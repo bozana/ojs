@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE emails SYSTEM "../../../../lib/pkp/dtd/emailTemplates.dtd">
+
+<!--
+  * @file plugins/generic/vgWort/xml/emailTemplates.xml
+  *
+  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
+  * Last update: July 13, 2011  
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * VG Wort email templates.
+  *
+  -->
+<emails>
+	<email key="VGWORT_ORDER_REMINDER" can_edit="1" can_disable="0"/>
+	<email key="VGWORT_REGISTER_NOTIFY" can_edit="1" can_disable="1"/>
+</emails>

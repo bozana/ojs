@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc SYSTEM "../../../../../../../lib/pkp/dtd/helpToc.dtd">
+
+<!--
+  * 000000.xml
+  *
+  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
+  * Last update: July 13, 2011  
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * VG Wort plugin help. 
+  *
+  -->
+
+<toc id="VGWortPlugin/toc/000000" locale="en_US" title="VG Wort Plugin" parent_topic="index/topic/000000">
+	<topic id="VGWortPlugin/topic/000000" title="VG Wort Plugin" />
+</toc>
