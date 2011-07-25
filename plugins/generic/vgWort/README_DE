@@ -3,7 +3,7 @@
 === Version: 1.0
 === Author: Božana Bokan <bozana.bokan@fu-berlin.de>
     Center für Digitale Systeme (CeDiS), Freie Universität Berlin
-=== Last update: 21. Juli 2011  
+=== Last update: 25. Juli 2011  
 ================================
 
 Über
@@ -30,10 +30,6 @@ Um das Plug-In zu installieren:
     $ tar xvzf vgWort-1.0.tar.gz 
  - aus Ihrem OJS-Verzeichnis führen Sie aus:
     $ php tools/upgrade.php upgrade
- - schalten Sie das Plug-In ein, indem Sie zu Home > User > Journal Management > Plugin Management > Generic Plugins gehen und "ENABLE" unter "VG Wort" wählen
-
-oder
- - laden Sie die Plug-In-Datei tar.gz hoch, indem Sie zu Home > User > Journal Management > Plugin Management > Install A New Plugin gehen
  - schalten Sie das Plug-In ein, indem Sie zu Home > User > Journal Management > Plugin Management > Generic Plugins gehen und "ENABLE" unter "VG Wort" wählen
 
 Kontakt/Support
