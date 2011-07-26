@@ -5,7 +5,7 @@
   * version.xml
   *
   * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
-  * Last update: July 19, 2011  
+  * Last update: July 26, 2011  
   * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
   *
   * Plugin version information.
@@ -14,7 +14,7 @@
 	<application>vgWort</application>
 	<type>plugins.generic</type>
 	<release>1.0.0.0</release>
-	<date>2011-07-21</date>
+	<date>2011-07-26</date>
 	<lazy-load>1</lazy-load>
 	<class>VGWortPlugin</class>
 </version>

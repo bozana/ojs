@@ -3,7 +3,7 @@
 === Version: 1.0
 === Author: Božana Bokan <bozana.bokan@fu-berlin.de>
     Center for Digital Systems (CeDiS), Freie Universität Berlin
-=== Last update: July 25, 2011  
+=== Last update: July 26, 2011  
 ================================
 
 About
@@ -12,6 +12,7 @@ The VG Wort plugin enables integration and management of the VG Wort pixel tags 
 See the plugin documetation in German: http://pkp.sfu.ca/wiki/index.php/VGWortPlugIn_Doku
 
 The plugin is a part of the project "Functional extensions and value added services for OJS" located at the Freie Universität Berlin and founded by the Deutsche Forschungsgemeinschaft (DFG).
+More about the project: http://www.cedis.fu-berlin.de/ojs-de
 
 License
 -------

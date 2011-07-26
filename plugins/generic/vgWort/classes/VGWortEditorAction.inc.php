@@ -4,7 +4,7 @@
  * @file plugins/generic/vgWort/classes/VGWortEditorAction.inc.php
  *
  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
- * Last update: July 21, 2011  
+ * Last update: July 26, 2011  
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * @class VGWortEditorAction

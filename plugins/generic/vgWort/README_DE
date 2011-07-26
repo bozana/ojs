@@ -3,7 +3,7 @@
 === Version: 1.0
 === Author: Božana Bokan <bozana.bokan@fu-berlin.de>
     Center für Digitale Systeme (CeDiS), Freie Universität Berlin
-=== Last update: 25. Juli 2011  
+=== Last update: 26. Juli 2011  
 ================================
 
 Über
@@ -12,6 +12,7 @@ Das VG-Wort-Plug-In ermöglicht die Integration und Verwaltung von VG-Wort-Zähl
 Lesen Sie auch die Plug-In-Dokumentation: http://pkp.sfu.ca/wiki/index.php/VGWortPlugIn_Doku
 
 Das Plug-In ist Teil des Projekts "Funktionaler Ausbau von und Mehrwertdienste für ‚Open Journal Systems‘ (OJS)", das an der Freien Universität Berlin angesiedelt und durch die Deutsche Forschungsgemeinschaft (DFG) finanziert wird.
+Mehr zum Projekt: http://www.cedis.fu-berlin.de/ojs-de
 
 Lizenz
 -------
@@ -30,7 +31,7 @@ Um das Plug-In zu installieren:
     $ tar xvzf vgWort-1.0.tar.gz 
  - aus Ihrem OJS-Verzeichnis führen Sie aus:
     $ php tools/upgrade.php upgrade
- - schalten Sie das Plug-In ein, indem Sie zu Home > User > Journal Management > Plugin Management > Generic Plugins gehen und "ENABLE" unter "VG Wort" wählen
+ - schalten Sie das Plug-In ein, indem Sie zu Startseite > Benutzer/in > Zeitschriftenverwaltung > Verwaltung der Plug-Ins > Generische Plug-Ins gehen und "Einschalten" unter "VG Wort" wählen
 
 Kontakt/Support
 ---------------
