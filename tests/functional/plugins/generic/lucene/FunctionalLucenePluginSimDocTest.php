@@ -61,20 +61,7 @@ class FunctionalLucenePluginSimDocTest extends FunctionalLucenePluginBaseTestCas
 		$pluginSettingsDao =& DAORegistry::getDAO('PluginSettingsDAO'); /* @var $pluginSettingsDao PluginSettingsDAO */
 		$pluginSettingsDao->updateSetting(0, 'luceneplugin', 'simdocs', true);
 
-		// Execute a simple search that returns at least one result.
-		$this->simpleSearch('lucene');
-
-		// Check that the link "similar documents" is present.
-		$this->assertElementPresent('link=similar documents');
-
-		// Click the "similar documents" button.
-		$this->clickAndWait('link=similar documents');
-
-		// Check that a search for similar articles has been executed.
-		$this->waitForLocation('*lucene-test/search/search*');
-		$this->waitForElementPresent('name=query');
-		$this->assertValue('name=query', '*article*');
-		$this->assertValue('name=query', '*test*');
+		$this->checkSimDocs();
 	}
 }
 ?>

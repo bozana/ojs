@@ -88,7 +88,7 @@ class FunctionalLucenePluginRankingTest extends FunctionalLucenePluginBaseTestCa
 	 *   single      | chicken AND (wings OR feet) | publication date | descending (default) | 5
 	 *   single      | chicken AND (wings OR feet) | article title    | ascending (default)  | 5
 	 *   single      | chicken AND (wings OR feet) | article title    | descending           | 4
-	 *   multi       | test NOT ranking            | issue publ. date | descending (default) | 3
+	 *   multi       | test NOT ranking            | issue publ. date | descending (default) | 3 or 4
 	 *   multi       | test NOT ranking            | journal title    | ascending (default)  | 3
 	 *   multi       | test NOT ranking            | journal title    | descending           | 1
 	 *
@@ -105,73 +105,40 @@ class FunctionalLucenePluginRankingTest extends FunctionalLucenePluginBaseTestCa
 	function testResultOrdering() {
 		// Test ordering of a single-journal search.
 		$singleJournalExamples = array(
-			array('luceneSearchOrder', 'score', 4), // Default: descending
-			array('luceneSearchDirection', 'asc', 3),
-			array('luceneSearchOrder', 'authors', 4), // Default: ascending
-			array('luceneSearchDirection', 'desc', 5),
-			array('luceneSearchOrder', 'publicationDate', 5), // Default: descending
-			array('luceneSearchOrder', 'title', 5), // Default: ascending
-			array('luceneSearchDirection', 'desc', 4)
+			array('searchResultOrder', 'score', 4), // Default: descending
+			array('searchResultOrderDir', 'asc', 3),
+			array('searchResultOrder', 'authors', 4), // Default: ascending
+			array('searchResultOrderDir', 'desc', 5),
+			array('searchResultOrder', 'publicationDate', 5), // Default: descending
+			array('searchResultOrder', 'title', 5), // Default: ascending
+			array('searchResultOrderDir', 'desc', 4)
 		);
 		// Execute a query that produces a different score for all
 		// articles in the result set.
 		$this->simpleSearch('+chicken +(wings feet) 2');
 		foreach($singleJournalExamples as $example) {
-			$this->_checkResultOrderingExample($example);
+			$this->checkResultOrderingExample($example);
 		}
 
 		// Make sure that there is no journal-title ordering.
-		$singleJournalOrderingOptions = $this->getSelectOptions('luceneSearchOrder');
+		$singleJournalOrderingOptions = $this->getSelectOptions('searchResultOrder');
 		$this->assertFalse(in_array('Journal Title', $singleJournalOrderingOptions));
 
 
 		// Test ordering of a multi-journal search.
 		$multiJournalExamples = array(
-			array('luceneSearchOrder', 'issuePublicationDate', 3), // Default: descending
-			array('luceneSearchOrder', 'journalTitle', 3), // Default: ascending
-			array('luceneSearchDirection', 'desc', 1)
+			array('searchResultOrder', 'issuePublicationDate', array(3,4)), // Default: descending
+			array('searchResultOrder', 'journalTitle', 3), // Default: ascending
+			array('searchResultOrderDir', 'desc', 1)
 		);
 		$this->simpleSearchAcrossJournals('test NOT ranking');
 		foreach($multiJournalExamples as $example) {
-			$this->_checkResultOrderingExample($example);
+			$this->checkResultOrderingExample($example);
 		}
 
 		// Make sure that journal-title ordering is allowed.
-		$multiJournalOrderingOptions = $this->getSelectOptions('luceneSearchOrder');
+		$multiJournalOrderingOptions = $this->getSelectOptions('searchResultOrder');
 		$this->assertTrue(in_array('Journal Title', $multiJournalOrderingOptions));
-	}
-
-
-	//
-	// Private helper methods
-	//
-	/**
-	 * Check result ordering example.
-	 * @param $example array
-	 */
-	private function _checkResultOrderingExample($example) {
-		// Expand the example.
-		list($selectField, $value, $expectedFirstResult) = $example;
-
-		// Save order and direction for debugging.
-		static $luceneSearchOrder, $luceneSearchDirection;
-		$$selectField = $value;
-
-		try {
-			// Select the next order criterium or direction.
-			if ($this->getSelectedValue($selectField) != $value) {
-				$this->selectAndWait($selectField, "value=$value");
-			}
-
-			// Check the first result to make sure ordering works
-			// correctly.
-			$this->assertAttribute(
-				'css=table.listing a.file:first-child@href',
-				'*/article/view/' . $expectedFirstResult
-			);
-		} catch (Exception $e) {
-			throw $this->improveException($e, "example $luceneSearchOrder - $luceneSearchDirection");
-		}
 	}
 }
 ?>

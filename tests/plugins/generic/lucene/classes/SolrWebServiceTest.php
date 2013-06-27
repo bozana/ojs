@@ -164,7 +164,7 @@ class SolrWebServiceTest extends PKPTestCase {
 		$expectedFacets = array(
 			// only facets that return at least one result will be shown.
 			'discipline' => array('exotic food' => 1, 'dietary research' => 1),
-			'subject' => array('lunchtime no lunch' => 1),
+			'subject' => array('lunchtime no lunch' => 1, 'article' => 1, 'test' => 1),
 			// facets for 'type' were not requested so we shouldn't get a result here
 			'coverage' => array('daily probes' => 1, 'the 21st century' => 1, 'world wide' => 1),
 			'journalTitle' => array(), // This shows that non-selected facets will not be shown.
@@ -634,14 +634,6 @@ class SolrWebServiceTest extends PKPTestCase {
 		$journal = $this->getMock('Journal', array('getSetting'));
 		$journal->setId('2');
 		$journal->setPath('lucene-test');
-		$journal->setData(
-			'supportedLocales',
-			array(
-				'en_US' => 'English',
-				'de_DE' => 'German',
-				'fr_FR' => 'French'
-			)
-		);
 		$journal->expects($this->any())
 		        ->method('getSetting')
 		        ->will($this->returnCallback(array($this, 'journalGetSettingCallback')));
@@ -654,14 +646,16 @@ class SolrWebServiceTest extends PKPTestCase {
 	 * @param $locale string
 	 * @return string
 	 */
-	public function &journalGetSettingCallback($name, $locale) {
+	public function &journalGetSettingCallback($name, $locale = null) {
 		$titleValues = array(
 			'de_DE' => 'Zeitschrift',
 			'en_US' => 'Journal'
 		);
-		if ($name == 'title' && isset($titleValues[$locale])) {
+		$supportedLocales = array('en_US', 'de_DE', 'pt_BR');
+		if ($name == 'name' && isset($titleValues[$locale])) {
 			return $titleValues[$locale];
 		}
+		if ($name == 'supportedLocales') return $supportedLocales;
 		$nullVar = null;
 		return $nullVar;
 	}

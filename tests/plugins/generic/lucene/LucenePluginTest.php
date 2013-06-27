@@ -147,7 +147,7 @@ class LucenePluginTest extends DatabaseTestCase {
 			unset($webService, $searchRequest);
 
 			// Execute the test.
-			$params = array($journal, $testCase, $fromDate, null, 1, 25, &$totalResults, &$error);
+			$params = array($journal, $testCase, $fromDate, null, 'score', 'desc', array(), 1, 25, &$totalResults, &$error);
 			$this->lucenePlugin->callbackRetrieveResults($hook, $params);
 		}
 
@@ -161,7 +161,7 @@ class LucenePluginTest extends DatabaseTestCase {
 		           ->will($this->returnValue('some error message'));
 		$originalWebService = $this->lucenePlugin->_solrWebService;
 		$this->lucenePlugin->_solrWebService = $webService;
-		$params = array($journal, array(null => 'test'), null, null, 1, 25, &$totalResults, &$error);
+		$params = array($journal, array(null => 'test'), null, null, 'score', 'desc', array(), 1, 25, &$totalResults, &$error);
 		$this->assertEquals(array(), $this->lucenePlugin->callbackRetrieveResults($hook, $params));
 		$this->assertEquals('some error message ##plugins.generic.lucene.message.techAdminInformed##', $error);
 		$this->lucenePlugin->_solrWebService = $originalWebService;
