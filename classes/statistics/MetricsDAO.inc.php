@@ -125,6 +125,7 @@ class MetricsDAO extends DAO {
 					$currentClause .= "$column = ?";
 					$params[] = $values;
 				} else {
+					if (empty($values)) return null;
 					$placeholders = array_pad(array(), count($values), '?');
 					$placeholders = implode(', ', $placeholders);
 					$currentClause .= "$column IN ($placeholders)";

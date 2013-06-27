@@ -103,13 +103,18 @@ class ArticleSearchDAO extends DAO {
 		$result =& $this->retrieveCached(
 			'SELECT
 				o.article_id,
+				MAX(a.journal_id) AS journal_id,
+				MAX(i.date_published) AS i_pub,
+				MAX(pa.date_published) AS a_pub,
 				COUNT(*) AS count
 			FROM
+				articles a,
 				published_articles pa,
 				issues i,
 				article_search_objects o NATURAL JOIN ' . $sqlFrom . '
 			WHERE
-				pa.article_id = o.article_id AND
+				a.article_id = o.article_id AND
+				pa.article_id = a.article_id AND
 				i.issue_id = pa.issue_id AND
 				i.published = 1 AND ' . $sqlWhere . '
 			GROUP BY o.article_id
@@ -119,7 +124,18 @@ class ArticleSearchDAO extends DAO {
 			3600 * $cacheHours // Cache for 24 hours
 		);
 
-		$returner = new DBRowIterator($result);
+		$returner = array();
+		while (!$result->EOF) {
+			$row = $result->getRowAssoc(false);
+			$returner[$row['article_id']] = array(
+				'count' => $row['count'],
+				'journal_id' => $row['journal_id'],
+				'issuePublicationDate' => $this->datetimeFromDB($row['i_pub']),
+				'publicationDate' => $this->datetimeFromDB($row['a_pub'])
+			);
+			$result->MoveNext();
+		}
+		$result->Close();
 		return $returner;
 	}
 

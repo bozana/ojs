@@ -30,7 +30,7 @@ class SearchHandler extends Handler {
 	 * @param $request PKPRequest
 	 */
 	function index($args, &$request) {
-		$this->validate($request);
+		$this->validate(null, $request);
 		$this->search($args, $request);
 	}
 
@@ -127,7 +127,7 @@ class SearchHandler extends Handler {
 	 * @param $request PKPRequest
 	 */
 	function search($args, &$request) {
-		$this->validate($request);
+		$this->validate(null, $request);
 
 		// Get and transform active filters.
 		$searchFilters = ArticleSearch::getSearchFilters($request);
@@ -139,7 +139,7 @@ class SearchHandler extends Handler {
 		// Retrieve results.
 		$error = '';
 		$results =& ArticleSearch::retrieveResults(
-			$searchFilters['searchJournal'], $keywords, $error,
+			$request, $searchFilters['searchJournal'], $keywords, $error,
 			$searchFilters['fromDate'], $searchFilters['toDate'],
 			$rangeInfo
 		);
@@ -148,6 +148,22 @@ class SearchHandler extends Handler {
 		$this->setupTemplate($request);
 		$templateMgr =& TemplateManager::getManager($request);
 		$templateMgr->setCacheability(CACHEABILITY_NO_STORE);
+
+		// Result set ordering options.
+		$orderByOptions = ArticleSearch::getResultSetOrderingOptions($request);
+		$templateMgr->assign('searchResultOrderOptions', $orderByOptions);
+		$orderDirOptions = ArticleSearch::getResultSetOrderingDirectionOptions();
+		$templateMgr->assign('searchResultOrderDirOptions', $orderDirOptions);
+
+		// Result set ordering selection.
+		list($orderBy, $orderDir) = ArticleSearch::getResultSetOrdering($request);
+		$templateMgr->assign('orderBy', $orderBy);
+		$templateMgr->assign('orderDir', $orderDir);
+
+		// Similar documents.
+		$templateMgr->assign('simDocsEnabled', true);
+
+		// Result set display.
 		$templateMgr->assign('jsLocaleKeys', array('search.noKeywordError'));
 		$this->_assignSearchFilters($request, $templateMgr, $searchFilters);
 		$templateMgr->assign_by_ref('results', $results);
@@ -156,12 +172,41 @@ class SearchHandler extends Handler {
 	}
 
 	/**
+	 * Redirect to a search query that shows documents
+	 * similar to the one identified by an article id in the
+	 * request.
+	 * @param $args array
+	 * @param $request Request
+	 */
+	function similarDocuments($args, &$request) {
+		$this->validate(null, $request);
+
+		// Retrieve the (mandatory) ID of the article that
+		// we want similar documents for.
+		$articleId = $request->getUserVar('articleId');
+		if (!is_numeric($articleId)) {
+			$request->redirect(null, 'search');
+		}
+
+		// Check whether a search plugin provides terms for a similarity search.
+		$searchTerms = ArticleSearch::getSimilarityTerms($articleId);
+
+		// Redirect to a search query with the identified search terms (if any).
+		if (empty($searchTerms)) {
+			$searchParams = null;
+		} else {
+			$searchParams = array('query' => implode(' ', $searchTerms));
+		}
+		$request->redirect(null, 'search', 'search', null, $searchParams);
+	}
+
+	/**
 	 * Show index of published articles by author.
 	 * @param $args array
 	 * @param $request PKPRequest
 	 */
 	function authors($args, &$request) {
-		$this->validate($request);
+		$this->validate(null, $request);
 		$this->setupTemplate($request, true);
 
 		$journal =& $request->getJournal();
@@ -254,7 +299,7 @@ class SearchHandler extends Handler {
 	 * @param $request PKPRequest
 	 */
 	function titles($args, &$request) {
-		$this->validate($request);
+		$this->validate(null, $request);
 		$this->setupTemplate($request, true);
 
 		$journal =& $request->getJournal();
@@ -280,7 +325,7 @@ class SearchHandler extends Handler {
 	 * @param $request PKPRequest
 	 */
 	function categories($args, &$request) {
-		$this->validate($request);
+		$this->validate(null, $request);
 		$this->setupTemplate($request);
 
 		$site =& $request->getSite();
@@ -309,7 +354,7 @@ class SearchHandler extends Handler {
 	function category($args, &$request) {
 		$categoryId = (int) array_shift($args);
 
-		$this->validate($request);
+		$this->validate(null, $request);
 		$this->setupTemplate($request, true, 'categories');
 
 		$site =& $request->getSite();
