@@ -263,14 +263,12 @@ class PubIdPlugin extends Plugin {
 	 * @return boolean
 	 */
 	function checkDuplicate($pubId, &$pubObject, $journalId) {
-		// FIXME: Hack to ensure that we get a published article if possible.
-		// Remove this when we have migrated getBest...(), etc. to Article.
-		if (is_a($pubObject, 'SectionEditorSubmission')) {
-			$articleDao = DAORegistry::getDAO('PublishedArticleDAO'); /* @var $articleDao PublishedArticleDAO */
-			$pubArticle =& $articleDao->getPublishedArticleByArticleId($pubObject->getId());
-			if (is_a($pubArticle, 'PublishedArticle')) {
+		if (is_a($pubObject, 'Submission')) {
+			$articleDao = DAORegistry::getDAO('ArticleDAO');
+			$article =& $articleDao->getById($pubObject->getId());
+			if (is_a($article, 'Article')) {
 				unset($pubObject);
-				$pubObject =& $pubArticle;
+				$pubObject =& $article;
 			}
 		}
 
@@ -281,7 +279,7 @@ class PubIdPlugin extends Plugin {
 		// the pubId suffixes only as a pubId with the given suffix may exist
 		// (e.g. through import) even if the suffix itself is not in the
 		// database.
-		$typesToCheck = array('Issue', 'PublishedArticle', 'ArticleGalley');
+		$typesToCheck = array('Issue', 'Article', 'ArticleGalley');
 		foreach($typesToCheck as $pubObjectType) {
 			switch($pubObjectType) {
 				case 'Issue':
@@ -289,12 +287,9 @@ class PubIdPlugin extends Plugin {
 					$objectsToCheck = $issueDao->getIssues($journalId);
 					break;
 
-				case 'PublishedArticle':
-					// FIXME: We temporarily have to use the published article
-					// DAO here until we've moved pubId-generation to the Article
-					// class.
-					$articleDao = DAORegistry::getDAO('PublishedArticleDAO'); /* @var $articleDao PublishedArticleDAO */
-					$objectsToCheck =& $articleDao->getPublishedArticlesByJournalId($journalId);
+				case 'Article':
+					$articleDao = DAORegistry::getDAO('ArticleDAO'); /* @var $articleDao ArticleDAO */
+					$objectsToCheck =& $articleDao->getByContextId($journalId);
 					break;
 
 				case 'ArticleGalley':

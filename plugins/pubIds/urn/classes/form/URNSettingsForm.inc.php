@@ -40,26 +40,38 @@ class URNSettingsForm extends Form {
 
 		parent::Form($plugin->getTemplatePath() . 'settingsForm.tpl');
 
-		$this->addCheck(new FormValidatorCustom($this, 'enableIssueURN', 'required', 'plugins.pubIds.urn.manager.settings.form.journalContentRequired', create_function('$enableIssueURN,$form', 'return $form->getData(\'enableIssueURN\') || $form->getData(\'enableArticleURN\') || $form->getData(\'enableGalleyURN\') || $form->getData(\'enableSuppFileURN\');'), array($this)));
-		$this->addCheck(new FormValidator($this, 'urnPrefix', 'required', 'plugins.pubIds.urn.manager.settings.form.urnPrefixRequired'));
-		$this->addCheck(new FormValidatorRegExp($this, 'urnPrefix', 'optional', 'plugins.pubIds.urn.manager.settings.form.urnPrefixPattern', '/^urn:[a-zA-Z0-9-]*:.*/'));
-		$this->addCheck(new FormValidatorCustom($this, 'urnIssueSuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnIssueSuffixPatternRequired', create_function('$urnIssueSuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableIssueURN\')) return $urnIssueSuffixPattern != \'\';return true;'), array($this)));
-		$this->addCheck(new FormValidatorCustom($this, 'urnArticleSuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnArticleSuffixPatternRequired', create_function('$urnArticleSuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableArticleURN\')) return $urnArticleSuffixPattern != \'\';return true;'), array($this)));
-		$this->addCheck(new FormValidatorCustom($this, 'urnGalleySuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnGalleySuffixPatternRequired', create_function('$urnGalleySuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableGalleyURN\')) return $urnGalleySuffixPattern != \'\';return true;'), array($this)));
-		$this->addCheck(new FormValidatorCustom($this, 'urnSuppFileSuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnSuppFileSuffixPatternRequired', create_function('$urnSuppFileSuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableSuppFileURN\')) return $urnSuppFileSuffixPattern != \'\';return true;'), array($this)));
-		$this->addCheck(new FormValidator($this, 'namespace', 'required', 'plugins.pubIds.urn.manager.settings.form.namespaceRequired'));
-		$this->addCheck(new FormValidatorUrl($this, 'urnResolver', 'required', 'plugins.pubIds.urn.manager.settings.form.urnResolverRequired'));
 		$this->addCheck(new FormValidatorPost($this));
+
+		// for URN reset requests
+		import('lib.pkp.classes.linkAction.request.RemoteActionConfirmationModal');
+		$application = PKPApplication::getApplication();
+		$request = $application->getRequest();
+		$clearPubIdsLinkAction =
+		new LinkAction(
+			'reassignUNRs',
+			new RemoteActionConfirmationModal(
+				__('plugins.pubIds.urn.manager.settings.clearURNs.confirm'),
+				__('common.delete'),
+				$request->url(null, null, 'plugin', null, array('verb' => 'settings', 'clearPubIds' => true, 'plugin' => $plugin->getName(), 'category' => 'pubIds')),
+				'modal_delete'
+			),
+			__('plugins.pubIds.urn.manager.settings.clearURNs'),
+			'delete'
+		);
+		$this->setData('clearPubIdsLinkAction', $clearPubIdsLinkAction);
+		$this->setData('urnSettingsHandlerJsUrl', $plugin->getJSFileUrl($request));
+		$this->setData('pluginName', $plugin->getName());
 	}
 
 	//
 	// Implement template methods from Form
 	//
 	/**
-	 * @see Form::display()
+	 * @see Form::fetch()
 	 */
 	function fetch($request) {
-		$namespaces = array(
+		$urnNamespaces = array(
+			'' => '',
 			'urn:nbn:de' => 'urn:nbn:de',
 			'urn:nbn:at' => 'urn:nbn:at',
 			'urn:nbn:ch' => 'urn:nbn:ch',
@@ -67,26 +79,8 @@ class URNSettingsForm extends Form {
 			'urn' => 'urn'
 		);
 		$templateMgr = TemplateManager::getManager($request);
-		$templateMgr->assign('namespaces', $namespaces);
-
-		// for DOI reset requests
-		import('lib.pkp.classes.linkAction.request.RemoteActionConfirmationModal');
-		$clearPubIdsLinkAction =
-		new LinkAction(
-			'reassignURNs',
-			new RemoteActionConfirmationModal(
-				__('plugins.pubIds.urn.manager.settings.clearURNs.confirm'),
-				__('common.delete'),
-				$request->url(null, null, 'plugin', null, array('verb' => 'settings', 'clearPubIds' => true, 'plugin' => $this->_plugin->getName(), 'category' => 'pubIds')),
-				'modal_delete'
-			),
-			__('plugins.pubIds.urn.manager.settings.clearURNs'),
-			'delete'
-		);
-
-		$templateMgr->assign('clearPubIdsLinkAction', $clearPubIdsLinkAction);
-
-		return parent::fetch();
+		$templateMgr->assign('urnNamespaces', $urnNamespaces);
+		return parent::fetch($request);
 	}
 
 	/**
@@ -99,8 +93,6 @@ class URNSettingsForm extends Form {
 		foreach($this->_getFormFields() as $fieldName => $fieldType) {
 			$this->setData($fieldName, $plugin->getSetting($journalId, $fieldName));
 		}
-
-		$this->setData('pluginName', $plugin->getName());
 	}
 
 	/**
@@ -122,6 +114,21 @@ class URNSettingsForm extends Form {
 		}
 	}
 
+	/**
+	 * Validate the form
+	 */
+	function validate($request) {
+		$this->addCheck(new FormValidatorCustom($this, 'urnObjects', 'required', 'plugins.pubIds.urn.manager.settings.form.journalContentRequired', create_function('$enableIssueURN,$form', 'return $form->getData(\'enableIssueURN\') || $form->getData(\'enableArticleURN\') || $form->getData(\'enableGalleyURN\') || $form->getData(\'enableSuppFileURN\');'), array($this)));
+		$this->addCheck(new FormValidator($this, 'urnPrefix', 'required', 'plugins.pubIds.urn.manager.settings.form.urnPrefixRequired'));
+		$this->addCheck(new FormValidatorRegExp($this, 'urnPrefix', 'required', 'plugins.pubIds.urn.manager.settings.form.urnPrefixPattern', '/^urn:[a-zA-Z0-9-]*:.*/'));
+		$this->addCheck(new FormValidatorCustom($this, 'urnIssueSuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnIssueSuffixPatternRequired', create_function('$urnIssueSuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableIssueURN\')) return $urnIssueSuffixPattern != \'\';return true;'), array($this)));
+		$this->addCheck(new FormValidatorCustom($this, 'urnArticleSuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnArticleSuffixPatternRequired', create_function('$urnArticleSuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableArticleURN\')) return $urnArticleSuffixPattern != \'\';return true;'), array($this)));
+		$this->addCheck(new FormValidatorCustom($this, 'urnGalleySuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnGalleySuffixPatternRequired', create_function('$urnGalleySuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableGalleyURN\')) return $urnGalleySuffixPattern != \'\';return true;'), array($this)));
+		$this->addCheck(new FormValidatorCustom($this, 'urnSuppFileSuffixPattern', 'required', 'plugins.pubIds.urn.manager.settings.form.urnSuppFileSuffixPatternRequired', create_function('$urnSuppFileSuffixPattern,$form', 'if ($form->getData(\'urnSuffix\') == \'pattern\' && $form->getData(\'enableSuppFileURN\')) return $urnSuppFileSuffixPattern != \'\';return true;'), array($this)));
+		$this->addCheck(new FormValidator($this, 'urnNamespace', 'required', 'plugins.pubIds.urn.manager.settings.form.namespaceRequired'));
+		$this->addCheck(new FormValidatorUrl($this, 'urnResolver', 'required', 'plugins.pubIds.urn.manager.settings.form.urnResolverRequired'));
+		return parent::validate();
+	}
 	//
 	// Private helper methods
 	//
@@ -137,8 +144,8 @@ class URNSettingsForm extends Form {
 			'urnArticleSuffixPattern' => 'string',
 			'urnGalleySuffixPattern' => 'string',
 			'urnSuppFileSuffixPattern' => 'string',
-			'checkNo' => 'bool',
-			'namespace' => 'string',
+			'urnCheckNo' => 'bool',
+			'urnNamespace' => 'string',
 			'urnResolver' => 'string'
 		);
 	}
