@@ -41,7 +41,23 @@ class SubmissionMetadataViewForm extends PKPSubmissionMetadataViewForm {
 		$templateMgr->assign('sectionOptions', $seriesOptions);
 		$templateMgr->assign('sectionId', $submission->getSectionId());
 
+		// consider public identifiers
+		$pubIdPlugins =& PluginRegistry::loadCategory('pubIds', true);
+		$templateMgr->assign('pubIdPlugins', $pubIdPlugins);
+		$templateMgr->assign('article', $submission);
+
 		return parent::fetch($request);
+	}
+
+	/**
+	 * Initialize form data for a new form.
+	 */
+	function initData($args, $request) {
+		parent::initData($args, $request);
+		// consider the additional field names from the public identifer plugins
+		import('classes.plugins.PubIdPluginHelper');
+		$pubIdPluginHelper = new PubIdPluginHelper();
+		$pubIdPluginHelper->init($this, $this->getSubmission());
 	}
 
 	/**
@@ -50,6 +66,23 @@ class SubmissionMetadataViewForm extends PKPSubmissionMetadataViewForm {
 	function readInputData() {
 		parent::readInputData();
 		$this->readUserVars(array('sectionId'));
+		// consider the additional field names from the public identifer plugins
+		import('classes.plugins.PubIdPluginHelper');
+		$pubIdPluginHelper = new PubIdPluginHelper();
+		$pubIdPluginHelper->readInputData($this);
+	}
+
+	/**
+	 * Check to ensure that the form is correctly validated.
+	 */
+	function validate($request) {
+		// Verify additional fields from public identifer plug-ins.
+		$journal = $request->getJournal();
+		import('classes.plugins.PubIdPluginHelper');
+		$pubIdPluginHelper = new PubIdPluginHelper();
+		$pubIdPluginHelper->validate($journal->getId(), $this, $this->getSubmission());
+
+		return parent::validate();
 	}
 
 	/**
@@ -68,6 +101,11 @@ class SubmissionMetadataViewForm extends PKPSubmissionMetadataViewForm {
 			import('classes.search.ArticleSearchIndex');
 			ArticleSearchIndex::articleMetadataChanged($submission);
 		}
+
+		// consider the additional field names from the public identifer plugins
+		import('classes.plugins.PubIdPluginHelper');
+		$pubIdPluginHelper = new PubIdPluginHelper();
+		$pubIdPluginHelper->execute($this, $submission);
 	}
 }
 
