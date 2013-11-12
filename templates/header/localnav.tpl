@@ -62,6 +62,7 @@
 								</ul>
 							</li>
 							{/if}
+							{call_hook name="Templates::Header::Localnav::AdditionalManagementItems"}
 						</ul>
 					</li>
 				{/if}{* ROLE_ID_MANAGER || ROLE_ID_SERIES_EDITOR *}
