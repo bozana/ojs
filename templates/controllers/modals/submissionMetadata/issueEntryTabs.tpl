@@ -30,4 +30,5 @@
 		<li>
 			<a title="catalog" href="{url router=$smarty.const.ROUTE_COMPONENT component="tab.issueEntry.IssueEntryTabHandler" tab="publication" op="publicationMetadata" submissionId=$submissionId stageId=$stageId tabPos="1"}">{translate key="submission.issueEntry.publicationMetadata"}</a>
 		</li>
+		{call_hook name="Templates::Controllers::Modals::SubmissionMetadata::IssueEntryTabs::AdditionalItems"}
 </ul>
