@@ -1,0 +1,38 @@
+================================
+=== OJS VG Wort Plugin
+=== Version: 1.2
+=== Author: Božana Bokan <bozana.bokan@fu-berlin.de>
+    Center for Digital Systems (CeDiS), Freie Universität Berlin
+=== Last update: February 26, 2013
+================================
+
+About
+-----
+The VG Wort plugin enables integration and management of the VG Wort pixel tags in OJS. Here you can order new pixel tags, assign the pixel tags to the articles, register them and view the VG Wort statistics.
+See the plugin documetation in German: http://pkp.sfu.ca/wiki/index.php/VGWortPlugIn_Doku
+
+The plugin is a part of the project "Functional extensions and value added services for OJS" located at the Freie Universität Berlin and founded by the Deutsche Forschungsgemeinschaft (DFG).
+More about the project: http://www.cedis.fu-berlin.de/ojs-de
+
+License
+-------
+This plugin is licensed under the GNU General Public License v2. See the OJS file docs/COPYING for the complete terms of this license.
+
+System Requirements
+-------------------
+Same requirements as the OJS 2.4.2 core.
+Additionally PHP 5 >= 5.0.1, PHP Soap, and PHP OpenSSL extension modules.
+
+Installation
+------------
+To install the plugin either:
+ - copy the plugin tar.gz file to your OJS/plugins/generic directory
+ - to unzip the plugin inside the plugins/generic directory:
+    $ tar xvzf vgWort-1.2.tar.gz 
+ - from your OJS directory execute :
+    $ php tools/upgrade.php upgrade
+ - enable the plugin by going to:  Home > User > Journal Management > Plugin Management > Generic Plugins and selecting "ENABLE" under "VG Wort"
+
+Contact/Support
+---------------
+Please email the author for support, bugfixes, or comments.

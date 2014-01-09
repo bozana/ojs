@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE email_texts SYSTEM "../../../../../lib/pkp/dtd/emailTemplateData.dtd">
+
+<!--
+  * @file plugins/generic/vgWort/locale/en_US/emailTemplates.xml
+  *
+  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
+  * Author: Marco Tullney, Freie Universität Berlin
+  * Last update: July 13, 2011  
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * VG WORT email template localized default text.
+  *
+  -->
+<email_texts locale="de_DE">
+	<email_text key="VGWORT_ORDER_REMINDER">
+		<subject>VG Wort: Erinnerung an Zählpixel-Bestellung</subject>
+		<body>Liebe Redakteur/innen,
+		
+dies ist eine Information darüber, dass die minimale Anzahl an verfügbaren Zählpixel (wie in den VG-Wort-Plug-In-Einstellungen festgelegt) für die Zeitschrift {$journalName} erreicht worden ist.
+
+Es gibt momentan {$availablePixelTagCount} verfügbare Zählpixel. Bitte loggen Sie sich auf der Zeitschriftenwebsite ein und bestellen Sie neue Zählpixel.
+
+Vielen Dank,
+{$editorialContactSignature}</body>
+		<description>Dies ist eine automatisch erzeugte E-Mail, die an Redakteur/innen verschickt wird als Erinnerung daran, dass neue Zählpixel bestellt werden sollten.</description>
+	</email_text>
+
+
+	<email_text key="VGWORT_REGISTER_NOTIFY">
+		<subject>VG Wort: Zählpixel registriert</subject>
+		<body>Liebe/r {$authorName},
+
+das Zählpixel mit dem privaten Code „{$privateCode}“ ist Ihrer Veröffentlichung „{$articleTitle}“ in {$journalName} zugewiesen und bei der VG Wort registriert worden.
+
+Wenn die Voraussetzungen für die Auszahlung von Vergütungen für diese elektronische Veröffentlichung erreicht werden, werden die Autor/innen von der VG Wort benachrichtigt werden. 
+
+Mit freundlichen Grüßen
+{$editorialContactSignature}</body>
+		<description>Dies ist eine automatisch erzeugte E-Mail, die an eine/n Autor/in nach der Registrierung der seiner/ihrer Publikation zugeordneten Zählpixel geschickt wird.</description>
+	</email_text>
+</email_texts>

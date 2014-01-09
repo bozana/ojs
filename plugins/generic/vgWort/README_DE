@@ -1,0 +1,38 @@
+================================
+=== OJS VG-Wort-Plugin
+=== Version: 1.2
+=== Author: Božana Bokan <bozana.bokan@fu-berlin.de>
+    Center für Digitale Systeme (CeDiS), Freie Universität Berlin
+=== Last update: 26. Februar 2013 
+================================
+
+Über
+-----
+Das VG-Wort-Plug-In ermöglicht die Integration und Verwaltung von VG-Wort-Zählpixeln in OJS. Sie können hier neue Zählpixel bestellen, Artikeln Zählpixel zuweisen, Zählpixel melden und die Statistik der VG Wort ansehen.
+Lesen Sie auch die Plug-In-Dokumentation: http://pkp.sfu.ca/wiki/index.php/VGWortPlugIn_Doku
+
+Das Plug-In ist Teil des Projekts "Funktionaler Ausbau von und Mehrwertdienste für ‚Open Journal Systems‘ (OJS)", das an der Freien Universität Berlin angesiedelt und durch die Deutsche Forschungsgemeinschaft (DFG) finanziert wird.
+Mehr zum Projekt: http://www.cedis.fu-berlin.de/ojs-de
+
+Lizenz
+-------
+Das Plug-In ist unter GNU General Public License v2 lizenziert. Sehen Sie die OJS-Datei docs/COPYING für mehr Informationen über die Lizenz.
+
+Systemanforderungen
+-------------------
+Die gleichen Anforderungen wie für OJS 2.4.2.
+Zusätzlich PHP 5 >= 5.0.1, PHP Soap und PHP OpenSSL extension modules.
+
+Installation
+------------
+Um das Plug-In zu installieren:
+ - kopieren Sie die Plug-In-Datei tar.gz in Ihr Verzeichnis OJS/plugins/generic
+ - entpacken Sie das Plug-In in Ihr Verzeichnis plugins/generic:
+    $ tar xvzf vgWort-1.2.tar.gz 
+ - aus Ihrem OJS-Verzeichnis führen Sie aus:
+    $ php tools/upgrade.php upgrade
+ - schalten Sie das Plug-In ein, indem Sie zu Startseite > Benutzer/in > Zeitschriftenverwaltung > Verwaltung der Plug-Ins > Generische Plug-Ins gehen und "Einschalten" unter "VG Wort" wählen
+
+Kontakt/Support
+---------------
+Für Support, Fehlerbehebung oder Kommentare schicken Sie bitte eine E-Mail an die Autorin.
