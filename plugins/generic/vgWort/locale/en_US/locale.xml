@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
+
+<!--
+  * @file plugins/generic/vgWort/locale/en_US/locale.xml
+  *
+  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
+  * Author: Marco Tullney, Technische Informationsbibliothek und Universitätsbibliothek Hannover (TIB/UB)
+  * Last update: February 04, 2014  
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * VG Wort plugin localization strings for the en_US (U.S. English) locale.
+  -->
+ 
+<locale name="en_US" full_name="U.S. English">
+	<!-- VG Wort plugin -->
+	<message key="plugins.generic.vgWort.displayName">VG Wort</message>
+	<message key="plugins.generic.vgWort.description"><![CDATA[This plugin enables integration and management of the <a href="http://www.vgwort.de/" target="_blank">VG Wort</a> pixel tags in OJS. Requires the VG Wort publisher account and the configuration of the plugin settings.]]></message>
+	<message key="plugins.generic.vgWort.descriptionDisabled"><![CDATA[This plugin enables integration and management of the <a href="http://www.vgwort.de/" target="_blank">VG Wort</a> pixel tags in OJS. <strong>The system requirements are not fulfilled. Please ensure that PHP 5 >= 5.0.1, PHP Soap and OpenSSL extension modules are available on the server.</strong>]]></message>
+
+	<!-- VG Wort manager options, setting -->
+	<message key="plugins.generic.vgWort.manager.settings">Settings</message>
+	<message key="plugins.generic.vgWort.manager.settings.description"><![CDATA[Please do the following setup steps to be able to manage and use VG Wort pixel tags in OJS:
+	<ul>
+	<li>Enter the VG Wort publisher username and passwort that will be used for the VG Wort services authentication: order, check, registration and statistics of the pixel tags.</li>
+	<li>Select the editors that will be allowed to use the VG Wort services and to manage the pixel tags in OJS.</li>
+	<li>Define the minimal amount of available pixel tags. If the minimum of the available pixel tags is reached, the selected editors will be notified by an email and reminded to order new pixel tags.</li>
+	</ul>
+	]]></message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortSettings">VG Wort Settings</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserId">VG Wort Username</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserPassword">VG Wort Password</message>
+	<message key="plugins.generic.vgWort.manager.settings.editors">Editors</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortNotification">Notification</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortPixelTagMin">The minimum of the available pixel tags</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortPixelTagMinDescription">(max. 10)</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortEditorsRequired">Please choose the editors.</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserIdRequired">The VG Wort username is required.</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserPasswordRequired">The VG Wort password is required.</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortPixelTagMinRequired">The minimum of the available pixel tags is required and should be a number from 1 to 10.</message>
+
+	<!-- author metadata -->
+	<message key="plugins.generic.vgWort.cardNo">VG Wort CardNo</message>
+	<message key="plugins.generic.vgWort.cardNo.description">(Your VG Wort card number)</message>
+	<message key="plugins.generic.vgWort.cardNoValid">Please enter a valid cardNo (2-7 numbers).</message>
+	<message key="plugins.generic.vgWort.cardNoRequired">The VG Wort card number is required for all authors that should take part in the payout of royalties.</message>
+	<!-- summary view -->
+	<message key="plugins.generic.vgWort.assignDescription"><![CDATA[<strong>Be aware:</strong> Once assigned, a pixel tag can not be unassigned any more!<br />Ensure that the VG Wort card number exists for all authors that should take part in the payout of royalties, select the appropriate text type and press the button to assign a pixel tag to the article.]]></message>
+	<message key="plugins.generic.vgWort.textType">Text type</message>
+	<message key="plugins.generic.vgWort.textType.description">(The article text has to contain more than 1800 characters.)</message>
+	<message key="plugins.generic.vgWort.changeTextType">Change to</message>
+	<message key="plugins.generic.vgWort.text">Text</message>
+	<message key="plugins.generic.vgWort.lyric">Poem</message>	
+	<message key="plugins.generic.vgWort.assign">Assign</message>
+	<message key="plugins.generic.vgWort.confirmAssign">Once assigned, the pixel tag can not be unassigned from the text any more! Are you sure you want to assign a pixel tag to the text?</message>
+	<message key="plugins.generic.vgWort.assigned">Assigned</message>
+	<message key="plugins.generic.vgWort.removeDescription">The VG Wort tracking starts as soon as the article is published. To stop the VG Wort tracking remove the pixel tag.</message>
+	<message key="plugins.generic.vgWort.remove">Remove Pixel Tag</message>
+	<message key="plugins.generic.vgWort.confirmRemove">This will remove the pixel tag from the galleys and thus disable the VG Wort tracking. Are you sure you want to remove this pixel tag?</message>
+	<message key="plugins.generic.vgWort.reinsertDescription">The pixel tag has been removed from the galleys, thus VG Wort tracking can't take place. To enable the VG Wort tracking reinsert the pixel tag.</message>
+	<message key="plugins.generic.vgWort.reinsert">Reinsert Pixel Tag</message>
+	<message key="plugins.generic.vgWort.confirmReinsert">This will insert the pixel tag in the galleys and thus enable the VG Wort tracking again. Are you sure you want to reinsert this pixel tag?</message>
+
+	<!-- class PixelTag -->
+	<message key="plugins.generic.vgWort.pixelTag.status">Status</message>
+	<message key="plugins.generic.vgWort.pixelTag.available">Available</message>
+	<message key="plugins.generic.vgWort.pixelTag.unregistered">Unregistered</message>
+	<message key="plugins.generic.vgWort.pixelTag.registered">Registered</message>
+	<message key="plugins.generic.vgWort.pixelTag.active">Active</message>
+	<message key="plugins.generic.vgWort.pixelTag.removed">Removed</message>
+
+	<!-- editor VG Wort area -->
+	<message key="plugins.generic.vgWort.editor.vgWort">VG Wort</message>
+	<message key="plugins.generic.vgWort.editor.pixelTags">Pixel Tags</message>
+
+	<!-- pixel tags listing pages, titles and manues -->
+	<message key="plugins.generic.vgWort.pixelTagsAll">Pixel Tags - All</message>
+	<message key="plugins.generic.vgWort.pixelTagsAvailable">Pixel Tags - Available</message>
+	<message key="plugins.generic.vgWort.pixelTagsUnregistered">Pixel Tags - Unregistered</message>
+	<message key="plugins.generic.vgWort.pixelTagsRegistered">Pixel Tags - Registered</message>
+	<message key="plugins.generic.vgWort.pixelTagsStat">Pixel Tags - Statistics</message>	
+	<message key="plugins.generic.vgWort.all">All</message>
+	<message key="plugins.generic.vgWort.available">Available</message>
+	<message key="plugins.generic.vgWort.unregistered">Unregistered</message>
+	<message key="plugins.generic.vgWort.registered">Registered</message>
+	<message key="plugins.generic.vgWort.none">No pixel tags</message>
+
+	<!-- pixel tags listing pages, table columns, create/insert -->
+	<message key="plugins.generic.vgWort.pixelTag.pixelTag">Pixel Tag</message>
+	<message key="plugins.generic.vgWort.pixelTag.privateCode">Private Code</message>
+	<message key="plugins.generic.vgWort.pixelTag.publicCode">Public Code</message>
+	<message key="plugins.generic.vgWort.pixelTag.domain">Domain</message>
+	<message key="plugins.generic.vgWort.pixelTag.date_ordered">Ordered</message>
+	<message key="plugins.generic.vgWort.pixelTag.date_registered">Registered</message>
+	<message key="plugins.generic.vgWort.pixelTag.date_assigned">Assigned</message>
+	<message key="plugins.generic.vgWort.pixelTag.articleId">Article ID</message>
+	<message key="plugins.generic.vgWort.pixelTag.articleId.note"><![CDATA[<strong>Note:</strong> Please don't forget to insert the VG Wort card numbers for authors.]]></message>	
+	<message key="plugins.generic.vgWort.pixelTag.date_removed">Removed</message>
+	
+	<!-- order -->
+	<message key="plugins.generic.vgWort.editor.pixelTagCount">Count of pixel tags (max. 100)</message>
+	<message key="plugins.generic.vgWort.editor.order">Order</message>
+	<message key="plugins.generic.vgWort.editor.confirmDelete">Are you sure you want to delete this pixel tag?</message>
+	<!-- manually insert -->
+	<message key="plugins.generic.vgWort.editor.manuallyInsert">Insert registered pixel tag</message>	
+	<!-- register -->
+	<message key="plugins.generic.vgWort.editor.register">Register</message>
+	<!-- statistics -->
+	<message key="plugins.generic.vgWort.editor.statistics">Statistics</message>
+	<message key="plugins.generic.vgWort.month">Month</message>
+	<message key="plugins.generic.vgWort.orderedPixel">Ordered Pixel</message>
+	<message key="plugins.generic.vgWort.startedPixel">Tracking Started</message>
+	<message key="plugins.generic.vgWort.minAccess">Min Access</message>
+	<message key="plugins.generic.vgWort.minAccessNoMessage">Min Access, but not registered</message>
+
+	<!-- error messages -->
+	<message key="plugins.generic.vgWort.requirementsRequired">The system requirements are not fulfilled. Please ensure that PHP 5 >= 5.0.1, PHP Soap, and PHP OpenSSL extension modules are available on the server.</message>
+
+	<message key="plugins.generic.vgWort.errorsOccurred">Errors occurred</message>
+
+	<message key="plugins.generic.vgWort.assign.errorCode1">The VG Wort card number is required for all authors that should take part in the payout of royalties.</message>
+	<message key="plugins.generic.vgWort.assign.errorCode2">No available pixel tags. A notification email is sent to the responsible editors. Please try later.</message>
+	<message key="plugins.generic.vgWort.noWSDL">The WSDL not found at {$wsdl}. The VG Wort server could currently not be available. Please try later.</message>
+	<message key="plugins.generic.vgWort.401">Invalid VG Wort username or password defined in the plugin settings.</message>
+	<message key="plugins.generic.vgWort.403">The VG Wort user defined in the plugin settings is not authorized to do this.</message>
+
+	<message key="plugins.generic.vgWort.order.errorCode1">The maximum count of pixel tags ({$maxOrder}) for this order exceeded.</message>
+	<message key="plugins.generic.vgWort.order.errorCode2">The maximum count of pixel tags ({$maxOrder}) for this year exceeded.</message>
+	<message key="plugins.generic.vgWort.order.errorCode3">No email exists for your VG Wort account. Please enter an email for your account on VG Wort portal.</message>
+	<message key="plugins.generic.vgWort.order.errorCode100">A technical problem occurred. Please try later again.</message>
+	<message key="plugins.generic.vgWort.order.count">The count should be a number from 1 to 100.</message>
+
+	<message key="plugins.generic.vgWort.check.notValid">The author {$surName} has not a valid VG Wort card number.</message>
+	<message key="plugins.generic.vgWort.check.errorCode100">A technical problem occurred. Please try later again.</message>
+	<message key="plugins.generic.vgWort.check.galleyRequired">PDF or HTML galley is required.</message>
+	<message key="plugins.generic.vgWort.check.articleNotPublished">The article has not been published.</message>
+
+	<message key="plugins.generic.vgWort.statistics.errorCode100">A technical problem occurred. Please try later again.</message>
+
+	<message key="plugins.generic.vgWort.register.errorCode1">There is no such pixel tag.</message>
+	<message key="plugins.generic.vgWort.register.errorCode2">The pixel tag belongs to somebody else.</message>
+	<message key="plugins.generic.vgWort.register.errorCode3">The pixel tag is already registered.</message>
+	<message key="plugins.generic.vgWort.register.errorCode4">The VG Wort card number ({$cardNumber}) doesn't accord to the user ({$surName}).</message>
+	<message key="plugins.generic.vgWort.register.errorCode5">The text doesn't contain 1800 characters.</message>
+	<message key="plugins.generic.vgWort.register.errorCode100">A technical problem occurred. Please try later again.</message>
+
+	<message key="plugins.generic.vgWort.create.privateCodeRequired">A private code is required.</message>
+	<message key="plugins.generic.vgWort.create.publicCodeRequired">A public code is required.</message>
+	<message key="plugins.generic.vgWort.create.privateCodeAlphaNum">The private code may only contain alphanumeric characters.</message>
+	<message key="plugins.generic.vgWort.create.publicCodeAlphaNum">The public code may only contain alphanumeric characters.</message>
+	<message key="plugins.generic.vgWort.create.privateCodeLength">The private code has to contain 32 characters.</message>
+	<message key="plugins.generic.vgWort.create.publicCodeLength">The public code has to contain 32 characters.</message>
+	<message key="plugins.generic.vgWort.create.domainRequired">A VG Wort domain is required.</message>
+	<message key="plugins.generic.vgWort.create.domainPattern">The domain shoud be of the form vg[0-9][0-9].met.vgwort.de.</message>
+	<message key="plugins.generic.vgWort.create.articleIDRequired">An article ID is required.</message>
+	<message key="plugins.generic.vgWort.create.articleIDExist">The article ID doesn't exist.</message>
+</locale>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
+
+<!--
+  * @file plugins/generic/vgWort/locale/de_DE/locale.xml
+  *
+  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
+  * Author: Marco Tullney, Technische Informationsbibliothek und Universitätsbibliothek Hannover (TIB/UB)
+  * Last update: February 04, 2014 
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * VG Wort plugin localization strings for the de_DE (Deutsch (Deutschland)) locale.
+  -->
+ 
+<locale name="de_DE" full_name="Deutsch (Deutschland)">
+	<!-- VG Wort plugin -->
+	<message key="plugins.generic.vgWort.displayName">VG Wort</message>
+	<message key="plugins.generic.vgWort.description"><![CDATA[Dieses Plug-In erlaubt die Integration und Verwaltung von Zählpixeln der <a href="http://www.vgwort.de/" target="_blank">VG Wort</a> in OJS. Es benötigt einen VG-Wort-Verlagsaccount und das Setzen der Plug-In-Einstellungen.]]></message>
+	<message key="plugins.generic.vgWort.descriptionDisabled"><![CDATA[Dieses Plug-In erlaubt die Integration und Verwaltung von Zählpixeln der <a href="http://www.vgwort.de/" target="_blank">VG Wort</a> in OJS. <strong>Die Systemanforderungen wurden nicht erfüllt. Bitte stellen Sie sicher, dass PHP 5 >= 5.0.1, PHP Soap und PHP OpenSSL extension modules auf dem Server verfügbar sind.</strong>]]></message>
+
+	<!-- VG Wort manager options, setting -->
+	<message key="plugins.generic.vgWort.manager.settings">Einstellungen</message>
+	<message key="plugins.generic.vgWort.manager.settings.description"><![CDATA[Bitte erledigen Sie die folgenden Einrichtungsschritte, um VG-Wort-Zählpixel in OJS verwalten und nutzen zu können:
+	<ul>
+	<li>Geben Sie Nutzer/innennamen und Passwort des VG-Wort-Verlagsaccounts ein, der für die Authentifizierung der VG-Wort-Dienste Bestellung, Überprüfung, Meldung und Statistik der Zählpixel benutzt werden wird.</li>
+	<li>Wählen Sie die Redakteur/innen aus, denen es erlaubt sein wird, die VG-Wort-Dienste zu benutzen und Zählpixel in OJS zu verwalten.</li>
+	<li>Geben Sie die minimale Anzahl an verfügbaren Zählpixeln an. Wenn die minimale Anzahl erreicht wird, werden die ausgewählten Redakteur/innen per E-Mail benachrichtigt und daran erinnert, neue Zählpixel zu bestellen.</li>
+	</ul>
+	]]></message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortSettings">VG-Wort-Einstellungen</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserId">VG-Wort-Benutzer/innenname</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserPassword">VG-Wort-Passwort</message>
+	<message key="plugins.generic.vgWort.manager.settings.editors">Redakteur/innen</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortNotification">Benachrichtigung</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortPixelTagMin">Die minimale Anzahl an Zählpixeln</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortPixelTagMinDescription">(max. 10)</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortEditorsRequired">Bitte wählen Sie die Redakteur/innen aus.</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserIdRequired">Der VG-Wort-Benutzer/innenname wird benötigt.</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortUserPasswordRequired">Das VG-Wort-Passwort wird benötigt.</message>
+	<message key="plugins.generic.vgWort.manager.settings.vgWortPixelTagMinRequired">Die minmale Anzahl an Zählpixeln muss festgelegt werden und sollte eine Zahl zwischen 1 und 10 sein.</message>
+
+	<!-- author metadata -->
+	<message key="plugins.generic.vgWort.cardNo">VG-Wort-Karteinummer</message>
+	<message key="plugins.generic.vgWort.cardNo.description">(Ihre VG-Wort-Karteinummer)</message>
+	<message key="plugins.generic.vgWort.cardNoValid">Bitte geben Sie eine gültige Karteinummer (2-7 Ziffern) an.</message>
+	<message key="plugins.generic.vgWort.cardNoRequired">Die VG-Wort-Karteinummer wird für alle Autor/innen benötigt, die an der Ausschüttung der Vergütungen beteiligt werden sollen.</message>
+	<!-- summary view -->
+	<message key="plugins.generic.vgWort.assignDescription"><![CDATA[<strong>Bitte beachten Sie:</strong> Sobald ein Zählpixel zugewiesen worden ist, kann die Zuweisung nicht mehr aufgehoben werden!<br />Stellen Sie sicher, dass die VG-Wort-Karteinummern für alle Autor/innen, die an der Ausschüttung von Vergütungen beteiligt sein sollen, existieren, wählen Sie den entsprechenden Texttyp aus, und drücken Sie den Knopf, um ein Zählpixel dem Artikel zuzuweisen.]]></message>
+	<message key="plugins.generic.vgWort.textType">Texttyp</message>
+	<message key="plugins.generic.vgWort.textType.description">(Der Artikeltext muss mehr als 1800 Zeichen enthalten.)</message>
+	<message key="plugins.generic.vgWort.changeTextType">Ändern zu</message>
+	<message key="plugins.generic.vgWort.text">Text</message>
+	<message key="plugins.generic.vgWort.lyric">Gedicht</message>	
+	<message key="plugins.generic.vgWort.assign">Zuweisen</message>
+	<message key="plugins.generic.vgWort.confirmAssign">Nachdem das Zählpixel zugewiesen worden ist, kann es nicht mehr von dem Text entkoppelt werden! Sind Sie sicher, dass Sie dem Text ein Zählpixel zuweisen wollen?</message>
+	<message key="plugins.generic.vgWort.assigned">Zugewiesen</message>
+	<message key="plugins.generic.vgWort.removeDescription">Die VG-Wort-Zählung beginnt direkt nach der Veröffentlichung des Artikels. Um die Zählung zu stoppen, entfernen Sie das Zählpixel.</message>
+	<message key="plugins.generic.vgWort.remove">Zählpixel entfernen</message>
+	<message key="plugins.generic.vgWort.confirmRemove">Hiermit werden Sie das Zählpixel aus den Fahnen entfernen und damit die VG-Wort-Zählung deaktivieren. Sind Sie sicher, dass Sie dieses Zählpixel entfernen möchten?</message>
+	<message key="plugins.generic.vgWort.reinsertDescription">Das Zählpixel ist aus den Fahnen entfernt worden, folglich kann die VG-Wort-Zählung nicht stattfinden. Um die Zählung zu aktivieren, fügen Sie das Zählpixel wieder ein.</message>
+	<message key="plugins.generic.vgWort.reinsert">Zählpixel wieder einfügen</message>
+	<message key="plugins.generic.vgWort.confirmReinsert">Hiermit wird das Zählpixel wieder in die Fahnen eingefügt und folglich die VG-Wort-Zählung wieder gestartet. Sind Sie sicher, dass Sie dieses Zählpixel wieder einfügen möchten?</message>
+
+	<!-- class PixelTag -->
+	<message key="plugins.generic.vgWort.pixelTag.status">Status</message>
+	<message key="plugins.generic.vgWort.pixelTag.available">Verfügbar</message>
+	<message key="plugins.generic.vgWort.pixelTag.unregistered">Nicht gemeldet</message>
+	<message key="plugins.generic.vgWort.pixelTag.registered">Gemeldet</message>
+	<message key="plugins.generic.vgWort.pixelTag.active">Aktiv</message>
+	<message key="plugins.generic.vgWort.pixelTag.removed">Entfernt</message>
+
+	<!-- editor VG Wort area -->
+	<message key="plugins.generic.vgWort.editor.vgWort">VG Wort</message>
+	<message key="plugins.generic.vgWort.editor.pixelTags">Zählpixel</message>
+
+	<!-- pixel tags listing pages, titles and manues -->
+	<message key="plugins.generic.vgWort.pixelTagsAll">Zählpixel - Alle</message>
+	<message key="plugins.generic.vgWort.pixelTagsAvailable">Zählpixel - Verfügbare</message>
+	<message key="plugins.generic.vgWort.pixelTagsUnregistered">Zählpixel - Nicht gemeldete</message>
+	<message key="plugins.generic.vgWort.pixelTagsRegistered">Zählpixel - Gemeldete</message>
+	<message key="plugins.generic.vgWort.pixelTagsStat">Zählpixel - Statistik</message>	
+	<message key="plugins.generic.vgWort.all">Alle</message>
+	<message key="plugins.generic.vgWort.available">Verfügbar</message>
+	<message key="plugins.generic.vgWort.unregistered">Nicht gemeldet</message>
+	<message key="plugins.generic.vgWort.registered">Gemeldet</message>
+	<message key="plugins.generic.vgWort.none">Keine Zählpixel</message>
+
+	<!-- pixel tags listing pages, table columns -->
+	<message key="plugins.generic.vgWort.pixelTag.pixelTag">Zählpixel</message>
+	<message key="plugins.generic.vgWort.pixelTag.privateCode">Privater Code</message>
+	<message key="plugins.generic.vgWort.pixelTag.publicCode">Öffentlicher Code</message>
+	<message key="plugins.generic.vgWort.pixelTag.domain">Domain</message>
+	<message key="plugins.generic.vgWort.pixelTag.date_ordered">Bestellt</message>
+	<message key="plugins.generic.vgWort.pixelTag.date_registered">Gemeldet</message>
+	<message key="plugins.generic.vgWort.pixelTag.date_assigned">Zugewiesen</message>
+	<message key="plugins.generic.vgWort.pixelTag.articleId">Artikel-ID</message>
+	<message key="plugins.generic.vgWort.pixelTag.articleId.note"><![CDATA[<strong>Hinweis:</strong> Bitte vergessen Sie nicht die VG-Wort-Karteinummern für Autor/innen einzugeben.]]></message>	
+	<message key="plugins.generic.vgWort.pixelTag.date_removed">Entfernt</message>
+	
+	<!-- order -->
+	<message key="plugins.generic.vgWort.editor.pixelTagCount">Zählpixel-Anzahl (max. 100)</message>
+	<message key="plugins.generic.vgWort.editor.order">Bestellen</message>
+	<message key="plugins.generic.vgWort.editor.confirmDelete">Sind Sie sicher, dass Sie dieses Zählpixel löschen möchten?</message>
+	<!-- manually insert -->
+	<message key="plugins.generic.vgWort.editor.manuallyInsert">Gemeldetes Zählpixel eingeben</message>	
+	<!-- register -->
+	<message key="plugins.generic.vgWort.editor.register">Melden</message>
+	<!-- statistics -->
+	<message key="plugins.generic.vgWort.editor.statistics">Statistik</message>
+	<message key="plugins.generic.vgWort.month">Monat</message>
+	<message key="plugins.generic.vgWort.orderedPixel">Bestellte Pixel</message>
+	<message key="plugins.generic.vgWort.startedPixel">Zählung gestartet</message>
+	<message key="plugins.generic.vgWort.minAccess">Minimalzugriff</message>
+	<message key="plugins.generic.vgWort.minAccessNoMessage">Minimalzugriff, aber nicht gemeldet</message>
+
+	<!-- error messages -->
+	<message key="plugins.generic.vgWort.requirementsRequired">Die Systemanforderungen sind nicht erfüllt. Bitte stellen Sie sicher, dass PHP 5 >= 5.0.1, PHP Soap und PHP OpenSSL extension modules auf dem Server verfügbar sind.</message>
+
+	<message key="plugins.generic.vgWort.errorsOccurred">Fehler aufgetreten</message>
+
+	<message key="plugins.generic.vgWort.assign.errorCode1">VG-Wort-Karteinummern werden für alle Autor/innen benötigt, die an der Ausschüttung der Vergütungen teilnehmen sollen.</message>
+	<message key="plugins.generic.vgWort.assign.errorCode2">Keine verfügbaren Zählpixel. Eine Benachrichtigungs-E-Mail wird an die  zuständigen Redakteur/innen geschickt. Bitte versuchen Sie es später.</message>
+	<message key="plugins.generic.vgWort.noWSDL">WSDL nicht gefunden unter {$wsdl}. Der VG-Wort-Server könnte momentan nicht verfügbar sein. Bitte versuchen Sie es später.</message>
+	<message key="plugins.generic.vgWort.401">Ungültiger VG-Wort-Benutzer/innenname oder Passwort in den Plug-In-Einstellungen festgelegt.</message>
+	<message key="plugins.generic.vgWort.403">Der/die VG-Wort-Benutzer/in aus den Plug-In-Einstellungen ist nicht berechtigt, dies zu tun.</message>
+
+	<message key="plugins.generic.vgWort.order.errorCode1">Die maximale Anzahl an Zählpixeln ({$maxOrder}) für diesen Auftrag wurde überschritten.</message>
+	<message key="plugins.generic.vgWort.order.errorCode2">Die maximale Anzahl an Zählpixeln ({$maxOrder}) für dieses Jahr wurde überschritten.</message>
+	<message key="plugins.generic.vgWort.order.errorCode3">Es wurde keine E-Mail-Adresse für Ihren VG-Wort-Account angegeben. Bitte geben Sie eine E-Mail-Adresse für Ihren Account im VG-Wort-Portal ein.</message>
+	<message key="plugins.generic.vgWort.order.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+	<message key="plugins.generic.vgWort.order.count">Die Anzahl sollte eine Zahl zwischen 1 und 100 sein.</message>
+
+	<message key="plugins.generic.vgWort.check.notValid">Der/die Autor/in {$surName} hat keine gültige VG-Wort-Karteinummer.</message>
+	<message key="plugins.generic.vgWort.check.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+	<message key="plugins.generic.vgWort.check.galleyRequired">Eine PDF- oder HTML-Fahne wird benötigt.</message>
+	<message key="plugins.generic.vgWort.check.articleNotPublished">Der Artikel ist nicht veröffentlicht.</message>
+
+	<message key="plugins.generic.vgWort.statistics.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+
+	<message key="plugins.generic.vgWort.register.errorCode1">Dieses Zählpixel gibt es nicht.</message>
+	<message key="plugins.generic.vgWort.register.errorCode2">Dieses Zählpixel gehört einem anderen Account.</message>
+	<message key="plugins.generic.vgWort.register.errorCode3">Dieses Zählpixel ist bereits gemeldet.</message>
+	<message key="plugins.generic.vgWort.register.errorCode4">Die VG-Wort-Karteinummer ({$cardNumber}) passt nicht zu dem/der Benutzer/in ({$surName}).</message>
+	<message key="plugins.generic.vgWort.register.errorCode5">Der Text enthält keine 1800 Zeichen.</message>
+	<message key="plugins.generic.vgWort.register.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+
+	<message key="plugins.generic.vgWort.create.privateCodeRequired">Ein privater Code wird benötigt.</message>
+	<message key="plugins.generic.vgWort.create.publicCodeRequired">Ein öffentlicher Code wird benötigt.</message>
+	<message key="plugins.generic.vgWort.create.privateCodeAlphaNum">Der private Code darf nur alphanumerische Zeichen enthalten.</message>
+	<message key="plugins.generic.vgWort.create.publicCodeAlphaNum">Der öffentliche Code darf nur alphanumerische Zeichen enthalten.</message>
+	<message key="plugins.generic.vgWort.create.privateCodeLength">Der private Code muss 32 Zeichen enthalten.</message>
+	<message key="plugins.generic.vgWort.create.publicCodeLength">Der öffentliche Code muss 32 Zeichen enthalten.</message>
+	<message key="plugins.generic.vgWort.create.domainRequired">Eine VG-Wort-Domäne wird benötigt.</message>
+	<message key="plugins.generic.vgWort.create.domainPattern">Die Domäne sollte von der Form vg[0-9][0-9].met.vgwort.de sein.</message>
+	<message key="plugins.generic.vgWort.create.articleIDRequired">Eine Artikelnummer wird benötigt.</message>
+	<message key="plugins.generic.vgWort.create.articleIDExist">Die Artikelnummer existiert nicht.</message>
+</locale>

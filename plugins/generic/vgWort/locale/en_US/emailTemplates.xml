@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE email_texts SYSTEM "../../../../../lib/pkp/dtd/emailTemplateData.dtd">
+
+<!--
+  * @file plugins/generic/vgWort/locale/en_US/emailTemplates.xml
+  *
+  * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
+  * Author: Marco Tullney, Technische Informationsbibliothek und Universitätsbibliothek Hannover (TIB/UB)
+  * Last update: February 04, 2014  
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * VG WORT email template localized default text.
+  *
+  -->
+<email_texts locale="en_US">
+	<email_text key="VGWORT_ORDER_REMINDER">
+		<subject>VG Wort: Pixel Tag Order Reminder</subject>
+		<body>Dear Editors,
+		
+This is a reminder that the minimal amount of the available pixel tags (defined in the VG Wort plug-in settings) is reached for {$journalName}.
+
+There are {$availablePixelTagCount} available pixel tags at the moment. Please log into the journal website and order new pixel tags.
+
+Thank you,
+{$editorialContactSignature}</body>
+		<description>This is an automatically generated email that is sent to editors as a reminder that new pixel tags should be ordered.</description>
+	</email_text>
+
+
+	<email_text key="VGWORT_REGISTER_NOTIFY">
+		<subject>VG Wort: Pixel Tag Registered</subject>
+		<body>Dear {$authorName},
+
+The pixel tag with the private code "{$privateCode}" is assigned to your publication "{$articleTitle}" in {$journalName} and registered at VG Wort.
+
+If the prerequisite for the payment of royalties for this electronic publication is reached, the authors will be notified by VG Wort. 
+
+{$editorialContactSignature}</body>
+		<description>This is an automatically generated email that is sent to an author after the registration of the pixel tag assigned to the publication.</description>
+	</email_text>
+</email_texts>
