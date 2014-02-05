@@ -20,7 +20,7 @@
 
 	<!-- VG Wort manager options, setting -->
 	<message key="plugins.generic.vgWort.manager.settings">Einstellungen</message>
-	<message key="plugins.generic.vgWort.manager.settings.description"><![CDATA[Bitte erledigen Sie die folgenden Einrichtungsschritte, um VG-Wort-Zählpixel in OJS verwalten und nutzen zu können:
+	<message key="plugins.generic.vgWort.manager.settings.description"><![CDATA[Bitte führen Sie die folgenden Einrichtungsschritte durch, um VG-Wort-Zählpixel in OJS verwalten und nutzen zu können:
 	<ul>
 	<li>Geben Sie Nutzer/innennamen und Passwort des VG-Wort-Verlagsaccounts ein, der für die Authentifizierung der VG-Wort-Dienste Bestellung, Überprüfung, Meldung und Statistik der Zählpixel benutzt werden wird.</li>
 	<li>Wählen Sie die Redakteur/innen aus, denen es erlaubt sein wird, die VG-Wort-Dienste zu benutzen und Zählpixel in OJS zu verwalten.</li>
@@ -94,7 +94,7 @@
 	<message key="plugins.generic.vgWort.pixelTag.date_registered">Gemeldet</message>
 	<message key="plugins.generic.vgWort.pixelTag.date_assigned">Zugewiesen</message>
 	<message key="plugins.generic.vgWort.pixelTag.articleId">Artikel-ID</message>
-	<message key="plugins.generic.vgWort.pixelTag.articleId.note"><![CDATA[<strong>Hinweis:</strong> Bitte vergessen Sie nicht die VG-Wort-Karteinummern für Autor/innen einzugeben.]]></message>	
+	<message key="plugins.generic.vgWort.pixelTag.articleId.note"><![CDATA[<strong>Hinweis:</strong> Bitte vergessen Sie nicht, die VG-Wort-Karteinummern für Autor/innen einzugeben.]]></message>	
 	<message key="plugins.generic.vgWort.pixelTag.date_removed">Entfernt</message>
 	
 	<!-- order -->
@@ -119,9 +119,9 @@
 	<message key="plugins.generic.vgWort.errorsOccurred">Fehler aufgetreten</message>
 
 	<message key="plugins.generic.vgWort.assign.errorCode1">VG-Wort-Karteinummern werden für alle Autor/innen benötigt, die an der Ausschüttung der Vergütungen teilnehmen sollen.</message>
-	<message key="plugins.generic.vgWort.assign.errorCode2">Keine verfügbaren Zählpixel. Eine Benachrichtigungs-E-Mail wird an die  zuständigen Redakteur/innen geschickt. Bitte versuchen Sie es später.</message>
-	<message key="plugins.generic.vgWort.noWSDL">WSDL nicht gefunden unter {$wsdl}. Der VG-Wort-Server könnte momentan nicht verfügbar sein. Bitte versuchen Sie es später.</message>
-	<message key="plugins.generic.vgWort.401">Ungültiger VG-Wort-Benutzer/innenname oder Passwort in den Plug-In-Einstellungen festgelegt.</message>
+	<message key="plugins.generic.vgWort.assign.errorCode2">Keine verfügbaren Zählpixel. Eine Benachrichtigungs-E-Mail wird an die zuständigen Redakteur/innen geschickt. Bitte versuchen Sie es später noch einmal.</message>
+	<message key="plugins.generic.vgWort.noWSDL">WSDL nicht gefunden unter {$wsdl}. Der VG-Wort-Server könnte momentan nicht verfügbar sein. Bitte versuchen Sie es später noch einmal.</message>
+	<message key="plugins.generic.vgWort.401">Ungültige VG-Wort-Zugangsdaten (Benutzer/innenname oder Passwort) in den Plug-In-Einstellungen festgelegt.</message>
 	<message key="plugins.generic.vgWort.403">Der/die VG-Wort-Benutzer/in aus den Plug-In-Einstellungen ist nicht berechtigt, dies zu tun.</message>
 
 	<message key="plugins.generic.vgWort.order.errorCode1">Die maximale Anzahl an Zählpixeln ({$maxOrder}) für diesen Auftrag wurde überschritten.</message>
@@ -131,17 +131,17 @@
 	<message key="plugins.generic.vgWort.order.count">Die Anzahl sollte eine Zahl zwischen 1 und 100 sein.</message>
 
 	<message key="plugins.generic.vgWort.check.notValid">Der/die Autor/in {$surName} hat keine gültige VG-Wort-Karteinummer.</message>
-	<message key="plugins.generic.vgWort.check.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
-	<message key="plugins.generic.vgWort.check.galleyRequired">Eine PDF- oder HTML-Fahne wird benötigt.</message>
+	<message key="plugins.generic.vgWort.check.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später noch einmal.</message>
+	<message key="plugins.generic.vgWort.check.galleyRequired">Es wird eine PDF- oder HTML-Fahne benötigt.</message>
 	<message key="plugins.generic.vgWort.check.articleNotPublished">Der Artikel ist nicht veröffentlicht.</message>
 
-	<message key="plugins.generic.vgWort.statistics.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+	<message key="plugins.generic.vgWort.statistics.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später noch einmal.</message>
 
 	<message key="plugins.generic.vgWort.register.errorCode1">Dieses Zählpixel gibt es nicht.</message>
 	<message key="plugins.generic.vgWort.register.errorCode2">Dieses Zählpixel gehört einem anderen Account.</message>
 	<message key="plugins.generic.vgWort.register.errorCode3">Dieses Zählpixel ist bereits gemeldet.</message>
 	<message key="plugins.generic.vgWort.register.errorCode4">Die VG-Wort-Karteinummer ({$cardNumber}) passt nicht zu dem/der Benutzer/in ({$surName}).</message>
-	<message key="plugins.generic.vgWort.register.errorCode5">Der Text enthält keine 1800 Zeichen.</message>
+	<message key="plugins.generic.vgWort.register.errorCode5">Der Text enthält weniger als 1800 Zeichen.</message>
 	<message key="plugins.generic.vgWort.register.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
 
 	<message key="plugins.generic.vgWort.create.privateCodeRequired">Ein privater Code wird benötigt.</message>

@@ -2,7 +2,7 @@
 <!DOCTYPE email_texts SYSTEM "../../../../../lib/pkp/dtd/emailTemplateData.dtd">
 
 <!--
-  * @file plugins/generic/vgWort/locale/en_US/emailTemplates.xml
+  * @file plugins/generic/vgWort/locale/de_DE/emailTemplates.xml
   *
   * Author: Božana Bokan, Center for Digital Systems (CeDiS), Freie Universität Berlin
   * Author: Marco Tullney, Technische Informationsbibliothek und Universitätsbibliothek Hannover (TIB/UB)
