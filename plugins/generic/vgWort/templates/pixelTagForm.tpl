@@ -42,7 +42,7 @@ function hideDescription(hide) {
 	</tr>
 	<tr valign="top">
 		<td class="label">{fieldLabel name="dateOrdered" required="true" key="plugins.generic.vgWort.pixelTag.date_ordered"}</td>
-		<td class="value" id="dateOrdered">{html_select_date prefix="dateOrdered" all_extra="class=\"selectMenu\"" start_year="-5" }</td>
+		<td class="value" id="dateOrdered">{html_select_date prefix="dateOrdered" all_extra="class=\"selectMenu\"" start_year="-5" time=$dateOrdered}</td>
 	</tr>
 	<tr valign="top">
 		<td width="20%" class="label">{fieldLabel name="articleId" required="true" key="plugins.generic.vgWort.pixelTag.articleId"}</td>
@@ -64,11 +64,11 @@ function hideDescription(hide) {
 	</tr>
 	<tr valign="top">
 		<td class="label">{fieldLabel name="dateAssigned" required="true" key="plugins.generic.vgWort.pixelTag.date_assigned"}</td>
-		<td class="value" id="dateAssigned">{html_select_date prefix="dateAssigned" all_extra="class=\"selectMenu\"" start_year="-5" }</td>
+		<td class="value" id="dateAssigned">{html_select_date prefix="dateAssigned" all_extra="class=\"selectMenu\"" start_year="-5" time=$dateAssigned}</td>
 	</tr>
 	<tr valign="top">
 		<td class="label">{fieldLabel name="dateRegistered" required="true" key="plugins.generic.vgWort.pixelTag.date_registered"}</td>
-		<td class="value" id="dateRegistered">{html_select_date prefix="dateRegistered" all_extra="class=\"selectMenu\"" start_year="-5" }</td>
+		<td class="value" id="dateRegistered">{html_select_date prefix="dateRegistered" all_extra="class=\"selectMenu\"" start_year="-5" time=$dateRegistered}</td>
 	</tr>
 </table>
 

@@ -153,5 +153,6 @@
 	<message key="plugins.generic.vgWort.create.domainRequired">A VG Wort domain is required.</message>
 	<message key="plugins.generic.vgWort.create.domainPattern">The domain shoud be of the form vg[0-9][0-9].met.vgwort.de.</message>
 	<message key="plugins.generic.vgWort.create.articleIDRequired">An article ID is required.</message>
-	<message key="plugins.generic.vgWort.create.articleIDExist">The article ID doesn't exist.</message>
+	<message key="plugins.generic.vgWort.create.articleIDDoesNotExist">The article ID doesn't exist.</message>
+	<message key="plugins.generic.vgWort.create.articleIDPixelTagExists">A pixel tag is already assigned to the article.</message>
 </locale>

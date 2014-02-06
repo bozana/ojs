@@ -153,5 +153,6 @@
 	<message key="plugins.generic.vgWort.create.domainRequired">Eine VG-Wort-Domäne wird benötigt.</message>
 	<message key="plugins.generic.vgWort.create.domainPattern">Die Domäne sollte von der Form vg[0-9][0-9].met.vgwort.de sein.</message>
 	<message key="plugins.generic.vgWort.create.articleIDRequired">Eine Artikelnummer wird benötigt.</message>
-	<message key="plugins.generic.vgWort.create.articleIDExist">Die Artikelnummer existiert nicht.</message>
+	<message key="plugins.generic.vgWort.create.articleIDDoesNotExist">Die Artikelnummer existiert nicht.</message>
+	<message key="plugins.generic.vgWort.create.articleIDPixelTagExists">Dem Artikel wurde ein Zählpixel schon zugewiesen.</message>
 </locale>

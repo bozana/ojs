@@ -41,7 +41,8 @@ class PixelTagForm extends Form {
 		$this->addCheck(new FormValidator($this, 'domain', FORM_VALIDATOR_REQUIRED_VALUE, 'plugins.generic.vgWort.create.domainRequired'));
 		$this->addCheck(new FormValidatorRegExp($this, 'domain', FORM_VALIDATOR_REQUIRED_VALUE, 'plugins.generic.vgWort.create.domainPattern', '/^vg[0-9][0-9]\.met\.vgwort\.de$/'));
 		$this->addCheck(new FormValidator($this, 'articleId', FORM_VALIDATOR_REQUIRED_VALUE, 'plugins.generic.vgWort.create.articleIDRequired'));
-		$this->addCheck(new FormValidatorCustom($this, 'articleId', FORM_VALIDATOR_REQUIRED_VALUE, 'plugins.generic.vgWort.create.articleIDExist', create_function('$articleId,$journalId,$articleDao', '$article = $articleDao->getArticle($articleId, $journalId); return isset($article);'), array($this->journalId, DAORegistry::getDAO('ArticleDAO'))));
+		$this->addCheck(new FormValidatorCustom($this, 'articleId', FORM_VALIDATOR_REQUIRED_VALUE, 'plugins.generic.vgWort.create.articleIDDoesNotExist', create_function('$articleId,$journalId,$articleDao', '$article = $articleDao->getArticle($articleId, $journalId); return isset($article);'), array($this->journalId, DAORegistry::getDAO('ArticleDAO'))));
+		$this->addCheck(new FormValidatorCustom($this, 'articleId', FORM_VALIDATOR_REQUIRED_VALUE, 'plugins.generic.vgWort.create.articleIDPixelTagExists', create_function('$articleId,$journalId,$pixelTagDao', '$pixelTag = $pixelTagDao->getPixelTagByArticleId($journalId, $articleId); return !isset($pixelTag);'), array($this->journalId, DAORegistry::getDAO('PixelTagDAO'))));
 		$this->addCheck(new FormValidatorPost($this));
 	}
 
