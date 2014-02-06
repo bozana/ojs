@@ -127,7 +127,7 @@
 	<message key="plugins.generic.vgWort.order.errorCode1">Die maximale Anzahl an Zählpixeln ({$maxOrder}) für diesen Auftrag wurde überschritten.</message>
 	<message key="plugins.generic.vgWort.order.errorCode2">Die maximale Anzahl an Zählpixeln ({$maxOrder}) für dieses Jahr wurde überschritten.</message>
 	<message key="plugins.generic.vgWort.order.errorCode3">Es wurde keine E-Mail-Adresse für Ihren VG-Wort-Account angegeben. Bitte geben Sie eine E-Mail-Adresse für Ihren Account im VG-Wort-Portal ein.</message>
-	<message key="plugins.generic.vgWort.order.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+	<message key="plugins.generic.vgWort.order.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später noch einmal.</message>
 	<message key="plugins.generic.vgWort.order.count">Die Anzahl sollte eine Zahl zwischen 1 und 100 sein.</message>
 
 	<message key="plugins.generic.vgWort.check.notValid">Der/die Autor/in {$surName} hat keine gültige VG-Wort-Karteinummer.</message>
@@ -142,7 +142,7 @@
 	<message key="plugins.generic.vgWort.register.errorCode3">Dieses Zählpixel ist bereits gemeldet.</message>
 	<message key="plugins.generic.vgWort.register.errorCode4">Die VG-Wort-Karteinummer ({$cardNumber}) passt nicht zu dem/der Benutzer/in ({$surName}).</message>
 	<message key="plugins.generic.vgWort.register.errorCode5">Der Text enthält weniger als 1800 Zeichen.</message>
-	<message key="plugins.generic.vgWort.register.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später wieder.</message>
+	<message key="plugins.generic.vgWort.register.errorCode100">Ein technisches Problem ist aufgetreten. Bitte versuchen Sie es später noch einmal.</message>
 
 	<message key="plugins.generic.vgWort.create.privateCodeRequired">Ein privater Code wird benötigt.</message>
 	<message key="plugins.generic.vgWort.create.publicCodeRequired">Ein öffentlicher Code wird benötigt.</message>
@@ -154,5 +154,5 @@
 	<message key="plugins.generic.vgWort.create.domainPattern">Die Domäne sollte von der Form vg[0-9][0-9].met.vgwort.de sein.</message>
 	<message key="plugins.generic.vgWort.create.articleIDRequired">Eine Artikelnummer wird benötigt.</message>
 	<message key="plugins.generic.vgWort.create.articleIDDoesNotExist">Die Artikelnummer existiert nicht.</message>
-	<message key="plugins.generic.vgWort.create.articleIDPixelTagExists">Dem Artikel wurde ein Zählpixel schon zugewiesen.</message>
+	<message key="plugins.generic.vgWort.create.articleIDPixelTagExists">Dem Artikel wurde bereits ein Zählpixel zugewiesen.</message>
 </locale>
