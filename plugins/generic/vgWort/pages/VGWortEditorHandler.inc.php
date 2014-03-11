@@ -67,7 +67,7 @@ class VGWortEditorHandler extends Handler {
 						}
 					} else {
 						$isError = true;
-						$errors[] = Locale::translate('plugins.generic.vgWort.order.count');
+						$errors[] = __('plugins.generic.vgWort.order.count');
 					}
 				}
 				$status = PT_STATUS_AVAILABLE;
@@ -400,7 +400,7 @@ class VGWortEditorHandler extends Handler {
 			}
 			$pageCrumbs[] = array(
 				$request->url(null, 'editor', 'pixelTags', $returnPage),
-				Locale::Translate('plugins.generic.vgWort.editor.vgWort'),
+				__('plugins.generic.vgWort.editor.vgWort'),
 				true
 			);
 		}

@@ -69,12 +69,12 @@ class VGWortPlugin extends GenericPlugin {
 	}
 
 	function getDisplayName() {
-		return Locale::translate('plugins.generic.vgWort.displayName');
+		return __('plugins.generic.vgWort.displayName');
 	}
 
 	function getDescription() {
-		if ($this->requirementsFulfilled()) return Locale::translate('plugins.generic.vgWort.description');
-		return Locale::translate('plugins.generic.vgWort.descriptionDisabled');
+		if ($this->requirementsFulfilled()) return __('plugins.generic.vgWort.description');
+		return __('plugins.generic.vgWort.descriptionDisabled');
 	}
 
 	/**
@@ -371,7 +371,7 @@ class VGWortPlugin extends GenericPlugin {
 		$verbs = array();
 		if ($this->requirementsFulfilled()) {
 			if ($this->getEnabled()) {
-				$verbs[] = array('settings', Locale::translate('plugins.generic.vgWort.manager.settings'));
+				$verbs[] = array('settings', __('plugins.generic.vgWort.manager.settings'));
 			}
 			return parent::getManagementVerbs($verbs);
 		}

@@ -55,16 +55,16 @@ class VGWortEditorAction {
 		try {
 			// check if the system requirements are fulfilled
 			if (!$vgWortPlugin->requirementsFulfilled()) {
-        		return array(false, Locale::translate('plugins.generic.vgWort.requirementsRequired'));
+        		return array(false, __('plugins.generic.vgWort.requirementsRequired'));
 			}
 			// catch and throw an exception if the VG Wort server is down
 			if(!@file_get_contents(PIXEL_SERVICE_WSDL)) {
-        		throw new SoapFault('noWSDL', Locale::translate('plugins.generic.vgWort.noWSDL', array('wsdl'=>PIXEL_SERVICE_WSDL)));
+        		throw new SoapFault('noWSDL', __('plugins.generic.vgWort.noWSDL', array('wsdl'=>PIXEL_SERVICE_WSDL)));
     		}
     		// catch and throw an exception if the authentication or the authorization error occurs
     		if(!@fopen(str_replace('://', '://'.$vgWortUserId.':'.$vgWortUserPassword.'@', PIXEL_SERVICE_WSDL), 'r')) {
 				$httpString = explode(" ", $http_response_header[0]);
-        		throw new SoapFault('httpError', Locale::translate('plugins.generic.vgWort.'.$httpString[1]));
+        		throw new SoapFault('httpError', __('plugins.generic.vgWort.'.$httpString[1]));
     		}
 			$client = new SoapClient(PIXEL_SERVICE_WSDL, array('login' => $vgWortUserId, 'password' => $vgWortUserPassword, 'exceptions'=>true, 'trace'=>1, 'features' => SOAP_SINGLE_ELEMENT_ARRAYS));
 			$result = $client->orderPixel(array("count"=>$count));
@@ -76,7 +76,7 @@ class VGWortEditorAction {
 			}
 			$detail = $soapFault->detail;
 			$function = $detail->orderPixelFault;
-			return array(false, Locale::translate('plugins.generic.vgWort.order.errorCode'.$function->errorcode, array('maxOrder'=>$function->maxOrder)));
+			return array(false, __('plugins.generic.vgWort.order.errorCode'.$function->errorcode, array('maxOrder'=>$function->maxOrder)));
 		}
 	}
 
@@ -112,13 +112,13 @@ class VGWortEditorAction {
 		$publishedArticle = & $publishedArticleDao->getPublishedArticleByArticleId($pixelTag->getArticleId());
 		// the article has to be published
 		if (!isset($publishedArticle)) {
-			return array(false, Locale::translate('plugins.generic.vgWort.check.articleNotPublished'));
+			return array(false, __('plugins.generic.vgWort.check.articleNotPublished'));
 		} else {
 			$issueDao =& DAORegistry::getDAO('IssueDAO');
 			$issue = & $issueDao->getIssueById($publishedArticle->getIssueId(), $pixelTag->getJournalId());
 			// the issue has to be published
 			if (!$issue->getPublished()) {
-				return array(false, Locale::translate('plugins.generic.vgWort.check.articleNotPublished'));
+				return array(false, __('plugins.generic.vgWort.check.articleNotPublished'));
 			} else {
 				// there has to be a HTML or a PDF galley -- VG Wort concerns only HTML und PDF formats
 				// get all galleys
@@ -126,7 +126,7 @@ class VGWortEditorAction {
 				// filter HTML und PDF galleys
 				$filteredGalleys = array_filter($galleys, array($this, 'filterGalleys'));
 				if (empty($filteredGalleys)) {
-					return array(false, Locale::translate('plugins.generic.vgWort.check.galleyRequired'));
+					return array(false, __('plugins.generic.vgWort.check.galleyRequired'));
 				} else {
 					// There is at least one vg wort card number and
 					// all existing vg wort card numbers are valid
@@ -143,7 +143,7 @@ class VGWortEditorAction {
 						}
 					}
 					if (!$cardNoExists) {
-						 return array(false, Locale::translate('plugins.generic.vgWort.cardNoRequired'));
+						 return array(false, __('plugins.generic.vgWort.cardNoRequired'));
 					}
 				}
 			}
@@ -165,20 +165,20 @@ class VGWortEditorAction {
 		try {
 			// check if the system requirements are fulfilled
 			if (!$vgWortPlugin->requirementsFulfilled()) {
-        		return array(false, Locale::translate('plugins.generic.vgWort.requirementsRequired'));
+        		return array(false, __('plugins.generic.vgWort.requirementsRequired'));
 			}
 			// catch and throw an exception if the VG Wort server is down
 			if(!@file_get_contents(MESSAGE_SERVICE_WSDL)) {
-        		throw new SoapFault('noWSDL', Locale::translate('plugins.generic.vgWort.noWSDL', array('wsdl'=>MESSAGE_SERVICE_WSDL)));
+        		throw new SoapFault('noWSDL', __('plugins.generic.vgWort.noWSDL', array('wsdl'=>MESSAGE_SERVICE_WSDL)));
     		}
     		// catch and throw an exception if the authentication or the authorization error occurs
 			if(!@fopen(str_replace('://', '://'.$vgWortUserId.':'.$vgWortUserPassword.'@', MESSAGE_SERVICE_WSDL), 'r')) {
 				$httpString = explode(" ", $http_response_header[0]);
-        		throw new SoapFault('httpError', Locale::translate('plugins.generic.vgWort.'.$httpString[1]));
+        		throw new SoapFault('httpError', __('plugins.generic.vgWort.'.$httpString[1]));
     		}
     		$client = new SoapClient(MESSAGE_SERVICE_WSDL, array('login' => $vgWortUserId, 'password' => $vgWortUserPassword));
 			$result = $client->checkAuthor(array("cardNumber"=>$cardNo, "surName"=>$surName));
-			return array($result->valid, Locale::translate('plugins.generic.vgWort.check.notValid', array('surName'=>$surName)));
+			return array($result->valid, __('plugins.generic.vgWort.check.notValid', array('surName'=>$surName)));
 		}
 		catch (SoapFault $soapFault) {
 			if($soapFault->faultcode == 'noWSDL' || $soapFault->faultcode == 'httpError') {
@@ -186,7 +186,7 @@ class VGWortEditorAction {
 			}
 			$detail = $soapFault->detail;
 			$function = $detail->checkAuthorFault;
-			return array(false, Locale::translate('plugins.generic.vgWort.check.errorCode'.$function->errorcode));
+			return array(false, __('plugins.generic.vgWort.check.errorCode'.$function->errorcode));
 		}
 	}
 
@@ -267,7 +267,7 @@ class VGWortEditorAction {
 
 		// get the title (max. 100 characters):
 		// if there is no German title, then try English, else in the primary language
-		$primaryLocale = Locale::getPrimaryLocale();
+		$primaryLocale = AppLocale::getPrimaryLocale();
 		$title = $publishedArticle->getTitle('de_DE');
 		if (!isset($title) || $title == '') $title = $publishedArticle->getTitle('en_US');
 		if (!isset($title) || $title == '') $title = $publishedArticle->getTitle($primaryLocale);
@@ -284,16 +284,16 @@ class VGWortEditorAction {
 		try {
 			// check if the system requirements are fulfilled
 			if (!$vgWortPlugin->requirementsFulfilled()) {
-        		return array(false, Locale::translate('plugins.generic.vgWort.requirementsRequired'));
+        		return array(false, __('plugins.generic.vgWort.requirementsRequired'));
 			}
 			// catch and throw an exception if the VG Wort server is down
 			if(!@file_get_contents(MESSAGE_SERVICE_WSDL)) {
-        		throw new SoapFault('noWSDL', Locale::translate('plugins.generic.vgWort.noWSDL', array('wsdl'=>MESSAGE_SERVICE_WSDL)));
+        		throw new SoapFault('noWSDL', __('plugins.generic.vgWort.noWSDL', array('wsdl'=>MESSAGE_SERVICE_WSDL)));
     		}
     		// catch and throw an exception if the authentication or the authorization error occurs
     		if(!@fopen(str_replace('://', '://'.$vgWortUserId.':'.$vgWortUserPassword.'@', MESSAGE_SERVICE_WSDL), 'r')) {
 				$httpString = explode(" ", $http_response_header[0]);
-        		throw new SoapFault('httpError', Locale::translate('plugins.generic.vgWort.'.$httpString[1]));
+        		throw new SoapFault('httpError', __('plugins.generic.vgWort.'.$httpString[1]));
     		}
     		$client = new SoapClient(MESSAGE_SERVICE_WSDL, array('login' => $vgWortUserId, 'password' => $vgWortUserPassword));
     		$result = $client->newMessage(array("parties"=>$parties, "privateidentificationid"=>$pixelTag->getPrivateCode(), "messagetext"=>$message, "webranges"=>$webranges));
@@ -305,7 +305,7 @@ class VGWortEditorAction {
 			}
 			$detail = $soapFault->detail;
 			$function = $detail->newMessageFault;
-			return array(false, Locale::translate('plugins.generic.vgWort.register.errorCode'.$function->errorcode, array('cardNumber'=>$function->cardNumber, 'surName'=>$function->surName)));
+			return array(false, __('plugins.generic.vgWort.register.errorCode'.$function->errorcode, array('cardNumber'=>$function->cardNumber, 'surName'=>$function->surName)));
 		}
 	}
 
@@ -358,16 +358,16 @@ class VGWortEditorAction {
 		try {
 			// check if the system requirements are fulfilled
 			if (!$vgWortPlugin->requirementsFulfilled()) {
-        		return array(false, Locale::translate('plugins.generic.vgWort.requirementsRequired'));
+        		return array(false, __('plugins.generic.vgWort.requirementsRequired'));
 			}
 			// catch and throw an exception if the VG Wort server is down
 			if(!@file_get_contents(MESSAGE_SERVICE_WSDL)) {
-        		throw new SoapFault('noWSDL', Locale::translate('plugins.generic.vgWort.noWSDL', array('wsdl'=>MESSAGE_SERVICE_WSDL)));
+        		throw new SoapFault('noWSDL', __('plugins.generic.vgWort.noWSDL', array('wsdl'=>MESSAGE_SERVICE_WSDL)));
     		}
     		// catch and throw an exception if the authentication or the authorization error occurs
     		if(!@fopen(str_replace('://', '://'.$vgWortUserId.':'.$vgWortUserPassword.'@', MESSAGE_SERVICE_WSDL), 'r')) {
 				$httpString = explode(" ", $http_response_header[0]);
-        		throw new SoapFault('httpError', Locale::translate('plugins.generic.vgWort.'.$httpString[1]));
+        		throw new SoapFault('httpError', __('plugins.generic.vgWort.'.$httpString[1]));
     		}
     		$client = new SoapClient(MESSAGE_SERVICE_WSDL, array('login' => $vgWortUserId, 'password' => $vgWortUserPassword));
 			$result = $client->qualityControl();
@@ -379,7 +379,7 @@ class VGWortEditorAction {
 			}
 			$detail = $soapFault->detail;
 			$function = $detail->qualityControlFault;
-			return array(false, Locale::translate('plugins.generic.vgWort.statistics.errorCode'.$function->errorcode));
+			return array(false, __('plugins.generic.vgWort.statistics.errorCode'.$function->errorcode));
 		}
 	}
 

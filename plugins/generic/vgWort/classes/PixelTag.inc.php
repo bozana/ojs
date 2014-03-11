@@ -252,13 +252,13 @@ class PixelTag extends DataObject {
 	function getStatusString() {
 		switch ($this->getData('status')) {
 			case PT_STATUS_AVAILABLE:
-				return Locale::translate('plugins.generic.vgWort.pixelTag.available');
+				return __('plugins.generic.vgWort.pixelTag.available');
 			case PT_STATUS_UNREGISTERED:
-				return Locale::translate('plugins.generic.vgWort.pixelTag.unregistered');
+				return __('plugins.generic.vgWort.pixelTag.unregistered');
 			case PT_STATUS_REGISTERED:
-				return Locale::translate('plugins.generic.vgWort.pixelTag.registered');
+				return __('plugins.generic.vgWort.pixelTag.registered');
 			default:
-				return Locale::translate('plugins.generic.vgWort.pixelTag.status');
+				return __('plugins.generic.vgWort.pixelTag.status');
 		}
 	}
 
@@ -300,13 +300,13 @@ class PixelTag extends DataObject {
 	function getTextTypeString() {
 		switch ($this->getData('textType')) {
 			case TYPE_DEFAULT:
-				return Locale::translate('article.comments.sectionDefault');
+				return __('article.comments.sectionDefault');
 			case TYPE_TEXT:
-				return Locale::translate('plugins.generic.vgWort.text');
+				return __('plugins.generic.vgWort.text');
 			case TYPE_LYRIC:
-				return Locale::translate('plugins.generic.vgWort.lyric');
+				return __('plugins.generic.vgWort.lyric');
 			default:
-				return Locale::translate('article.comments.sectionDefault');
+				return __('article.comments.sectionDefault');
 		}
 	}
 
