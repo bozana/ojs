@@ -13,11 +13,11 @@
  * @brief VGWortEditorAction class.
  */
 
-//define('PIXEL_SERVICE_WSDL', 'https://tom.vgwort.de/services/1.0/pixelService.wsdl');
-//define('MESSAGE_SERVICE_WSDL', 'https://tom.vgwort.de/services/1.2/messageService.wsdl');
+define('PIXEL_SERVICE_WSDL', 'https://tom.vgwort.de/services/1.0/pixelService.wsdl');
+define('MESSAGE_SERVICE_WSDL', 'https://tom.vgwort.de/services/1.2/messageService.wsdl');
 /* just to test the plug-in, please use the VG Wort test portal: */
-define('PIXEL_SERVICE_WSDL', 'https://tom-test.vgwort.de/services/1.0/pixelService.wsdl');
-define('MESSAGE_SERVICE_WSDL', 'https://tom-test.vgwort.de/services/1.2/messageService.wsdl');
+//define('PIXEL_SERVICE_WSDL', 'https://tom-test.vgwort.de/services/1.0/pixelService.wsdl');
+//define('MESSAGE_SERVICE_WSDL', 'https://tom-test.vgwort.de/services/1.2/messageService.wsdl');
 
 class VGWortEditorAction {
 
