@@ -13,8 +13,8 @@
 <version>
 	<application>vgWort</application>
 	<type>plugins.generic</type>
-	<release>1.3.0.0</release>
-	<date>2014-02-05</date>
+	<release>1.4.0.0</release>
+	<date>2014-04-03</date>
 	<lazy-load>1</lazy-load>
 	<class>VGWortPlugin</class>
 </version>

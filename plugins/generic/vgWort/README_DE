@@ -1,9 +1,9 @@
 ================================
 === OJS VG-Wort-Plugin
-=== Version: 1.3
+=== Version: 1.4
 === Author: Božana Bokan <bozana.bokan@fu-berlin.de>
     Center für Digitale Systeme (CeDiS), Freie Universität Berlin
-=== Last update: 04. Februar 2014 
+=== Last update: 03. April 2014 
 ================================
 
 Über
@@ -43,3 +43,4 @@ Version History
 1.1	- Updated to support OJS 2.4.1
 1.2 - Updated to support OJS 2.4.2
 1.3 - Insert already registered pixel tags
+1.4 - Very important fix - use VG Wort live instead of test server
