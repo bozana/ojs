@@ -2,17 +2,17 @@
 <!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
 
 <!--
-  * plugins/generic/defaultENTranslation/locale/en_US/locale.xml
+  * plugins/generic/defaultENTranslation/locale/de_DE/locale.xml
   *
   * Copyright (c) 2013-2015 Simon Fraser University Library
   * Copyright (c) 2000-2015 John Willinsky
   * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
   *
-  * Localization strings for the en_US (U.S. English) locale.
+  * Localization strings for the de_DE (Deutsch (Deutschland)) locale.
   *
   -->
  
-<locale name="en_US" full_name="U.S. English">
+<locale name="de_DE" full_name="Deutsch (Deutschland)">
 	<message key="plugins.generic.defaultENTranslation.displayName">Default EN Translation Plugin</message>
-	<message key="plugins.generic.defaultENTranslation.description">This plugin enables the display of English text when the current UI language is lacking a translation of that text.</message>
+	<message key="plugins.generic.defaultENTranslation.description">Dieses Plug-In ermöglicht es, den englischen Text anzuzeigen, wenn in der momentan ausgewählten Sprache der Benutzeroberfläche eine Übersetzung fehlt.</message>
 </locale>
