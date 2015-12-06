@@ -102,12 +102,88 @@ class ArticleGalleyGridHandler extends RepresentationsGridHandler {
 	// Public Publication Format Grid Actions
 	//
 	/**
+	 * Edit article galley's pub ids
+	 * @param $args array
+	 * @param $request PKPRequest
+	 * @return JSONMessage JSON object
+	 */
+	function identifiers($args, $request) {
+		$submission = $this->getSubmission();
+		$representationDao = Application::getRepresentationDAO();
+		$representation = $representationDao->getById(
+			$request->getUserVar('representationId'),
+			$submission->getId()
+		);
+		import('controllers.tab.pubIds.form.PublicIdentifiersForm');
+		$form = new PublicIdentifiersForm($representation);
+		$form->initData($request);
+		return new JSONMessage(true, $form->fetch($request));
+	}
+
+	/**
+	 * Update article galley's pub ids
+	 * @param $args array
+	 * @param $request PKPRequest
+	 * @return JSONMessage JSON object
+	 */
+	function updateIdentifiers($args, $request) {
+		$submission = $this->getSubmission();
+		$representationDao = Application::getRepresentationDAO();
+		$representation = $representationDao->getById(
+			$request->getUserVar('representationId'),
+			$submission->getId()
+		);
+		import('controllers.tab.pubIds.form.PublicIdentifiersForm');
+		$form = new PublicIdentifiersForm($representation);
+		$form->readInputData();
+		if ($form->validate($request)) {
+			$form->execute($request);
+			return DAO::getDataChangedEvent();
+		} else {
+			return new JSONMessage(true, $form->fetch($request));
+		}
+	}
+
+	/**
+	 * Clear galley pub id
+	 * @param $args array
+	 * @param $request PKPRequest
+	 * @return JSONMessage JSON object
+	 */
+	function clearPubId($args, $request) {
+		$submission = $this->getSubmission();
+		$representationDao = Application::getRepresentationDAO();
+		$representation = $representationDao->getById(
+			$request->getUserVar('representationId'),
+			$submission->getId()
+		);
+		import('controllers.tab.pubIds.form.PublicIdentifiersForm');
+		$form = new PublicIdentifiersForm($representation);
+		$form->clearPubId($request->getUserVar('pubIdPlugIn'));
+		return new JSONMessage(true);
+	}
+
+	/**
+	 * Edit submission file metadata modal.
+	 * @param $args array
+	 * @param $request Request
+	 * @return JSONMessage JSON object
+	 */
+	function editFormat($args, $request) {
+		$submission = $this->getSubmission();
+		$templateMgr = TemplateManager::getManager($request);
+		$templateMgr->assign('submissionId', $submission->getId());
+		$templateMgr->assign('representationId', $request->getUserVar('representationId'));
+		return new JSONMessage(true, $templateMgr->fetch('controllers/grid/articleGalleys/editFormat.tpl'));
+	}
+
+	/**
 	 * Edit a format
 	 * @param $args array
 	 * @param $request PKPRequest
 	 * @return JSONMessage JSON object
 	 */
-	function editFormat($args, $request) {
+	function editFormatTab($args, $request) {
 		$submission = $this->getSubmission();
 		$representationDao = Application::getRepresentationDAO();
 		$representation = $representationDao->getById(
@@ -183,6 +259,23 @@ class ArticleGalleyGridHandler extends RepresentationsGridHandler {
 		);
 
 		if (!$representation) return new JSONMessage(false, __('manager.setup.errorDeletingItem'));
+
+		$confirmationText = __('grid.catalogEntry.approvedRepresentation.removeMessage');
+		if ($request->getUserVar('newApprovedState')) {
+			$confirmationText = __('grid.catalogEntry.approvedRepresentation.message');
+		}
+		import('lib.pkp.controllers.grid.representations.form.AssignPublicIdentifiersForm');
+		$assignPublicIdentifiersForm = new AssignPublicIdentifiersForm($representation, $request->getUserVar('newApprovedState'), $confirmationText);
+		if (!$request->getUserVar('confirmed')) {
+			// Display assign pub ids modal
+			$assignPublicIdentifiersForm->initData($args, $request);
+			return new JSONMessage(true, $assignPublicIdentifiersForm->fetch($request));
+		}
+		if ($request->getUserVar('newApprovedState')) {
+			// Asign pub ids
+			$assignPublicIdentifiersForm->readInputData();
+			$assignPublicIdentifiersForm->execute($request);
+		}
 
 		$newApprovedState = (int) $request->getUserVar('newApprovedState');
 		$representation->setIsApproved($newApprovedState);

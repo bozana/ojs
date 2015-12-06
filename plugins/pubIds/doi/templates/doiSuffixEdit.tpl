@@ -8,36 +8,61 @@
  * Edit DOI meta-data.
  *}
 
-{if $pubObject}
-{assign var=pubObjectType value=$pubIdPlugin->getPubObjectType($pubObject)}
-{assign var=enableObjectDoi value=$pubIdPlugin->getSetting($currentJournal->getId(), "enable`$pubObjectType`Doi")}
-{if $enableObjectDoi}
-	<div id="pub-id::doi">
-		<h3>{translate key="plugins.pubIds.doi.editor.doi"}</h3>
+	{assign var=pubObjectType value=$pubIdPlugin->getPubObjectType($pubObject)}
+	{assign var=enableObjectDoi value=$pubIdPlugin->getSetting($currentJournal->getId(), "enable`$pubObjectType`Doi")}
+	{if $enableObjectDoi}
 		{assign var=storedPubId value=$pubObject->getStoredPubId($pubIdPlugin->getPubIdType())}
-		{if $pubIdPlugin->getSetting($currentJournal->getId(), 'doiSuffix') == 'customId' || $storedPubId}
-			{if empty($storedPubId)}
-				<table class="data">
-					<tr>
-						<td rowspan="2" width="10%" class="label">{fieldLabel name="doiSuffix" key="plugins.pubIds.doi.manager.settings.doiSuffix"}</td>
-						<td rowspan="2" width="10%" align="right">{$pubIdPlugin->getSetting($currentJournal->getId(), 'doiPrefix')|escape}/</td>
-						<td class="value"><input type="text" class="textField" name="doiSuffix" id="doiSuffix" value="{$doiSuffix|escape}" size="20" maxlength="20" />
-					</tr>
-					<tr>
-						<td colspan="3"><span class="instruct">{translate key="plugins.pubIds.doi.manager.settings.doiSuffixDescription"}</span></td>
-					</tr>
-				</table>
-			{else}
-				{$storedPubId|escape}
+		{fbvFormArea id="pubIdDOIFormArea" class="border" title="plugins.pubIds.doi.editor.doi"}
+			{assign var=formArea value=true}
+			{if $pubIdPlugin->getSetting($currentJournal->getId(), 'doiSuffix') == 'customId' || $storedPubId}
+				{if empty($storedPubId)} {* edit custom suffix *}
+					{fbvFormSection}
+						<p class="pkp_help">{translate key="plugins.pubIds.doi.manager.settings.doiSuffix.description"}</p>
+						{fbvElement type="text" label="plugins.pubIds.doi.manager.settings.doiPrefix" id="doiPrefix" disabled=true value=$pubIdPlugin->getSetting($currentJournal->getId(), 'doiPrefix') size=$fbvStyles.size.SMALL}
+						{fbvElement type="text" label="plugins.pubIds.doi.manager.settings.doiSuffix" id="doiSuffix" value=$doiSuffix size=$fbvStyles.size.MEDIUM}
+					{/fbvFormSection}
+					{if $canBeAssigned}
+						{assign var=pubIdAssignFile value=$pubIdPlugin->getPubIdAssignFile()}
+						{include file="$pubIdAssignFile" pubIdPlugin=$pubIdPlugin pubObject=$pubObject}
+					{/if}
+				{else} {* stored pub id and clear option *}
+					<p>
+						{$storedPubId|escape}<br />
+						{include file="linkAction/linkAction.tpl" action=$clearPubIdLinkActionDoi contextId="publicIdentifiersForm"}
+					</p>
+				{/if}
+			{else} {* pub id preview *}
+				<p>{$pubIdPlugin->getPubId($pubObject, true)|escape}</p>
+				{if $canBeAssigned}
+					{assign var=pubIdAssignFile value=$pubIdPlugin->getPubIdAssignFile()}
+					{include file="$pubIdAssignFile" pubIdPlugin=$pubIdPlugin pubObject=$pubObject}
+				{else}
+					<p class="pkp_help">{translate key="plugins.pubIds.doi.editor.doiNotYetGenerated"}</p>
+				{/if}
 			{/if}
-		{else}
-			{$pubIdPlugin->getPubId($pubObject, true)|escape} <br />
-			<br />
-			{capture assign=translatedObjectType}{translate key="plugins.pubIds.doi.editor.doiObjectType"|cat:$pubObjectType}{/capture}
-			{translate key="plugins.pubIds.doi.editor.doiNotYetGenerated" pubObjectType=$translatedObjectType}
+		{/fbvFormArea}
+	{/if}
+	{* issue pub object *}
+	{if $pubObjectType == 'Issue'}
+		{assign var=enableArticleDoi value=$pubIdPlugin->getSetting($currentJournal->getId(), "enableArticleDoi")}
+		{assign var=enableRepresentationDoi value=$pubIdPlugin->getSetting($currentJournal->getId(), "enableRepresentationDoi")}
+		{assign var=enableSubmissionFileDoi value=$pubIdPlugin->getSetting($currentJournal->getId(), "enableSubmissionFileDoi")}
+		{if $enableArticleDoi || $enableRepresentationDoi || $enableSubmissionFileDoi}
+			{if !$formArea}
+				{assign var="formAreaTitle" value="plugins.pubIds.doi.editor.doi"}
+			{else}
+				{assign var="formAreaTitle" value=""}
+			{/if}
+			{fbvFormArea id="pubIdDOIFormArea" class="border" title=$formAreaTitle}
+				{fbvFormSection list="true" description="plugins.pubIds.doi.editor.clearIssueObjectsDoi.description"}
+					{include file="linkAction/linkAction.tpl" action=$clearIssueObjectsPubIdsLinkActionDoi contextId="publicIdentifiersForm"}
+				{/fbvFormSection}
+			{/fbvFormArea}
 		{/if}
-		<br />
-	</div>
-	<div class="separator"> </div>
-{/if}
-{/if}
+	{/if}
+
+	{if $pubObjectType == 'Issue' || $pubObjectType == 'Article'}
+		{url|assign:pubIdAssignmentsGridUrl router=$smarty.const.ROUTE_COMPONENT component="grid.pubIds.PubIdAssignmentsGridHandler" op="fetchGrid" pubIdType=$pubIdPlugin->getPubIdType() pubObjectType=$pubObjectType pubObjectId=$pubObject->getId() escape=false}
+		{load_url_in_div id="pubIdAssignmentsGridContainer" url=$pubIdAssignmentsGridUrl}
+	{/if}
+

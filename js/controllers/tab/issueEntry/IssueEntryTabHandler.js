@@ -245,7 +245,13 @@
 	 */
 	$.pkp.controllers.tab.issueEntry.IssueEntryTabHandler.prototype.
 			tabsReloadRequested = function(divElement, event, jsonContent) {
-		this.getHtmlElement().trigger('formSubmitted');
+		//this.getHtmlElement().trigger( 'formSubmitted' );
+		var $element = this.getHtmlElement();
+		$.get(jsonContent.tabsUrl, function(data) {
+			var jsonData = $.parseJSON(data);
+			$element.prev('div').remove();
+			$element.replaceWith(jsonData.content);
+		});
 	};
 /** @param {jQuery} $ jQuery closure. */
 }(jQuery));
