@@ -90,6 +90,16 @@
 		{/fbvFormArea}
 	{/if}
 
+    {fbvFormArea id="identifiers" title="submission.identifiers"}
+        {foreach from=$pubIdPlugins item=pubIdPlugin}
+            {assign var=pubObjectType value=$pubIdPlugin->getPubObjectType($submission)}
+            {if $pubIdPlugin->isObjectTypeEnabled($pubObjectType, $currentJournal->getId())}
+                {assign var=pubIdAssignFile value=$pubIdPlugin->getPubIdAssignFile()}
+                {include file="$pubIdAssignFile" pubObject=$submission pubObjectType=$pubObjectType}
+            {/if}
+        {/foreach}
+    {/fbvFormArea}
+
 	{fbvFormArea id="permissions" title="submission.permissions"}
 		{fbvFormSection list=true}
 			{fbvElement type="checkbox" id="attachPermissions" label="submission.attachPermissions"}

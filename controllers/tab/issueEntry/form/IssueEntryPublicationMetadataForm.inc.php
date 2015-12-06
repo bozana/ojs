@@ -107,6 +107,11 @@ class IssueEntryPublicationMetadataForm extends Form {
 			$templateMgr->assign('publicationPayment', $completedPaymentDao->getPublicationCompletedPayment($context->getId(), $this->getSubission()->getId()));
 		}
 
+		// pub ids
+		$pubIdPlugins =& PluginRegistry::loadCategory('pubIds', true, $context->getId());
+		$templateMgr->assign('pubIdPlugins', $pubIdPlugins);
+		$templateMgr->assign('submission', $this->getSubmission());
+
 		return parent::fetch($request);
 	}
 
@@ -213,6 +218,9 @@ class IssueEntryPublicationMetadataForm extends Form {
 			'publicArticleId', 'copyrightYear', 'copyrightHolder',
 			'licenseURL', 'attachPermissions',
 		));
+		import('lib.pkp.classes.plugins.PKPPubIdPluginHelper');
+		$pubIdPluginHelper = new PKPPubIdPluginHelper();
+		$pubIdPluginHelper->readAssignInputData($this);
 	}
 
 	/**
@@ -327,6 +335,11 @@ class IssueEntryPublicationMetadataForm extends Form {
 					$articleSearchIndex->submissionFilesChanged($publishedArticle);
 				}
 
+				// pub ids
+				import('lib.pkp.classes.plugins.PKPPubIdPluginHelper');
+				$pubIdPluginHelper = new PKPPubIdPluginHelper();
+				$pubIdPluginHelper->assignPubId($context->getId(), $this, $submission);
+
 			} else {
 				if ($publishedArticle) {
 					// This was published elsewhere; make sure we don't
@@ -338,6 +351,8 @@ class IssueEntryPublicationMetadataForm extends Form {
 					$articleSearchIndex->submissionFileDeleted($submission->getId());
 				}
 			}
+
+
 
 			if ($this->getData('attachPermissions')) {
 				$submission->setCopyrightYear($this->getData('copyrightYear'));
