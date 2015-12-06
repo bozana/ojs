@@ -23,7 +23,7 @@
 	{if $formParams.expeditedSubmission}
 		action="{url router=$smarty.const.ROUTE_PAGE op="expedite"}"
 	{else}
-		action="{url router=$smarty.const.ROUTE_COMPONENT op="saveForm"}"
+		action="{url router=$smarty.const.ROUTE_COMPONENT op="savePublicationMetadata"}"
 	{/if}
 >
 	{include file="controllers/notification/inPlaceNotification.tpl" notificationId="publicationMetadataFormFieldsNotification"}

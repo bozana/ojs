@@ -361,30 +361,6 @@ class ArticleDAO extends SubmissionDAO {
 		$this->flushCache();
 	}
 
-	/**
-	 * Delete the public IDs of all articles in a journal.
-	 * @param $journalId int
-	 * @param $pubIdType string One of the NLM pub-id-type values or
-	 * 'other::something' if not part of the official NLM list
-	 * (see <http://dtd.nlm.nih.gov/publishing/tag-library/n-4zh0.html>).
-	 */
-	function deleteAllPubIds($journalId, $pubIdType) {
-		$journalId = (int) $journalId;
-		$settingName = 'pub-id::'.$pubIdType;
-
-		$articles = $this->getByContextId($journalId);
-		while ($article = $articles->next()) {
-			$this->update(
-				'DELETE FROM submission_settings WHERE setting_name = ? AND submission_id = ?',
-				array(
-					$settingName,
-					(int)$article->getId()
-				)
-			);
-		}
-		$this->flushCache();
-	}
-
 	function flushCache() {
 		// Because both publishedArticles and articles are cached by
 		// article ID, flush both caches on update.
@@ -395,7 +371,7 @@ class ArticleDAO extends SubmissionDAO {
 		$cache->flush();
 	}
 
-	
+
 	//
 	// Protected functions
 	//
