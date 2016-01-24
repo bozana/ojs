@@ -85,7 +85,7 @@ class HtmlArticleGalleyPlugin extends ViewableFilePlugin {
 					foreach ($styleFiles as $file) {
 						$styleUrl = $router->url($request, null, 'article', 'viewFile', array(
 							$galley->getSubmissionId(),
-							$galley->getBestGalleyId($journal),
+							$galley->getBestGalleyId(),
 							$file->getFileId()
 						));
 
@@ -142,7 +142,7 @@ class HtmlArticleGalleyPlugin extends ViewableFilePlugin {
 		$images = $this->_getImageFiles($galley, $fileId, $journal);
 
 		foreach ($images as $image) {
-			$imageUrl = $request->url(null, 'article', 'viewFile', array($galley->getSubmissionId(), $galley->getBestGalleyId($journal), $image->getFileId()));
+			$imageUrl = $request->url(null, 'article', 'viewFile', array($galley->getSubmissionId(), $galley->getBestGalleyId(), $image->getFileId()));
 			$pattern = preg_quote($image->getOriginalFileName());
 
 			$contents = preg_replace(

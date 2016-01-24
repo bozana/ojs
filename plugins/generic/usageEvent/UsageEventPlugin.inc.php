@@ -154,7 +154,7 @@ class UsageEventPlugin extends GenericPlugin {
 					if ($galley->isHTMLGalley() || $galley->getRemoteURL()) {
 						$pubObject = $galley;
 						$assocType = ASSOC_TYPE_GALLEY;
-						$canonicalUrlParams = array($article->getBestArticleId(), $pubObject->getBestGalleyId($journal));
+						$canonicalUrlParams = array($article->getBestArticleId(), $pubObject->getBestGalleyId());
 						$idParams = array('a' . $article->getId(), 'g' . $pubObject->getId());
 					} else {
 						// This is an access to an intermediary galley page which we
@@ -165,12 +165,12 @@ class UsageEventPlugin extends GenericPlugin {
 					if ($article) {
 						$pubObject = $article;
 						$assocType = ASSOC_TYPE_ARTICLE;
-						$canonicalUrlParams = array($pubObject->getBestArticleId($journal));
+						$canonicalUrlParams = array($pubObject->getBestArticleId());
 						$idParams = array('a' . $pubObject->getId());
 					} else {
 						$pubObject = $issue;
 						$assocType = ASSOC_TYPE_ISSUE;
-						$canonicalUrlParams = array($pubObject->getBestIssueId($journal));
+						$canonicalUrlParams = array($pubObject->getBestIssueId());
 						$idParams = array('i' . $pubObject->getId());
 					}
 				}
@@ -186,7 +186,7 @@ class UsageEventPlugin extends GenericPlugin {
 				$assocType = ASSOC_TYPE_GALLEY;
 				$canonicalUrlOp = 'download';
 				$article = $args[0];
-				$canonicalUrlParams = array($article->getBestArticleId(), $pubObject->getBestGalleyId($journal));
+				$canonicalUrlParams = array($article->getBestArticleId(), $pubObject->getBestGalleyId());
 				$idParams = array('a' . $article->getId(), 'g' . $pubObject->getId());
 				break;
 
@@ -196,7 +196,7 @@ class UsageEventPlugin extends GenericPlugin {
 				$assocType = ASSOC_TYPE_ISSUE_GALLEY;
 				$canonicalUrlOp = 'download';
 				$issue = $args[0];
-				$canonicalUrlParams = array($issue->getBestIssueId(), $pubObject->getBestGalleyId($journal));
+				$canonicalUrlParams = array($issue->getBestIssueId(), $pubObject->getBestGalleyId());
 				$idParams = array('i' . $issue->getId(), 'ig' . $pubObject->getId());
 				break;
 

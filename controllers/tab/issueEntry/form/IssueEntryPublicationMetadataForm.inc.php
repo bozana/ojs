@@ -76,10 +76,6 @@ class IssueEntryPublicationMetadataForm extends Form {
 		$templateMgr->assign('context', $context);
 
 		$journalSettingsDao = DAORegistry::getDAO('JournalSettingsDAO');
-		$enablePublicArticleId = $journalSettingsDao->getSetting($context->getId(),'enablePublicArticleId');
-		$templateMgr->assign('enablePublicArticleId', $enablePublicArticleId);
-		$enablePageNumber = $journalSettingsDao->getSetting($context->getId(), 'enablePageNumber');
-		$templateMgr->assign('enablePageNumber', $enablePageNumber);
 		$templateMgr->assign('issueOptions', $this->getIssueOptions($context));
 
 		$publishedArticle = $this->getPublishedArticle();
@@ -107,7 +103,7 @@ class IssueEntryPublicationMetadataForm extends Form {
 			$templateMgr->assign('publicationPayment', $completedPaymentDao->getPublicationCompletedPayment($context->getId(), $this->getSubission()->getId()));
 		}
 
-		// pub ids
+		// pub ids (for assignment)
 		$pubIdPlugins =& PluginRegistry::loadCategory('pubIds', true, $context->getId());
 		$templateMgr->assign('pubIdPlugins', $pubIdPlugins);
 		$templateMgr->assign('submission', $this->getSubmission());
@@ -215,7 +211,7 @@ class IssueEntryPublicationMetadataForm extends Form {
 		$this->readUserVars(array(
 			'waivePublicationFee', 'markAsPaid', 'issueId',
 			'datePublished', 'accessStatus', 'pages',
-			'publicArticleId', 'copyrightYear', 'copyrightHolder',
+			'copyrightYear', 'copyrightHolder',
 			'licenseURL', 'attachPermissions',
 		));
 		import('lib.pkp.classes.plugins.PKPPubIdPluginHelper');
@@ -293,9 +289,6 @@ class IssueEntryPublicationMetadataForm extends Form {
 			$articleDao = DAORegistry::getDAO('ArticleDAO');
 			if (!is_null($this->getData('pages'))) {
 				$submission->setPages($this->getData('pages'));
-			}
-			if (!is_null($this->getData('publicArticleId'))) {
-				$articleDao->changePubId($submission->getId(), 'publisher-id', $this->getData('publicArticleId'));
 			}
 
 			if ($issue) {

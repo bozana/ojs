@@ -202,11 +202,6 @@
 	<message key="manager.setup.enableAnnouncements">Enable Journal Managers to add journal announcements.</message>
 	<message key="manager.setup.enableAnnouncementsHomepage1">Display</message>
 	<message key="manager.setup.enableAnnouncementsHomepage2">of the most recent announcements on the journal homepage.</message>
-	<message key="manager.setup.enablePageNumber">Page numbers for items will be calculated and entered manually in the Table of Contents (e.g., pp. 13-26).</message>
-	<message key="manager.setup.enablePublicArticleId">Custom identifiers will be used to identify published items.</message>
-	<message key="manager.setup.enablePublicGalleyId">Custom identifiers will be used to identify galleys (e.g. HTML or PDF files) for published items.</message>
-	<message key="manager.setup.enablePublicIssueId">Custom identifiers will be used to identify issues.</message>
-	<message key="manager.setup.enablePublicSuppFileId">Custom identifiers will be used to identify supplemental article files.</message>
 	<message key="manager.setup.enableUserRegistration">Users can register themselves with the journal in one or more of the following roles:</message>
 	<message key="manager.setup.enableUserRegistration.author">Authors (can submit materials to the journal)</message>
 	<message key="manager.setup.enableUserRegistration.reader">Readers (will receive notifications and be counted as equivalent to a subscriber)</message>
@@ -617,7 +612,6 @@
 	<message key="manager.subscriptionTypes.subscriptionTypeCreatedSuccessfully">Subscription type created successfully.</message>
 
 	<message key="manager.distribution.access">Access</message>
-	<message key="manager.distribution.identifiers">Identifiers</message>
 	<message key="manager.settings.journalDescription"><![CDATA[All settings specific to the journal (masthead, contact, policies, guidelines, affiliation & support, categories and series).]]></message>
 	<message key="manager.settings.publicationDescription">All settings specific to the publication process (general settings, submission stage, review stage, editorial stage, production stage, email templates).</message>
 	<message key="manager.settings.websiteDescription">All settings specific to the public website pages (homepage, appearance, language)</message>

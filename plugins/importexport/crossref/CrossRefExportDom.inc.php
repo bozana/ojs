@@ -157,7 +157,7 @@ class CrossRefExportDom {
 		XMLCustomWriter::createChildWithText($doc, $journalIssueNode, 'issue', $issue->getNumber());
 
 		if ($issue->getDatePublished() && $issue->getPubId('doi')) {
-			$issueDoiNode = CrossRefExportDom::generateDOIdataDom($doc, $issue->getPubId('doi'), Request::url(null, 'issue', 'view', $issue->getBestIssueId($journal)));
+			$issueDoiNode = CrossRefExportDom::generateDOIdataDom($doc, $issue->getPubId('doi'), Request::url(null, 'issue', 'view', $issue->getBestIssueId()));
 			XMLCustomWriter::appendChild($journalIssueNode, $issueDoiNode);
 		}
 
@@ -271,7 +271,7 @@ class CrossRefExportDom {
 				$resourceNode = XMLCustomWriter::createElement($doc, 'resource');
 				XMLCustomWriter::appendChild($itemNode, $resourceNode);
 				XMLCustomWriter::setAttribute($resourceNode, 'mime_type', $galley->getFileType());
-				$urlNode = XMLCustomWriter::createTextNode($doc, $request->url(null, 'article', 'viewFile', array($galley->getArticleId(), $galley->getBestGalleyId($journal))));
+				$urlNode = XMLCustomWriter::createTextNode($doc, $request->url(null, 'article', 'viewFile', array($galley->getArticleId(), $galley->getBestGalleyId())));
 				XMLCustomWriter::appendChild($resourceNode, $urlNode);
 			}
 		}

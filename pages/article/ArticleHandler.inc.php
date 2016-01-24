@@ -59,11 +59,7 @@ class ArticleHandler extends Handler {
 
 		$this->journal = $request->getContext();
 		$publishedArticleDao = DAORegistry::getDAO('PublishedArticleDAO');
-		if ($this->journal->getSetting('enablePublicArticleId')) {
-			$publishedArticle = $publishedArticleDao->getPublishedArticleByBestArticleId((int) $this->journal->getId(), $articleId, true);
-		} else {
-			$publishedArticle = $publishedArticleDao->getPublishedArticleByArticleId((int) $articleId, (int) $this->journal->getId(), true);
-		}
+		$publishedArticle = $publishedArticleDao->getPublishedArticleByBestArticleId((int) $this->journal->getId(), $articleId, true);
 
 		$issueDao = DAORegistry::getDAO('IssueDAO');
 		if (isset($publishedArticle)) {
@@ -77,13 +73,7 @@ class ArticleHandler extends Handler {
 		}
 
 		$galleyDao = DAORegistry::getDAO('ArticleGalleyDAO');
-		if ($this->journal->getSetting('enablePublicGalleyId')) {
-			$this->galley = $galleyDao->getByBestGalleyId($galleyId, $this->article->getId());
-		}
-
-		if (!$this->galley) {
-			$this->galley = $galleyDao->getById($galleyId, $this->article->getId());
-		}
+		$this->galley = $galleyDao->getByBestGalleyId($galleyId, $this->article->getId());
 	}
 
 	/**
@@ -106,13 +96,7 @@ class ArticleHandler extends Handler {
 			$section = $sectionDao->getById($article->getSectionId(), $journal->getId(), true);
 
 			$galleyDao = DAORegistry::getDAO('ArticleGalleyDAO');
-			if ($journal->getSetting('enablePublicGalleyId')) {
-				$galley = $galleyDao->getByBestGalleyId($galleyId, $article->getId());
-			}
-
-			if (!isset($galley)) {
-				$galley = $galleyDao->getById($galleyId, $article->getId());
-			}
+			$galley = $galleyDao->getByBestGalleyId($galleyId, $article->getId());
 
 			if (isset($galley)) {
 				if ($galley->getRemoteURL()) {
@@ -233,7 +217,7 @@ class ArticleHandler extends Handler {
 
 			if (!HookRegistry::call('ArticleHandler::download', array($this->article, &$this->galley, &$fileId))) {
 				import('lib.pkp.classes.file.SubmissionFileManager');
-				$submissionFileManager = new SubmissionFileManager($this->article->getContextId(), $articleId);
+				$submissionFileManager = new SubmissionFileManager($this->article->getContextId(), $this->article->getId());
 				$submissionFileManager->downloadFile($fileId, null, $request->getUserVar('inline')?true:false);
 			}
 		}
