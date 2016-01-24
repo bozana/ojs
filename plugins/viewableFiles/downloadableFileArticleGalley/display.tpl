@@ -9,7 +9,7 @@
  *}
 {if $galley}
 	<h3>{translate key="article.nonpdf.title"}</h3>
-	{url|assign:"url" op="download" path=$article->getId()|to_array:$galley->getBestGalleyId($currentJournal)}
+	{url|assign:"url" op="download" path=$article->getId()|to_array:$galley->getBestGalleyId()}
 	<p>{translate key="article.nonpdf.note" url=$url}</p>
 
 	<script>
