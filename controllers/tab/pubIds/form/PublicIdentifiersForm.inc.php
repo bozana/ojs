@@ -123,6 +123,7 @@ class PublicIdentifiersForm extends Form {
 	 * @copydoc Form::readInputData()
 	 */
 	function readInputData() {
+		$this->readUserVars(array('selectedObjects'));
 		$this->readUserVars(array('publisherId'));
 		$pubIdPluginHelper = new PKPPubIdPluginHelper();
 		$pubIdPluginHelper->readInputData($this->getContextId(), $this);

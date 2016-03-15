@@ -44,6 +44,15 @@ abstract class PubIdPlugin extends PKPPubIdPlugin {
 		return array('Issue', 'Article', 'Representation', 'SubmissionFile');
 	}
 
+	function getDisplayPubObjectType($pubObjectType) {
+		switch ($pubObjectType) {
+			case 'Representation':
+				return 'Galley';
+			case 'SubmissionFile':
+				return 'File';
+		}
+	}
+
 	/**
 	 * @copydoc PKPPubIdPlugin::getPubObjects()
 	 */
@@ -78,6 +87,79 @@ abstract class PubIdPlugin extends PKPPubIdPlugin {
 				}
 				unset($representations);
 				break;
+		}
+		return $objectsToCheck;
+	}
+
+	/**
+	 * @copydoc PKPPubIdPlugin::getSubPubObjects()
+	 */
+	function getSubPubObjects($pubObjectType, $pubObjectId, $contextId) {
+		$objectsToCheck = null;
+		switch($pubObjectType) {
+			case 'Issue':
+				$articlePubIdEnabled = $this->isObjectTypeEnabled('Article', $contextId);
+				$representationPubIdEnabled = $this->isObjectTypeEnabled('Representation', $contextId);
+				$filePubIdEnabled = $this->isObjectTypeEnabled('SubmissionFile', $contextId);
+
+				$articleDao =& DAORegistry::getDAO('ArticleDAO');
+				$publishedArticleDao =& DAORegistry::getDAO('PublishedArticleDAO');
+				$representationDao = Application::getRepresentationDAO();
+				$submissionFileDao = DAORegistry::getDAO('SubmissionFileDAO'); /* @var $submissionFileDao SubmissionFileDAO */
+				import('lib.pkp.classes.submission.SubmissionFile'); // SUBMISSION_FILE_... constants
+				import('lib.pkp.classes.submission.SubmissionFileDAODelegate');
+				$submissionFileDaoDelegate = new SubmissionFileDAODelegate();
+
+				$publishedArticles = $publishedArticleDao->getPublishedArticles($pubObjectId);
+				foreach ($publishedArticles as $publishedArticle) {
+					if ($articlePubIdEnabled) {
+						$objectsToCheck['Article-'.$publishedArticle->getId()] = $publishedArticle;
+					}
+					if ($representationPubIdEnabled || $filePubIdEnabled) {
+						$representations = $representationDao->getBySubmissionId($publishedArticle->getId());
+						while ($representation = $representations->next()) {
+							if ($representationPubIdEnabled) {
+								$objectsToCheck['Representation-'.$representation->getId()] = $representation;
+							}
+							$articleProofFiles = $submissionFileDao->getAllRevisionsByAssocId(ASSOC_TYPE_REPRESENTATION, $representation->getId(), SUBMISSION_FILE_PROOF);
+							foreach ($articleProofFiles as $articleProofFile) {
+								if ($filePubIdEnabled) {
+									$objectsToCheck['SubmissionFile-'.$articleProofFile->getFileId()] = $articleProofFile;
+								}
+							}
+						}
+						unset($representations);
+					}
+				}
+				break;
+
+			case 'Article':
+				$representationPubIdEnabled = $this->isObjectTypeEnabled('Representation', $contextId);
+				$filePubIdEnabled = $this->isObjectTypeEnabled('SubmissionFile', $contextId);
+
+				$representationDao = Application::getRepresentationDAO();
+				$submissionFileDao = DAORegistry::getDAO('SubmissionFileDAO'); /* @var $submissionFileDao SubmissionFileDAO */
+				import('lib.pkp.classes.submission.SubmissionFile'); // SUBMISSION_FILE_... constants
+				import('lib.pkp.classes.submission.SubmissionFileDAODelegate');
+				$submissionFileDaoDelegate = new SubmissionFileDAODelegate();
+
+				if ($representationPubIdEnabled || $filePubIdEnabled) {
+					$representations = $representationDao->getBySubmissionId($pubObjectId, $contextId);
+					while ($representation = $representations->next()) {
+						if ($representationPubIdEnabled) {
+							$objectsToCheck['Representation-'.$representation->getId()] = $representation;
+						}
+						$articleProofFiles = $submissionFileDao->getAllRevisionsByAssocId(ASSOC_TYPE_REPRESENTATION, $representation->getId(), SUBMISSION_FILE_PROOF);
+						if ($filePubIdEnabled) {
+							foreach ($articleProofFiles as $articleProofFile) {
+								$objectsToCheck['SubmissionFile-'.$articleProofFile->getFileId()] = $articleProofFile;
+							}
+						}
+					}
+					unset($representations);
+				}
+				break;
+
 		}
 		return $objectsToCheck;
 	}
@@ -148,45 +230,45 @@ abstract class PubIdPlugin extends PKPPubIdPlugin {
 				$pubIdSuffix = $this->getSetting($contextId, $suffixPatternsFieldNames[$pubObjectType]);
 
 				// %j - journal initials
-				$pubIdSuffix = String::regexp_replace('/%j/', String::strtolower($context->getAcronym($context->getPrimaryLocale())), $pubIdSuffix);
+				$pubIdSuffix = PKPString::regexp_replace('/%j/', PKPString::strtolower($context->getAcronym($context->getPrimaryLocale())), $pubIdSuffix);
 
 				// %x - custom identifier
 				if ($pubObject->getStoredPubId('publisher-id')) {
-					$pubIdSuffix = String::regexp_replace('/%x/', $pubObject->getStoredPubId('publisher-id'), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%x/', $pubObject->getStoredPubId('publisher-id'), $pubIdSuffix);
 				}
 
 				if ($issue) {
 					// %v - volume number
-					$pubIdSuffix = String::regexp_replace('/%v/', $issue->getVolume(), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%v/', $issue->getVolume(), $pubIdSuffix);
 					// %i - issue number
-					$pubIdSuffix = String::regexp_replace('/%i/', $issue->getNumber(), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%i/', $issue->getNumber(), $pubIdSuffix);
 					// %Y - year
-					$pubIdSuffix = String::regexp_replace('/%Y/', $issue->getYear(), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%Y/', $issue->getYear(), $pubIdSuffix);
 				}
 
 				if ($article) {
 					// %a - article id
-					$pubIdSuffix = String::regexp_replace('/%a/', $article->getId(), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%a/', $article->getId(), $pubIdSuffix);
 					// %p - page number
 					if ($article->getPages()) {
-						$pubIdSuffix = String::regexp_replace('/%p/', $article->getPages(), $pubIdSuffix);
+						$pubIdSuffix = PKPString::regexp_replace('/%p/', $article->getPages(), $pubIdSuffix);
 					}
 				}
 
 				if ($representation) {
 					// %g - galley id
-					$pubIdSuffix = String::regexp_replace('/%g/', $representation->getId(), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%g/', $representation->getId(), $pubIdSuffix);
 				}
 
 				if ($submissionFile) {
 					// %f - file id
-					$pubIdSuffix = String::regexp_replace('/%f/', $submissionFile->getId(), $pubIdSuffix);
+					$pubIdSuffix = PKPString::regexp_replace('/%f/', $submissionFile->getId(), $pubIdSuffix);
 				}
 
 				break;
 
 			default:
-				$pubIdSuffix = String::strtolower($context->getAcronym($context->getPrimaryLocale()));
+				$pubIdSuffix = PKPString::strtolower($context->getAcronym($context->getPrimaryLocale()));
 
 				if ($issue) {
 					$pubIdSuffix .= '.v' . $issue->getVolume() . 'i' . $issue->getNumber();

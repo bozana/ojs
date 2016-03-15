@@ -97,9 +97,6 @@ class IssueEntryPublicationMetadataForm extends Form {
 			$templateMgr->assign('publicationPayment', $completedPaymentDao->getPublicationCompletedPayment($context->getId(), $this->getSubission()->getId()));
 		}
 
-		// pub ids (for assignment)
-		$pubIdPlugins =& PluginRegistry::loadCategory('pubIds', true, $context->getId());
-		$templateMgr->assign('pubIdPlugins', $pubIdPlugins);
 		$templateMgr->assign('submission', $this->getSubmission());
 
 		return parent::fetch($request);
@@ -208,9 +205,6 @@ class IssueEntryPublicationMetadataForm extends Form {
 			'copyrightYear', 'copyrightHolder',
 			'licenseURL', 'attachPermissions',
 		));
-		import('lib.pkp.classes.plugins.PKPPubIdPluginHelper');
-		$pubIdPluginHelper = new PKPPubIdPluginHelper();
-		$pubIdPluginHelper->readAssignInputData($this);
 	}
 
 	/**
@@ -321,11 +315,6 @@ class IssueEntryPublicationMetadataForm extends Form {
 					$articleSearchIndex->articleMetadataChanged($publishedArticle);
 					$articleSearchIndex->submissionFilesChanged($publishedArticle);
 				}
-
-				// pub ids
-				import('lib.pkp.classes.plugins.PKPPubIdPluginHelper');
-				$pubIdPluginHelper = new PKPPubIdPluginHelper();
-				$pubIdPluginHelper->assignPubId($context->getId(), $this, $submission);
 
 			} else {
 				if ($publishedArticle) {
