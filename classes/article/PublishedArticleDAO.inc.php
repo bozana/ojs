@@ -730,6 +730,70 @@ class PublishedArticleDAO extends ArticleDAO {
 		$result->Close();
 		return $returner;
 	}
+
+
+	/**
+	 * Get all published submissions matching the specified settings.
+	 * @param $pubIdType string
+	 * @param $contextId integer optional
+	 * @param $title string optional
+	 * @param $author string optional
+	 * @param $issueId integer optional
+	 * @param $pubIdStatusSettingName string optional (e.g. crossref::status)
+	 * @param $pubIdStatusId integer optional
+	 * @param $rangeInfo DBResultRange optional
+	 * @return DAOResultFactory
+	 */
+	function getByPubIdType($pubIdType, $contextId = null, $title = null, $author = null, $issueId = null, $pubIdStatusSettingName = null, $pubIdStatusId = null, $rangeInfo = null) {
+		$params = $this->getFetchParameters(); // because of the neccessary section row names in _fromRow
+		$params[] = 'pub-id::'.$pubIdType;
+
+		if ($contextId) {
+			$params[] = (int) $contextId;
+		}
+
+		if ($title) {
+			$params[] = 'title';
+			$params[] = '%' . $title . '%';
+		}
+
+		if ($author) array_push($params, $authorQuery = '%' . $author . '%', $authorQuery, $authorQuery);
+
+		if ($issueId) {
+			$params[] = (int) $issueId;
+		}
+
+		if ($pubIdStatusSettingName && $pubIdStatusId) {
+			$params[] = $pubIdStatusSettingName;
+			$params[] = (int) $pubIdStatusId;
+		}
+
+		$result = $this->retrieveRange(
+				'SELECT	s.*, ps.*,
+					' . $this->getFetchColumns() . '
+				FROM	published_submissions ps
+					LEFT JOIN submissions s ON (s.submission_id = ps.submission_id)
+					LEFT JOIN submission_settings ss ON (s.submission_id = ss.submission_id)
+					' . ($title?' LEFT JOIN submission_settings sst ON (s.submission_id = sst.submission_id)':'')
+					. ($author?' LEFT JOIN authors au ON (s.submission_id = au.submission_id)':'')
+					. (($pubIdStatusSettingName && $pubIdStatusId)?' LEFT JOIN submission_settings sss ON (s.submission_id = sss.submission_id)':'')
+					. $this->getFetchJoins()
+					. ' ' . $this->getCompletionJoins() .'
+				WHERE
+					ss.setting_name = ? AND ss.setting_value IS NOT NULL
+					' . ($contextId?' AND s.context_id = ?':'')
+					. ($title?' AND (sst.setting_name = ? AND sst.setting_value LIKE ?)':'')
+					. ($author?' AND (au.first_name LIKE ? OR au.middle_name LIKE ? OR au.last_name LIKE ?)':'')
+					. ($issueId?' AND ps.issue_id = ?':'')
+					. (($pubIdStatusSettingName && $pubIdStatusId)?' AND (sss.setting_name = ? AND sss.setting_value = ?)':'')
+					. ' AND ' . $this->getCompletionConditions(true),
+				$params,
+				$rangeInfo
+				);
+
+		return new DAOResultFactory($result, $this, '_fromRow');
+	}
+
 }
 
 ?>

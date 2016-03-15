@@ -617,6 +617,39 @@ class IssueDAO extends DAO {
 	}
 
 	/**
+	 * Get all published submissions matching the specified settings.
+	 * @param $pubIdType string
+	 * @param $contextId integer optional
+	 * @param $pubIdStatusSettingName string optional (e.g. crossref::status)
+	 * @param $pubIdStatusId integer optional
+	 * @param $rangeInfo DBResultRange optional
+	 * @return DAOResultFactory
+	 */
+	function getByPubIdType($pubIdType, $contextId = null, $pubIdStatusSettingName = null, $pubIdStatusId = null, $rangeInfo = null) {
+		$params = array('pub-id::'.$pubIdType);
+		if ($contextId) {
+			$params[] = (int) $contextId;
+		}
+		if ($pubIdStatusSettingName && $pubIdStatusId) {
+			$params[] = $pubIdStatusSettingName;
+			$params[] = (int) $pubIdStatusId;
+		}
+		$result = $this->retrieveRange(
+			'SELECT i.*
+			FROM issues i
+				LEFT JOIN custom_issue_orders o ON (o.issue_id = i.issue_id)
+				LEFT JOIN issue_settings ist ON i.issue_id = ist.issue_id
+			WHERE
+				ist.setting_name = ? AND ist.setting_value IS NOT NULL
+				' . ($contextId?' AND i.journal_id = ?':'')
+				.' AND i.published = 1 ORDER BY o.seq ASC, i.current DESC, i.date_published DESC',
+			$params,
+			$rangeInfo
+		);
+		return new DAOResultFactory($result, $this, '_returnIssueFromRow');
+	}
+
+	/**
 	 * Return number of articles assigned to an issue.
 	 * @param $issueId int
 	 * @return int

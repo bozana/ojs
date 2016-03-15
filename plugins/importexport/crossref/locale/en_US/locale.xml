@@ -14,13 +14,35 @@
 <locale name="en_US" full_name="U.S. English">
 	<message key="plugins.importexport.crossref.displayName">CrossRef XML Export Plugin</message>
 	<message key="plugins.importexport.crossref.description">Export article metadata in CrossRef XML format.</message>
-	
+
+	<message key="plugins.importexport.crossref.requirements">Requirements</message>
+	<message key="plugins.importexport.crossref.requirements.satisfied">All plugin requirements are satisfied.</message>
+	<message key="plugins.importexport.crossref.error.publisherNotConfigured"><![CDATA[A journal publisher has not been configured! You must add a publisher institution under <a href="{$publisherUrl}" target="_blank">Journal Setup Step 1.5</a>.]]></message>
+	<message key="plugins.importexport.crossref.settings.depositorIntro">The following items are required for a successful CrossRef deposit.</message>
+	<message key="plugins.importexport.crossref.settings.form.depositorName">Depositor name</message>
+	<message key="plugins.importexport.crossref.settings.form.depositorEmail">Depositor email</message>
+	<message key="plugins.importexport.crossref.settings.form.depositorNameRequired">Please enter the depositor name.</message>
+	<message key="plugins.importexport.crossref.settings.form.depositorEmailRequired">Please enter the depositor email.</message>
+	<message key="plugins.importexport.crossref.registrationIntro"><![CDATA[If you would like to use this plugin to register Digital Object Identifiers (DOIs) directly with CrossRef you will need a username and password (available from <a href="http://www.crossref.org" target="_blank">CrossRef</a>) in order to do so. If you do not have your own username and password you can still export into the CrossRef XML format, but you cannot register your DOIs with CrossRef from within OJS.]]></message>
+	<message key="plugins.importexport.crossref.settings.form.username">Username</message>
+	<message key="plugins.importexport.crossref.settings.form.usernameRequired">Please enter the username you got from CrossRef.</message>
+	<message key="plugins.importexport.crossref.settings.form.automaticRegistration">Register DOIs automatically</message>
+	<message key="plugins.importexport.crossref.settings.form.automaticRegistration.description"><![CDATA[OJS will deposit article DOIs automatically to CrossRef as articles are published. Please note that this may take a short amount of time after publication to process. You can check for all unregistered DOIs.]]></message>
+
+	<message key="plugins.importexport.crossref.error.noObjectsSelected">No objects selected.</message>
+
+	<message key="plugins.importexport.crossref.status.submitted">Submitted</message>
+	<message key="plugins.importexport.crossref.status.completed">Completed</message>
+	<message key="plugins.importexport.crossref.status.failed">Failed</message>
+	<message key="plugins.importexport.crossref.status.registered">Registered</message>
+
+
 	<message key="plugins.importexport.crossref.export">Export Data</message>
 	<message key="plugins.importexport.crossref.export.issues">Export Issues</message>
 	<message key="plugins.importexport.crossref.export.selectIssue">Select an Issue to export.</message>
 	<message key="plugins.importexport.crossref.export.articles">Export Articles</message>
 	<message key="plugins.importexport.crossref.export.selectArticle">Select Articles to export.</message>
-	
+
 	<message key="plugins.importexport.crossref.cliUsage"><![CDATA[Usage: 
 {$scriptName} {$pluginName} [xmlFileName] [journal_path] articles [articleId1] [articleId2] ...
 {$scriptName} {$pluginName} [xmlFileName] [journal_path] issue [issueId]
