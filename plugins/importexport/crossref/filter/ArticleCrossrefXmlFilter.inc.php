@@ -127,59 +127,101 @@ class ArticleCrossrefXmlFilter extends IssueCrossrefXmlFilter {
 			$licenseNode->appendChild($node = $doc->createElementNS($deployment->getAINamespace(), 'ai:license_ref', $submission->getLicenseUrl()));
 			$journalArticleNode->appendChild($licenseNode);
 		}
+
 		// DOI data
 		$doiDataNode = $this->createDOIDataNode($doc, $submission->getStoredPubId('doi'), $request->url($context->getPath(), 'article', 'view', $submission->getBestArticleId()));
 		// append galleys files and collection nodes to the DOI data node
-		$this->appendCollectionNodes($doc, $doiDataNode, $submission);
+		// galley can contain several files
+		$articleGalleyDao = DAORegistry::getDAO('ArticleGalleyDAO');
+		$galleys = $articleGalleyDao->getBySubmissionId($submission->getId());
+		import('lib.pkp.classes.submission.SubmissionFile'); // SUBMISSION_FILE_... constants
+		$submissionFileDao = DAORegistry::getDAO('SubmissionFileDAO'); /* @var $submissionFileDao SubmissionFileDAO */
+		// supplementary files
+		$supplementaryFiles = array();
+		while ($galley = $galleys->next()) {
+			$gallayFiles = $submissionFileDao->getLatestRevisionsByAssocId(ASSOC_TYPE_REPRESENTATION, $galley->getId(), $submission->getId(), SUBMISSION_FILE_PROOF);
+			// filter supp files
+			$suppGalleyFiles = array_filter($gallayFiles, create_function('$a', 'return get_class($a) == \'SupplementoryFile\';'));
+			array_push($supplementaryFiles, $suppGalleyFiles);
+			// filter submission files
+			$submissionGalleyFiles = array_filter($gallayFiles, create_function('$a', 'return get_class($a) == \'SubmissionFile\';'));
+			if (!empty($submissionGalleyFiles)) {
+				$this->appendCollectionNodes($doc, $doiDataNode, $galley, $submissionGalleyFiles);
+			}
+		}
 		$journalArticleNode->appendChild($doiDataNode);
 
 		/* Component list (supplementary files) ??? */
-		// TO-DO: how to recognise?
+		$componentFiles = array_filter($supplementaryFiles, create_function('$a', 'return $a->getStoredPubId(\'doi\');'));
+		if (!empty($componentFiles)) {
+			$journalArticleNode->appendChild($this->createComponentListNode($doc, $componentFiles));
+		}
+
 		return $journalArticleNode;
 	}
 
-	function appendCollectionNodes($doc, $doiDataNode, $submission) {
+	function appendCollectionNodes($doc, $doiDataNode, $galley, $submissionFiles) {
 		$deployment = $this->getDeployment();
 		$context = $deployment->getContext();
 		$request = Application::getRequest();
 
-		import('lib.pkp.classes.submission.SubmissionFile'); // SUBMISSION_FILE_... constants
-		// galley can contain several files
-		$articleGalleyDao = DAORegistry::getDAO('ArticleGalleyDAO');
-		$galleys = $articleGalleyDao->getBySubmissionId($submission->getId());
-		$submissionFileDao = DAORegistry::getDAO('SubmissionFileDAO'); /* @var $submissionFileDao SubmissionFileDAO */
-		while ($galley = $galleys->next()) {
-			$gallayFiles = $submissionFileDao->getAllRevisionsByAssocId(ASSOC_TYPE_REPRESENTATION, $galley->getId(), SUBMISSION_FILE_PROOF);
-			// galley filess i.e. collection nodes
-			if (!empty($gallayFiles)) {
-				// start of the text-mining collection element
-				$textMiningCollectionNode = $doc->createElementNS($deployment->getNamespace(), 'collection');
-				$textMiningCollectionNode->setAttribute('property', 'text-mining');
-				foreach ($gallayFiles as $gallayFile) {
-					$resourceURL = $request->url($context->getPath(), 'article', 'download', array($submission->getBestArticleId(), $galley->getBestGalleyId(), $gallayFile->getFileId()));
-					// iParadigms crawler based collection element
-					$crawlerBasedCollectionNode = $doc->createElementNS($deployment->getNamespace(), 'collection');
-					$crawlerBasedCollectionNode->setAttribute('property', 'crawler-based');
-					$iParadigmsItemNode = $doc->createElementNS($deployment->getNamespace(), 'item');
-					$iParadigmsItemNode->setAttribute('crawler', 'iParadigms');
-					$iParadigmsItemNode->appendChild($node = $doc->createElementNS($deployment->getNamespace(), 'resource', $resourceURL));
-					$crawlerBasedCollectionNode->appendChild($iParadigmsItemNode);
-					$doiDataNode->appendChild($crawlerBasedCollectionNode);
-					// end iParadigms
-					// text-mining collection item
-					$textMiningItemNode = $doc->createElementNS($deployment->getNamespace(), 'item');
-					$resourceNode = $doc->createElementNS($deployment->getNamespace(), 'resource', $resourceURL);
-					// not neccessary to consider remote galleys because we are just interested in files?
-					//$remoteGalleyURL = $galley->getRemoteURL();
-					//if (!$remoteGalleyURL) {
-						$resourceNode->setAttribute('mime_type', $gallayFile->getFileType());
-					//}
-					$textMiningItemNode->appendChild($resourceNode);
-					$textMiningCollectionNode->appendChild($textMiningItemNode);
-				}
-				$doiDataNode->appendChild($textMiningCollectionNode);
-			}
+		// start of the text-mining collection element
+		$textMiningCollectionNode = $doc->createElementNS($deployment->getNamespace(), 'collection');
+		$textMiningCollectionNode->setAttribute('property', 'text-mining');
+		foreach ($submissionFiles as $submissionFile) {
+			$resourceURL = $request->url($context->getPath(), 'article', 'download', array($submission->getBestArticleId(), $galley->getBestGalleyId(), $submissionFile->getFileId()));
+			// iParadigms crawler based collection element
+			$crawlerBasedCollectionNode = $doc->createElementNS($deployment->getNamespace(), 'collection');
+			$crawlerBasedCollectionNode->setAttribute('property', 'crawler-based');
+			$iParadigmsItemNode = $doc->createElementNS($deployment->getNamespace(), 'item');
+			$iParadigmsItemNode->setAttribute('crawler', 'iParadigms');
+			$iParadigmsItemNode->appendChild($node = $doc->createElementNS($deployment->getNamespace(), 'resource', $resourceURL));
+			$crawlerBasedCollectionNode->appendChild($iParadigmsItemNode);
+			$doiDataNode->appendChild($crawlerBasedCollectionNode);
+			// end iParadigms
+			// text-mining collection item
+			$textMiningItemNode = $doc->createElementNS($deployment->getNamespace(), 'item');
+			$resourceNode = $doc->createElementNS($deployment->getNamespace(), 'resource', $resourceURL);
+			// not neccessary to consider remote galleys because we are just interested in files?
+			//$remoteGalleyURL = $galley->getRemoteURL();
+			//if (!$remoteGalleyURL) {
+				$resourceNode->setAttribute('mime_type', $gallayFile->getFileType());
+			//}
+			$textMiningItemNode->appendChild($resourceNode);
+			$textMiningCollectionNode->appendChild($textMiningItemNode);
 		}
+		$doiDataNode->appendChild($textMiningCollectionNode);
+	}
+
+
+	function createComponentListNode($doc, $componentFiles) {
+		$deployment = $this->getDeployment();
+		$context = $deployment->getContext();
+		$request = Application::getRequest();
+
+		// Create the base node
+		$componentListNode =$doc->createElementNS($deployment->getNamespace(), 'component_list');
+		// Run through supp files and add component nodes.
+		foreach($componentFiles as $componentFile) {
+			$componentNode = $doc->createElementNS($deployment->getNamespace(), 'component');
+			$componentNode->setAttribute('parent_relation', 'isPartOf');
+
+			/* Titles */
+			$componentFileTitle = $componentFile->getName();
+			if (!empty($componentFileTitle)) {
+				$titlesNode = $doc->createElementNS($deployment->getNamespace(), 'titles');
+				// TO-DO: what language?
+				$titlesNode->appendChild($node = $doc->createElementNS($deployment->getNamespace(), 'title', $componentFileTitle[$submission->getLocale()]));
+				$componentNode->appendChild($titlesNode);
+			}
+
+			// DOI data node
+			// TO-DO: bestIds missing
+			$resourceURL = $request->url($context->getPath(), 'article', 'download', array($submission->getBestArticleId(), $galley->getBestGalleyId(), $componentFile->getFileId()));
+			$componentNode->appendChild($this->createDOIDataNode($doc, $componentFile->getStoredPubId('doi'), $resourceURL));
+		}
+		$componentListNode->appendChild($componentNode);
+		return $componentListNode;
 	}
 
 
