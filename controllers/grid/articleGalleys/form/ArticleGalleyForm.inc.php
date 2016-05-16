@@ -69,7 +69,6 @@ class ArticleGalleyForm extends Form {
 			$templateMgr->assign('galleyType', $this->_articleGalley->getGalleyType());
 		}
 		$templateMgr->assign('supportedLocales', $journal->getSupportedLocaleNames());
-		$templateMgr->assign('enablePublicGalleyId', $journal->getSetting('enablePublicGalleyId'));
 
 		// load the Article Galley plugins.
 		$plugins = PluginRegistry::loadCategory('viewableFiles');
@@ -146,9 +145,6 @@ class ArticleGalleyForm extends Form {
 
 		if ($articleGalley) {
 			$articleGalley->setLabel($this->getData('label'));
-			if ($journal->getSetting('enablePublicGalleyId')) {
-				$articleGalley->setStoredPubId('publisher-id', $this->getData('publicGalleyId'));
-			}
 			$articleGalley->setLocale($this->getData('galleyLocale'));
 			$articleGalley->setGalleyType($this->getData('galleyType'));
 			$articleGalley->setRemoteURL($this->getData('remoteURL'));
@@ -160,10 +156,6 @@ class ArticleGalleyForm extends Form {
 			$articleGalley = $articleGalleyDao->newDataObject();
 			$articleGalley->setSubmissionId($this->_submission->getId());
 			$articleGalley->setLabel($this->getData('label'));
-			if ($journal->getSetting('enablePublicGalleyId')) {
-				$articleGalley->setStoredPubId('publisher-id', $this->getData('publicGalleyId'));
-			}
-
 			$articleGalley->setLocale($this->getData('galleyLocale'));
 			$articleGalley->setGalleyType($this->getData('galleyType'));
 			$articleGalley->setRemoteURL($this->getData('remoteURL'));
