@@ -5,7 +5,7 @@
  * Copyright (c) 2003-2016 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * Edit custom URN suffix for an object (issue, article, file)
+ * Edit custom URN suffix for an object (issue, submission, file)
  *
  *}
 <script src="{$baseUrl}/plugins/pubIds/urn/js/checkNumber.js"></script>
@@ -48,9 +48,9 @@
 {/if}
 {* issue pub object *}
 {if $pubObjectType == 'Issue'}
-	{assign var=enableArticleURN value=$pubIdPlugin->getSetting($currentJournal->getId(), "enableArticleURN")}
+	{assign var=enableSubmissionURN value=$pubIdPlugin->getSetting($currentJournal->getId(), "enableSubmissionURN")}
 	{assign var=enableRepresentationURN value=$pubIdPlugin->getSetting($currentJournal->getId(), "enableRepresentationURN")}
-	{if $enableArticleURN || $enableRepresentationURN}
+	{if $enableSubmissionURN || $enableRepresentationURN}
 		{if !$formArea}
 			{assign var="formAreaTitle" value="plugins.pubIds.urn.editor.urn"}
 		{else}

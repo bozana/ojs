@@ -198,7 +198,7 @@ class URNPubIdPlugin extends PubIdPlugin {
 	function getSuffixPatternsFieldNames() {
 		return  array(
 			'Issue' => 'urnIssueSuffixPattern',
-			'Article' => 'urnArticleSuffixPattern',
+			'Submission' => 'urnSubmissionSuffixPattern',
 			'Representation' => 'urnRepresentationSuffixPattern',
 		);
 	}
