@@ -107,7 +107,11 @@ class ArticleHandler extends Handler {
 		// Fetch and assign the galley to the template
 		$galleyDao = DAORegistry::getDAO('ArticleGalleyDAO');
 		$galley = $galleyDao->getByBestGalleyId($galleyId, $article->getId());
-		if ($galley && $galley->getRemoteURL()) $request->redirectUrl($galley->getRemoteURL());
+		if ($galley && $galley->getRemoteURL()) {
+			if (!HookRegistry::call('ArticleHandler::viewRemoteGalley', array(&$article, &$galley))) {
+				$request->redirectUrl($galley->getRemoteURL());
+			}
+		}
 		$templateMgr->assign('galley', $galley);
 		// Copyright and license info
 		$templateMgr->assign(array(

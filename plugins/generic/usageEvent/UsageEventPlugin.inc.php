@@ -27,7 +27,8 @@ class UsageEventPlugin extends PKPUsageEventPlugin {
 	function getEventHooks() {
 		return array_merge(parent::getEventHooks(), array(
 			'ArticleHandler::download',
-			'IssueHandler::download'
+			'IssueHandler::download',
+			'ArticleHandler::viewRemoteGalley',
 		));
 	}
 
@@ -113,6 +114,16 @@ class UsageEventPlugin extends PKPUsageEventPlugin {
 					$submissionFileDao = DAORegistry::getDAO('SubmissionFileDAO');
 					$pubObject = $submissionFileDao->getLatestRevision($fileId);
 					break;
+				case 'ArticleHandler::viewRemoteGalley':
+					$assocType = ASSOC_TYPE_GALLEY;
+					$article = $hookArgs[0];
+					$galley = $hookArgs[1];
+					$canonicalUrlOp = 'view';
+					$canonicalUrlParams = array($article->getId(), $galley->getId());
+					$idParams = array('a' . $article->getId(), 'g' . $galley->getId());
+					$downloadSuccess = true;
+					$pubObject = $galley;
+					break;
 				default:
 					// Why are we called from an unknown hook?
 					assert(false);
@@ -129,7 +140,8 @@ class UsageEventPlugin extends PKPUsageEventPlugin {
 		return array(
 			ASSOC_TYPE_JOURNAL,
 			ASSOC_TYPE_ISSUE,
-			ASSOC_TYPE_ARTICLE
+			ASSOC_TYPE_ARTICLE,
+			ASSOC_TYPE_GALLEY
 		);
 	}
 
