@@ -201,7 +201,7 @@ class DataciteExportPlugin extends DOIPubIdExportPlugin {
 	}
 
 	/**
-	 * @copydoc DOIPubIdExportPlugin::depositXML()
+	 * @copydoc PubObjectsExportPlugin::depositXML()
 	 */
 	function depositXML($object, $context, $filename) {
 		$request = $this->getRequest();
