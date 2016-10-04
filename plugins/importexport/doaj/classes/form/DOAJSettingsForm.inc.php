@@ -106,8 +106,7 @@ class DOAJSettingsForm extends Form {
 	 */
 	function getFormFields() {
 		return array(
-			'username' => 'string',
-			'password' => 'string',
+			'apiKey' => 'string',
 			'automaticRegistration' => 'bool',
 			'testMode' => 'bool'
 		);
@@ -119,7 +118,7 @@ class DOAJSettingsForm extends Form {
 	 * @return boolean
 	 */
 	function isOptional($settingName) {
-		return in_array($settingName, array('username', 'password', 'automaticRegistration', 'testMode'));
+		return in_array($settingName, array('apiKey', 'automaticRegistration', 'testMode'));
 	}
 
 }

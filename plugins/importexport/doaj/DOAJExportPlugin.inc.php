@@ -21,6 +21,7 @@ define('DOAJ_API_DEPOSIT_OK', 201);
 
 define('DOAJ_API_URL', 'http://doaj.org/api/v1/');
 define('DOAJ_API_URL_DEV', 'http://testdoaj.cottagelabs.com/api/v1/');
+define('DOAJ_API_OPERATION', 'bulk/articles');
 # We should probably use bulk articles: "A list/array of article JSON objects that you would like to create or update"?
 # /api/v1/articles 
 # /api/v1/bulk/articles 
@@ -118,14 +119,14 @@ function depositXML($objects, $context, $filename) {
 		# filename; Article JSON example https://github.com/DOAJ/harvester/blob/9b59fddf2d01f7c918429d33b63ca0f1a6d3d0d0/service/tests/fixtures/article.py
 		curl_setopt($curlCh, CURLOPT_POSTFIELDS, $jsondata );
 
-		# DOAJ API Key. Need to do settings for saving this. https://testdoaj.cottagelabs.com/api/v1/bulk/articles?api_key=keyhash
-		$api_key = $this->getSetting($context->getId(), 'api_key');
-		
-		$params = 'api_key=' . $api_key;
+		$endpoint = ($this->isTestMode($context) ? DOAJ_API_URL_DEV : DOAJ_API_URL);
+		$apiKey = $this->getSetting($context->getId(), 'apiKey');
+		$params = 'api_key=' . $apiKey;
+
 		curl_setopt(
 			$curlCh,
 			CURLOPT_URL,
-			DOAJ_API_URL_DEV . (strpos(DOAJ_API_URL_DEV,'?')===false?'?':'&') . $params
+			$endpoint . DOAJ_API_OPERATION . (strpos($endpoint,'?')===false?'?':'&') . $params
 		);
 		
 		$response = curl_exec($curlCh);
