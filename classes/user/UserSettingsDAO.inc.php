@@ -37,14 +37,14 @@ class UserSettingsDAO extends PKPUserSettingsDAO {
 	 * @return DAOResultFactory matching Users
 	 */
 	function &getUsersBySetting($name, $value, $type = null, $journalId = null) {
-		return parent::getUsersBySetting($name, $value, $type, ASSOC_TYPE_JOURNAL, $journalId);
+		return parent::getUsersBySetting($name, $value, $type, $journalId ? ASSOC_TYPE_JOURNAL : null, $journalId);
 	}
 
 	/**
 	 * Retrieve all settings for a user for a journal.
 	 * @param $userId int
 	 * @param $journalId int
-	 * @return array 
+	 * @return array
 	 */
 	function &getSettingsByJournal($userId, $journalId = null) {
 		return parent::getSettingsByAssoc($userId, ASSOC_TYPE_JOURNAL, $journalId);
