@@ -22,9 +22,7 @@ define('DOAJ_API_DEPOSIT_OK', 201);
 define('DOAJ_API_URL', 'http://doaj.org/api/v1/');
 define('DOAJ_API_URL_DEV', 'http://testdoaj.cottagelabs.com/api/v1/');
 define('DOAJ_API_OPERATION', 'bulk/articles');
-# We should probably use bulk articles: "A list/array of article JSON objects that you would like to create or update"?
-# /api/v1/articles 
-# /api/v1/bulk/articles 
+#define('DOAJ_API_OPERATION', 'articles');
 
 class DOAJExportPlugin extends PubObjectsExportPlugin {
 	/**
@@ -101,7 +99,7 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 	/**
 	 * @copydoc PubObjectsExportPlugin::depositXML()
 	 */
-function depositXML($objects, $context, $filename) {
+	function depositXML($objects, $context, $filename) {
 		
 		$curlCh = curl_init();
 		if ($httpProxyHost = Config::getVar('proxy', 'http_host')) {
@@ -116,7 +114,10 @@ function depositXML($objects, $context, $filename) {
 		curl_setopt($curlCh, CURLOPT_POST, true);
 		curl_setopt($curlCh, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
-		# filename; Article JSON example https://github.com/DOAJ/harvester/blob/9b59fddf2d01f7c918429d33b63ca0f1a6d3d0d0/service/tests/fixtures/article.py
+		# Article JSON example https://github.com/DOAJ/harvester/blob/9b59fddf2d01f7c918429d33b63ca0f1a6d3d0d0/service/tests/fixtures/article.py
+		# get xml in $filename
+		# convert to bibjson http://okfnlabs.org/bibjson/
+		
 		curl_setopt($curlCh, CURLOPT_POSTFIELDS, $jsondata );
 
 		$endpoint = ($this->isTestMode($context) ? DOAJ_API_URL_DEV : DOAJ_API_URL);
