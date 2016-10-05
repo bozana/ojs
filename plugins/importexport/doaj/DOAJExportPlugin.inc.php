@@ -163,16 +163,17 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 		} elseif ($request->getUserVar(EXPORT_ACTION_DEPOSIT)) {
 			assert($filter != null);
 
-			// Set filter to JSON
+			// Set filter for JSON
 			$filter = 'article=>doaj-json';
 			
 			// Get the JSON
 			$exportJson = $this->exportJSON($objects, $filter, $context);
 
 			// Deposit the JSON
-			// Should this be renamed in PubObjectsExportPlugin, I mean remove "XML" or use something more general?
+			// Should depositXML be renamed in PubObjectsExportPlugin, I mean remove "XML" or use something more general? Same thing applies to $filename variable
 			$result = $this->depositXML($objects, $context, $exportJson);
 
+			
 			// send notifications
 			if ($result === true) {
 				$this->_sendNotification(
