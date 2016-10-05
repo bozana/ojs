@@ -114,11 +114,8 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 		curl_setopt($curlCh, CURLOPT_POST, true);
 		curl_setopt($curlCh, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
-		# Article JSON example https://github.com/DOAJ/harvester/blob/9b59fddf2d01f7c918429d33b63ca0f1a6d3d0d0/service/tests/fixtures/article.py
-		# get xml in $filename
-		# convert to bibjson http://okfnlabs.org/bibjson/
-		
-		curl_setopt($curlCh, CURLOPT_POSTFIELDS, $jsondata );
+		 
+		curl_setopt($curlCh, CURLOPT_POSTFIELDS, $filename );
 
 		$endpoint = ($this->isTestMode($context) ? DOAJ_API_URL_DEV : DOAJ_API_URL);
 		$apiKey = $this->getSetting($context->getId(), 'apiKey');
@@ -150,6 +147,92 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 		return $result;
 		
 	}
+	
+	/**
+	 * @copydoc PubObjectsExportPlugin::executeExportAction()
+	 */	 
+	function executeExportAction($request, $objects, $filter, $tab, $objectsFileNamePart) {
+		$context = $request->getContext();
+		$path = array('plugin', $this->getName());
+		if ($request->getUserVar(EXPORT_ACTION_EXPORT)) {
+			assert($filter != null);
+			// Get the XML
+			$exportXml = $this->exportXML($objects, $filter, $context);
+			header('Content-type: application/xml');
+			echo $exportXml;
+		} elseif ($request->getUserVar(EXPORT_ACTION_DEPOSIT)) {
+			assert($filter != null);
+
+			// Set filter to JSON
+			$filter = 'article=>doaj-json';
+			
+			// Get the JSON
+			$exportJson = $this->exportJSON($objects, $filter, $context);
+
+			// Deposit the JSON
+			// Should this be renamed in PubObjectsExportPlugin, I mean remove "XML" or use something more general?
+			$result = $this->depositXML($objects, $context, $exportJson);
+
+			// send notifications
+			if ($result === true) {
+				$this->_sendNotification(
+					$request->getUser(),
+					$this->getDepositSuccessNotificationMessageKey(),
+					NOTIFICATION_TYPE_SUCCESS
+				);
+			} else {
+				if (is_array($result)) {
+					foreach($result as $error) {
+						assert(is_array($error) && count($error) >= 1);
+						$this->_sendNotification(
+							$request->getUser(),
+							$error[0],
+							NOTIFICATION_TYPE_ERROR,
+							(isset($error[1]) ? $error[1] : null)
+						);
+					}
+				}
+			}
+
+			// redirect back to the right tab
+			$request->redirect(null, null, null, $path, null, $tab);
+		} elseif ($request->getUserVar(EXPORT_ACTION_MARKREGISTERED)) {
+			$this->markRegistered($context, $objects);
+			// redirect back to the right tab
+			$request->redirect(null, null, null, $path, null, $tab);
+		} else {
+			$dispatcher = $request->getDispatcher();
+			$dispatcher->handle404();
+		}
+	}
+
+	/**
+	 * Get the JSON for selected objects.
+	 * @param $objects mixed Array of or single published article, issue or galley
+	 * @param $filter string
+	 * @param $context Context
+	 * @return string JSON variable.
+	 */	 
+	function exportJSON($objects, $filter, $context) {
+		$json = '';
+		
+		// What do we actually need here, is something missing or is something unnecessary?
+		$filterDao = DAORegistry::getDAO('FilterDAO');
+		$exportFilters = $filterDao->getObjectsByGroup($filter);
+		assert(count($exportFilters) == 1); // Assert only a single serialization filter
+		$exportFilter = array_shift($exportFilters);
+		$exportDeployment = $this->_instantiateExportDeployment($context);		
+		$exportFilter->setDeployment($exportDeployment);
+		
+		// Not sure if this is enough, ie. I do not know the filter framework well enough
+		$json = $exportFilter->execute($objects, true);
+		
+		// We probably need validation here
+		
+		return $json;
+	}
+	
+	
 }
 
 ?>
