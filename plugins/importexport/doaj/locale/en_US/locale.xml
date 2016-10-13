@@ -15,6 +15,9 @@
 	<message key="plugins.importexport.doaj.displayName">DOAJ Export Plugin</message>
 	<message key="plugins.importexport.doaj.description">Export Journal for DOAJ.</message>
 	<message key="plugins.importexport.doaj.export.contact">Contact DOAJ for inclusion</message>
+	
+	<message key="plugins.importexport.doaj.register.error.mdsError">Deposit was not successful! The DOAJ API returned an error: '{$param}'.</message>
+	
 	<message key="plugins.importexport.doaj.cliUsage"><![CDATA[Usage:
 {$scriptName} {$pluginName} export [xmlFileName] [journal_path] articles objectId1 [objectId2] ...
 ]]></message>

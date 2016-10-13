@@ -83,6 +83,28 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 	}
 
 	/**
+	 * @copydoc PubObjectsExportPlugin::getExportActions()
+	 */
+	function getExportActions($context) {
+		$actions = array(EXPORT_ACTION_EXPORT, EXPORT_ACTION_MARKREGISTERED );
+		if ($this->getSetting($context->getId(), 'apiKey')) {
+			array_unshift($actions, EXPORT_ACTION_DEPOSIT);
+		}
+		return $actions;
+	}
+	
+	/**
+	 * @copydoc PubObjectsExportPlugin::getExportActionNames()
+	 */
+	function getExportActionNames() {
+		return array(
+			EXPORT_ACTION_DEPOSIT => __('plugins.importexport.doaj.action.deposit'),
+			EXPORT_ACTION_EXPORT => __('plugins.importexport.doaj.action.export'),
+			EXPORT_ACTION_MARKREGISTERED => __('plugins.importexport.doaj.action.markRegistered'),
+		);
+	}	
+	
+	/**
 	 * @copydoc PubObjectsExportPlugin::getExportDeploymentClassName()
 	 */
 	function getExportDeploymentClassName() {
@@ -109,6 +131,8 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 				curl_setopt($curlCh, CURLOPT_PROXYUSERPWD, $username . ':' . Config::getVar('proxy', 'password'));
 			}
 		}
+		
+		error_log($filename);
 		
 		curl_setopt($curlCh, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curlCh, CURLOPT_POST, true);
@@ -217,9 +241,11 @@ class DOAJExportPlugin extends PubObjectsExportPlugin {
 	function exportJSON($objects, $filter, $context) {
 		$json = '';
 		
-		// What do we actually need here, is something missing or is something unnecessary?
+		// What do we actually need here, is something missing or is something unnecessary?		
 		$filterDao = DAORegistry::getDAO('FilterDAO');
 		$exportFilters = $filterDao->getObjectsByGroup($filter);
+		
+		
 		assert(count($exportFilters) == 1); // Assert only a single serialization filter
 		$exportFilter = array_shift($exportFilters);
 		$exportDeployment = $this->_instantiateExportDeployment($context);		

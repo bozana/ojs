@@ -46,8 +46,11 @@ class DOAJJsonFilter extends NativeExportFilter {
 	 */
 	function &process(&$pubObjects) {
 		
-		// Create the JSON string Article JSON example https://github.com/DOAJ/harvester/blob/9b59fddf2d01f7c918429d33b63ca0f1a6d3d0d0/service/tests/fixtures/article.py
-		$json = "";
+		// Create the JSON string Article JSON example bibJson https://github.com/DOAJ/harvester/blob/9b59fddf2d01f7c918429d33b63ca0f1a6d3d0d0/service/tests/fixtures/article.py
+		
+		// because we are using the Bulk API the JSON needs to be an array []
+		
+		$json = '';
 		
 		
 		return $json;
