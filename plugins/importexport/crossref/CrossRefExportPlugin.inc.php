@@ -27,6 +27,10 @@ define('CROSSREF_API_URL', 'https://test.crossref.org/v2/deposits');
 //TESTING
 define('CROSSREF_API_URL_DEV', 'https://test.crossref.org/v2/deposits');
 
+//define('CROSSREF_API_STAUTS_URL', 'https://api.crossref.org/servlet/submissionDownload');
+define('CROSSREF_API_STAUTS_URL', 'https://test.crossref.org/servlet/submissionDownload');
+define('CROSSREF_API_STAUTS_URL_DEV', 'https://test.crossref.org/servlet/submissionDownload');
+
 // The name of the settings used to save the registered DOI and the URL with the deposit status.
 define('CROSSREF_DEPOSIT_STATUS', 'depositStatus');
 
@@ -89,6 +93,88 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 			CROSSREF_STATUS_FAILED => __('plugins.importexport.crossref.status.failed'),
 			EXPORT_STATUS_MARKEDREGISTERED => __('plugins.importexport.crossref.status.markedRegistered'),
 		));
+	}
+
+	/**
+	 * @copydoc PubObjectsExportPlugin::getStatusActions()
+	 */
+	function getStatusActions($pubObject) {
+		$request = Application::getRequest();
+		$dispatcher = $request->getDispatcher();
+		return array(
+			CROSSREF_STATUS_FAILED =>
+				new LinkAction(
+					'failureMessage',
+					new AjaxModal(
+						$dispatcher->url(
+							$request, ROUTE_COMPONENT, null,
+							'grid.settings.plugins.settingsPluginGridHandler',
+							'manage', null, array('plugin' => 'CrossRefExportPlugin', 'category' => 'importexport', 'verb' => 'statusMessage',
+							'batchId' => $pubObject->getData($this->getDepositBatchIdSettingName()))
+						),
+						__('plugins.importexport.crossref.status.failed'),
+						'failureMessage'
+					),
+					__('plugins.importexport.crossref.status.failed')
+				),
+			/* just for testing:
+			CROSSREF_STATUS_REGISTERED =>
+				new LinkAction(
+					'successMessage',
+					new AjaxModal(
+						$dispatcher->url(
+							$request, ROUTE_COMPONENT, null,
+							'grid.settings.plugins.settingsPluginGridHandler',
+							'manage', null, array('plugin' => 'CrossRefExportPlugin', 'category' => 'importexport', 'verb' => 'statusMessage',
+							'batchId' => $pubObject->getData($this->getDepositBatchIdSettingName()))
+						),
+						__('plugins.importexport.crossref.status.registered'),
+						'successMessage'
+					),
+					__('plugins.importexport.crossref.status.registered')
+				)
+			*/
+		);
+	}
+
+	/**
+	 * @copydoc PubObjectsExportPlugin::getStatusMessage()
+	 */
+	function getStatusMessage($request) {
+		$context = $request->getContext();
+		$curlCh = curl_init();
+		if ($httpProxyHost = Config::getVar('proxy', 'http_host')) {
+			curl_setopt($curlCh, CURLOPT_PROXY, $httpProxyHost);
+			curl_setopt($curlCh, CURLOPT_PROXYPORT, Config::getVar('proxy', 'http_port', '80'));
+			if ($username = Config::getVar('proxy', 'username')) {
+				curl_setopt($curlCh, CURLOPT_PROXYUSERPWD, $username . ':' . Config::getVar('proxy', 'password'));
+			}
+		}
+		curl_setopt($curlCh, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curlCh, CURLOPT_POST, true);
+		curl_setopt($curlCh, CURLOPT_HEADER, 0);
+
+		// Use a different endpoint for testing and
+		// production.
+		$endpoint = ($this->isTestMode($context) ? CROSSREF_API_STAUTS_URL : CROSSREF_API_STAUTS_URL_DEV);
+		curl_setopt($curlCh, CURLOPT_URL, $endpoint);
+		// Set the form post fields
+		$username = $this->getSetting($context->getId(), 'username');
+		$password = $this->getSetting($context->getId(), 'password');
+		$batchId = $request->getUserVar('batchId');
+		$data = array('doi_batch_id' => $batchId, 'type' => 'result', 'usr' => $username, 'pwd' => $password);
+		curl_setopt($curlCh, CURLOPT_POSTFIELDS, $data);
+		// Temporary fix: accept any server(peer) certificate
+		// TO-DO: download crossref certificate and link it here with CURLOPT_CAINFO
+		curl_setopt($curlCh, CURLOPT_SSL_VERIFYPEER, false);
+		$response = curl_exec($curlCh);
+
+		if ($response === false) {
+			$result = __('plugins.importexport.common.register.error.mdsError', array('param' => 'No response from server.'));
+		} else {
+			$result = $response;
+		}
+		return $result;
 	}
 
 	/**
@@ -254,13 +340,22 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 
 		if ($response === false) {
 			$result = array(array('plugins.importexport.common.register.error.mdsError', 'No response from server.'));
-		} elseif ( $status = curl_getinfo($curlCh, CURLINFO_HTTP_CODE) != CROSSREF_API_DEPOSIT_OK ) {
-			$status = CROSSREF_STATUS_FAILED;
+		} elseif (curl_getinfo($curlCh, CURLINFO_HTTP_CODE) != CROSSREF_API_DEPOSIT_OK) {
+			/* This failures can not be accessed later, shall they be saved within OJS?
+			// Get DOMDocument from the response XML string
+			$xmlDoc = new DOMDocument();
+			$xmlDoc->loadXML($response);
+			$batchIdNode = $xmlDoc->getElementsByTagName('batch_id')->item(0);
+			if ($batchIdNode) {
+				$status = CROSSREF_STATUS_FAILED;
+			}
+			*/
 			$result = array(array('plugins.importexport.common.register.error.mdsError', htmlspecialchars($response)));
 		} else {
 			// Get DOMDocument from the response XML string
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->loadXML($response);
+			$batchIdNode = $xmlDoc->getElementsByTagName('batch_id')->item(0);
 
 			// Get the DOI deposit status
 			// If the deposti failed
@@ -300,7 +395,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		}
 		// Update the status
 		if ($status) {
-			$this->updateDepositStatus($context, $objects, $status);
+			$this->updateDepositStatus($context, $objects, $status, $batchIdNode->nodeValue);
 			$this->updateObject($objects);
 		}
 
@@ -314,9 +409,10 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 	 * @param $object The object getting deposited
 	 * @param $status CROSSREF_STATUS_...
 	 */
-	function updateDepositStatus($context, $object, $status) {
+	function updateDepositStatus($context, $object, $status, $batchId) {
 		assert(is_a($object, 'PublishedArticle') or is_a($object, 'Issue'));
 		$object->setData($this->getDepositStatusSettingName(), $status);
+		$object->setData($this->getDepositBatchIdSettingName(), $batchId);
 		if ($status == CROSSREF_STATUS_REGISTERED) {
 			// Save the DOI -- the object will be updated
 			$this->saveRegisteredDoi($context, $object);
