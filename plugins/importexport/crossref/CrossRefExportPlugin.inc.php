@@ -211,6 +211,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		assert(is_array($additionalFields));
 		$additionalFields[] = $this->getDepositStatusUrlSettingName();
 		$additionalFields[] = $this->getDepositBatchIdSettingName();
+		$additionalFields[] = $this->getCitationsDiagnosticIdSettingName();
 	}
 
 	/**
@@ -356,9 +357,14 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->loadXML($response);
 			$batchIdNode = $xmlDoc->getElementsByTagName('batch_id')->item(0);
+			$citationsDiagnosticCode = null;
+			if ($xmlDoc->getElementsByTagName('citations_diagnostic')->length > 0) {
+				$citationsDiagnosticNode = $xmlDoc->getElementsByTagName('citations_diagnostic')->item(0);
+				$citationsDiagnosticCode = $citationsDiagnosticNode->getAttribute('deferred') ;
+			}
 
 			// Get the DOI deposit status
-			// If the deposti failed
+			// If the deposit failed
 			$failureCountNode = $xmlDoc->getElementsByTagName('failure_count')->item(0);
 			$failureCount = (int) $failureCountNode->nodeValue;
 			if ($failureCount > 0) {
@@ -395,7 +401,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		}
 		// Update the status
 		if ($status) {
-			$this->updateDepositStatus($context, $objects, $status, $batchIdNode->nodeValue);
+			$this->updateDepositStatus($context, $objects, $status, $batchIdNode->nodeValue, $citationsDiagnosticCode);
 			$this->updateObject($objects);
 		}
 
@@ -408,11 +414,17 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 	 * @param $context Context
 	 * @param $object The object getting deposited
 	 * @param $status CROSSREF_STATUS_...
+	 * @param $batchId string
+	 * @param $citationsDiagnosticCode string (optional) Code/ID returned by Crossref
 	 */
-	function updateDepositStatus($context, $object, $status, $batchId) {
+	function updateDepositStatus($context, $object, $status, $batchId, $citationsDiagnosticCode = null) {
 		assert(is_a($object, 'PublishedArticle') or is_a($object, 'Issue'));
 		$object->setData($this->getDepositStatusSettingName(), $status);
 		$object->setData($this->getDepositBatchIdSettingName(), $batchId);
+		if ($citationsDiagnosticCode) {
+			//set the citations diagnostic code
+			$object->setData($this->getCitationsDiagnosticIdSettingName(), $citationsDiagnosticCode);
+		}
 		if ($status == CROSSREF_STATUS_REGISTERED) {
 			// Save the DOI -- the object will be updated
 			$this->saveRegisteredDoi($context, $object);
@@ -433,6 +445,14 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 	 */
 	function getDepositBatchIdSettingName() {
 		return $this->getPluginSettingsPrefix().'::batchId';
+	}
+
+	/**
+	 * Get citations diagnostic ID setting name.
+	 * @return string
+	 */
+	function getCitationsDiagnosticIdSettingName() {
+		return $this->getPluginSettingsPrefix().'::citationsDiagnosticId';
 	}
 
 	/**
