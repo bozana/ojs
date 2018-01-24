@@ -219,6 +219,23 @@ class ArticleCrossrefXmlFilter extends IssueCrossrefXmlFilter {
 		$this->appendTextMiningCollectionNodes($doc, $doiDataNode, $submission, $submissionGalleys);
 		$journalArticleNode->appendChild($doiDataNode);
 
+		// citation list
+		$citationDao = DAORegistry::getDAO('CitationDAO');
+		$articleCitations = $citationDao->getBySubmissionId($submission->getId());
+		if ($articleCitations->getCount() != 0) {
+			$citationListNode = $doc->createElementNS($deployment->getNamespace(), 'citation_list');
+			while ($citation = $articleCitations->next()) {
+				$rawCitation = $citation->getRawCitation();
+				if (!empty($rawCitation)) {
+					$citationNode = $doc->createElementNS($deployment->getNamespace(), 'citation');
+					$citationNode->setAttribute('key', 'ref'.$citation->getId());
+					$citationNode->appendChild($node = $doc->createElementNS($deployment->getNamespace(), 'unstructured_citation', htmlspecialchars($rawCitation, ENT_COMPAT, 'UTF-8')));
+					$citationListNode->appendChild($citationNode);
+				}
+			}
+			$journalArticleNode->appendChild($citationListNode);
+		}
+
 		// component list (supplementary files)
 		if (!empty($componentGalleys)) {
 			$journalArticleNode->appendChild($this->createComponentListNode($doc, $submission, $componentGalleys));
