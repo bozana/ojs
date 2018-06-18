@@ -18,7 +18,6 @@ import('classes.plugins.DOIPubIdExportPlugin');
 // The status of the Crossref DOI.
 // any, notDeposited, and markedRegistered are reserved
 define('CROSSREF_STATUS_FAILED', 'failed');
-define('CROSSREF_STATUS_REGISTERED', 'found');
 
 define('CROSSREF_API_DEPOSIT_OK', 200);
 
@@ -32,7 +31,7 @@ define('CROSSREF_API_STAUTS_URL', 'https://test.crossref.org/servlet/submissionD
 //TESTING
 define('CROSSREF_API_STAUTS_URL_DEV', 'https://test.crossref.org/servlet/submissionDownload');
 
-// The name of the settings used to save the registered DOI and the URL with the deposit status.
+// The name of the setting used to save the registered DOI and the URL with the deposit status.
 define('CROSSREF_DEPOSIT_STATUS', 'depositStatus');
 
 
@@ -90,7 +89,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 	 */
 	function getStatusNames() {
 		return array_merge(parent::getStatusNames(), array(
-			CROSSREF_STATUS_REGISTERED => __('plugins.importexport.crossref.status.registered'),
+			EXPORT_STATUS_REGISTERED => __('plugins.importexport.crossref.status.registered'),
 			CROSSREF_STATUS_FAILED => __('plugins.importexport.crossref.status.failed'),
 			EXPORT_STATUS_MARKEDREGISTERED => __('plugins.importexport.crossref.status.markedRegistered'),
 		));
@@ -117,24 +116,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 						'failureMessage'
 					),
 					__('plugins.importexport.crossref.status.failed')
-				),
-			/* just for testing:
-			CROSSREF_STATUS_REGISTERED =>
-				new LinkAction(
-					'successMessage',
-					new AjaxModal(
-						$dispatcher->url(
-							$request, ROUTE_COMPONENT, null,
-							'grid.settings.plugins.settingsPluginGridHandler',
-							'manage', null, array('plugin' => 'CrossRefExportPlugin', 'category' => 'importexport', 'verb' => 'statusMessage',
-							'batchId' => $pubObject->getData($this->getDepositBatchIdSettingName()))
-						),
-						__('plugins.importexport.crossref.status.registered'),
-						'successMessage'
-					),
-					__('plugins.importexport.crossref.status.registered')
 				)
-			*/
 		);
 	}
 
@@ -151,7 +133,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		if (!empty($failedMsg)) {
 			return $failedMsg;
 		}
-		// else check the failure message with Crossref
+		// else check the failure message with Crossref, using the API
 		$context = $request->getContext();
 		$curlCh = curl_init();
 		if ($httpProxyHost = Config::getVar('proxy', 'http_host')) {
@@ -185,16 +167,6 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		return $result;
 	}
 
-	/**
-	 * @copydoc PubObjectsExportPlugin::getExportActions()
-	 */
-	function getExportActions($context) {
-		$actions = array(EXPORT_ACTION_EXPORT, EXPORT_ACTION_MARKREGISTERED, );
-		if ($this->getSetting($context->getId(), 'username') && $this->getSetting($context->getId(), 'password')) {
-			array_unshift($actions, EXPORT_ACTION_DEPOSIT);
-		}
-		return $actions;
-	}
 
 	/**
 	 * @copydoc PubObjectsExportPlugin::getExportActionNames()
@@ -217,7 +189,6 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		parent::getAdditionalFieldNames($hookName, $args);
 		$additionalFields =& $args[1];
 		assert(is_array($additionalFields));
-		$additionalFields[] = $this->getDepositStatusUrlSettingName();
 		$additionalFields[] = $this->getDepositBatchIdSettingName();
 		$additionalFields[] = $this->getFailedMsgSettingName();
 	}
@@ -390,7 +361,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 				$result = false;
 			} else {
 				// Deposit was received
-				$status = CROSSREF_STATUS_REGISTERED;
+				$status = EXPORT_STATUS_REGISTERED;
 				$result = true;
 
 				// If there were some warnings, display them
@@ -399,24 +370,8 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 				if ($warningCount > 0) {
 					$result = array(array('plugins.importexport.crossref.register.success.warning', htmlspecialchars($response)));
 				}
-
+				// A possibility for other plugins (e.g. reference linking) to work with the response
 				HookRegistry::call('crossrefexportplugin::deposited', array($this, $response, $objects));
-
-				/* Check some things maybe?
-				$batchIdNode = $xmlDoc->getElementsByTagName('batch_id')->item(0);
-				$submissionIdNode = $xmlDoc->getElementsByTagName('submission_id')->item(0);
-				$recordCountNode = $xmlDoc->getElementsByTagName('record_count')->item(0);
-				$recordCount = (int) $recordCountNode->nodeValue;
-				$successCountNode = $xmlDoc->getElementsByTagName('success_count')->item(0);
-				$successCount = (int) $successCountNode->nodeValue;
-				if ($failureCount > 0) {
-					if ($warningCount > 0) {
-						assert($warningCount + $failureCount + $successCount == $recordCount);
-					} else {
-						assert($failureCount + $successCount == $recordCount);
-					}
-				}
-				*/
 			}
 		}
 		// Update the status
@@ -446,7 +401,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 		if ($failedMsg) {
 			$object->setData($this->getFailedMsgSettingName(), $failedMsg);
 		}
-		if ($status == CROSSREF_STATUS_REGISTERED) {
+		if ($status == EXPORT_STATUS_REGISTERED) {
 			// Save the DOI -- the object will be updated
 			$this->saveRegisteredDoi($context, $object);
 		}
@@ -462,14 +417,6 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 			$object->setData($this->getDepositStatusSettingName(), EXPORT_STATUS_MARKEDREGISTERED);
 			$this->saveRegisteredDoi($context, $object);
 		}
-	}
-
-	/**
-	 * Get deposit status/batch ID URL setting name.
-	 * @return string
-	 */
-	function getDepositStatusUrlSettingName() {
-		return $this->getPluginSettingsPrefix().'::statusUrl';
 	}
 
 	/**
@@ -489,7 +436,7 @@ class CrossRefExportPlugin extends DOIPubIdExportPlugin {
 	}
 
 	/**
-	 * @copydoc DOIExportPlugin::getDepositSuccessNotificationMessageKey()
+	 * @copydoc PubObjectsExportPlugin::getDepositSuccessNotificationMessageKey()
 	 */
 	function getDepositSuccessNotificationMessageKey() {
 		return 'plugins.importexport.common.register.success';
