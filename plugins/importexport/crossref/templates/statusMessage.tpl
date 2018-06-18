@@ -9,5 +9,5 @@
  *
  *}
 
-<pre>{$statusMessage}</pre>
+<pre style="white-space: pre-wrap;">{$statusMessage}</pre>
 
