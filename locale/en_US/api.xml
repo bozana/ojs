@@ -13,4 +13,7 @@
 
 <locale name="en_US" full_name="U.S. English">
 	<message key="api.submissions.403.unpublishedIssues">You do not have permission to view unpublished issues.</message>
+	<message key="api.stats.400.wrongDateFormat">Your request was not valid. The date has to be in the format YYYY-MM-DD.</message>
+	<message key="api.stats.400.wrongDateRange">Your request was not valid. The dateStart is bigger than the dateEnd.</message>
+	<message key="api.stats.400.wrongTimeSegmentDaily">Your request was not valid. The timeSegment 'daily' can only be used together with a date range (dateStart and dateEnd) within the last 90 days.</message>
 </locale>
