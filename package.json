@@ -78,4 +78,6 @@
     "last 2 versions",
     "not ie <= 10"
   ]
+    "chart.js": "^2.7.3",
+    "vue-chartjs": "^3.4.0",
 }

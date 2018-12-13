@@ -104,7 +104,9 @@
 
 	<!-- Common Article Terms -->
 	<message key="article.article">Artikel</message>
-	<message key="article.articles">Artikels</message>
+	<message key="article.articles">Artikelen</message>
+	<message key="common.publishedSubmission">Artikel</m
+	<message key="common.publishedSubmissions">Artikelen</message>
 	<message key="article.submissionId">Inzending ID</message>
 	<message key="article.title">Titel</message>
 	<message key="article.authors">Auteurs</message>
@@ -1036,4 +1038,5 @@ Uw server ondersteunt momenteel mbstring: <strong>{$supportsMBString}</strong>]]
 
 	<message key="catalog.sortBy">Artikels sorteren op</message>
 	<message key="catalog.sortBy.categoryDescription">Kies hoe artikels in deze categorie worden geordend.</message>
+	<message key="common.publishedSubmission">Artikel</message>
 </locale>
