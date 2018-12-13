@@ -14,6 +14,7 @@
  */
 
 import('lib.pkp.classes.statistics.PKPMetricsDAO');
+import('classes.statistics.StatisticsHelper'); //STATISTICS_DIMENSION_
 
 class MetricsDAO extends PKPMetricsDAO {
 
