@@ -36,7 +36,7 @@ class MoveSuppFilesTool extends CommandLineTool {
 	 * Print command usage information.
 	 */
 	function usage() {
-		echo "Moves all galleys supplementary files to the submisison files grid. USE WITH CARE.\n"
+		echo "Moves all galleys supplementary files to the submisison files grid (for OJS 3.2+). USE WITH CARE.\n"
 			. "Usage:\n"
 			. "{$this->scriptName} all\n"
 			. "{$this->scriptName} context context_id [...]\n";
@@ -112,7 +112,7 @@ class MoveSuppFilesTool extends CommandLineTool {
 						// update DB table submission_files
 						$submissionFileDao->update('UPDATE submission_files SET file_stage = ?, viewable = ?, assoc_type = ?, assoc_id = ? WHERE file_id = ? AND revision = ?', array(SUBMISSION_FILE_SUBMISSION, true, NULL, NULL, (int) $row['file_id'], (int) $row['revision']));
 						// remove galley
-						$submissionFileDao->update('DELETE FROM submission_galleys WHERE galley_id = ?', array((int)$galleyId));
+						$submissionFileDao->update('DELETE FROM publication_galleys WHERE galley_id = ?', array((int)$galleyId));
 						$submissionFileDao->update('DELETE FROM submission_galley_settings WHERE galley_id = ?', array((int) $galleyId));
 					}
 				}
