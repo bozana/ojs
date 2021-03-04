@@ -113,7 +113,7 @@ class MoveSuppFilesTool extends CommandLineTool {
 						$submissionFileDao->update('UPDATE submission_files SET file_stage = ?, viewable = ?, assoc_type = ?, assoc_id = ? WHERE file_id = ? AND revision = ?', array(SUBMISSION_FILE_SUBMISSION, true, NULL, NULL, (int) $row['file_id'], (int) $row['revision']));
 						// remove galley
 						$submissionFileDao->update('DELETE FROM publication_galleys WHERE galley_id = ?', array((int)$galleyId));
-						$submissionFileDao->update('DELETE FROM submission_galley_settings WHERE galley_id = ?', array((int) $galleyId));
+						$submissionFileDao->update('DELETE FROM publication_galley_settings WHERE galley_id = ?', array((int) $galleyId));
 					}
 				}
 				$suppFilesResult->MoveNext();
