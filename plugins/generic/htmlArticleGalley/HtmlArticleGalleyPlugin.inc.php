@@ -13,14 +13,14 @@
  * @brief Class for HtmlArticleGalley plugin
  */
 
-use APP\facades\Repo;
-use APP\file\PublicFileManager;
-
 import('lib.pkp.classes.plugins.GenericPlugin');
 
+use APP\events\UsageEvent;
+
+use APP\facades\Repo;
+use APP\file\PublicFileManager;
 use APP\template\TemplateManager;
 use PKP\plugins\HookRegistry;
-
 use PKP\submission\SubmissionFile;
 
 class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
@@ -134,6 +134,10 @@ class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
                 echo $this->_getHTMLContents($request, $galley);
                 $returner = true;
                 HookRegistry::call('HtmlArticleGalleyPlugin::articleDownloadFinished', [&$returner]);
+                if (!$request->isDNTSet()) {
+                    $publication = $article->getCurrentPublication();
+                    event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION_FILE, $fileId, $article->getContextId(), $article->getId(), $galley->getId(), $submissionFile->getData('mimetype'), $publication  ->getData('issueId')));
+                }
             }
             return true;
         }

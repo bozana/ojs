@@ -39,4 +39,8 @@
 		<descr>Send automated reminders about subscription expiry.</descr>
 		<frequency day="1"/>
 	</task>
+	<task class="lib.pkp.classes.task.UpdateIPGeoDB">
+		<descr>Update the DB-IP city lite database automatically.</descr>
+		<frequency dayOfMonth="2"/>
+	</task>
 </scheduled_tasks>
