@@ -24,8 +24,8 @@ use PKP\config\Config;
 use PKP\core\Core;
 use PKP\db\DAORegistry;
 use PKP\file\FileManager;
-
 use PKP\plugins\HookRegistry;
+
 
 class IssueFileManager extends FileManager
 {
