@@ -40,6 +40,10 @@ define('METRIC_TYPE_COUNTER', 'ojs::counter');
 
 class Application extends PKPApplication
 {
+    public const ASSOC_TYPE_JOURNAL = 0x0000100;
+    public const ASSOC_TYPE_ISSUE = 0x0000103;
+    public const ASSOC_TYPE_ISSUE_GALLEY = 0x0000105;
+
     /**
      * Constructor
      */

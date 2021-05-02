@@ -18,13 +18,14 @@
 
 namespace APP\file;
 
-use APP\issue\IssueFile;
 use PKP\config\Config;
 use PKP\core\Core;
 use PKP\db\DAORegistry;
 use PKP\file\FileManager;
-
 use PKP\plugins\HookRegistry;
+
+use APP\issue\IssueFile;
+
 
 class IssueFileManager extends FileManager
 {
