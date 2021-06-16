@@ -23,6 +23,8 @@ use APP\subscription\SubscriptionDAO;
 use APP\facades\Repo;
 use PKP\controllers\grid\GridColumn;
 use PKP\core\JSONMessage;
+use PKP\db\DAO;
+use PKP\db\DAORegistry;
 use PKP\identity\Identity;
 use PKP\notification\PKPNotification;
 

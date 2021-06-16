@@ -219,14 +219,14 @@ abstract class SubscriptionDAO extends \PKP\db\DAO
     /**
      * Internal function to generate subscription based search query.
      *
-     * @param null|mixed $status
-     * @param null|mixed $searchField
-     * @param null|mixed $searchMatch
-     * @param null|mixed $search
-     * @param null|mixed $dateField
-     * @param null|mixed $dateFrom
-     * @param null|mixed $dateTo
-     * @param null|mixed $params
+     * @param ?int $status
+     * @param ?int $searchField
+     * @param ?string $searchMatch
+     * @param ?string $search
+     * @param ?int $dateField
+     * @param ?string $dateFrom
+     * @param ?string $dateTo
+     * @param ?array $params
      *
      * @return string
      */

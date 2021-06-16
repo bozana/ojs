@@ -26,31 +26,28 @@ use PKP\db\DAORegistry;
 
 class InstitutionalSubscription extends Subscription
 {
-    public const SUBSCRIPTION_IP_RANGE_RANGE = '-';
-    public const SUBSCRIPTION_IP_RANGE_WILDCARD = '*';
-
     //
     // Get/set methods
     //
 
     /**
-     * Get the institution name of the institutionalSubscription.
+     * Get the institution ID of the subscription.
      *
-     * @return string
+     * @return int
      */
-    public function getInstitutionName()
+    public function getInstitutionId()
     {
-        return $this->getData('institutionName');
+        return $this->getData('institutionId');
     }
 
     /**
-     * Set the institution name of the institutionalSubscription.
+     * Set the institution ID of the subscription.
      *
-     * @param $institutionName string
+     * @param $institutionId int
      */
-    public function setInstitutionName($institutionName)
+    public function setInstitutionId($institutionId)
     {
-        return $this->setData('institutionName', $institutionName);
+        $this->setData('institutionId', $institutionId);
     }
 
     /**
@@ -94,47 +91,6 @@ class InstitutionalSubscription extends Subscription
     }
 
     /**
-     * Get institutionalSubscription ip ranges.
-     *
-     * @return array
-     */
-    public function getIPRanges()
-    {
-        return $this->getData('ipRanges');
-    }
-
-    /**
-     * Get institutionalSubscription ip ranges string.
-     *
-     * @return string
-     */
-    public function getIPRangesString()
-    {
-        $ipRanges = $this->getData('ipRanges');
-        $numRanges = count($ipRanges);
-        $ipRangesString = '';
-
-        for ($i = 0; $i < $numRanges; $i++) {
-            $ipRangesString .= $ipRanges[$i];
-            if ($i + 1 < $numRanges) {
-                $ipRangesString .= '\n';
-            }
-        }
-
-        return $ipRangesString;
-    }
-
-    /**
-     * Set institutionalSubscription ip ranges.
-     *
-     * @param ipRanges array
-     */
-    public function setIPRanges($ipRanges)
-    {
-        return $this->setData('ipRanges', $ipRanges);
-    }
-
-    /**
      * Check whether subscription is valid
      *
      * @param $domain string
@@ -153,10 +109,4 @@ class InstitutionalSubscription extends Subscription
 
 if (!PKP_STRICT_MODE) {
     class_alias('\APP\subscription\InstitutionalSubscription', '\InstitutionalSubscription');
-    foreach ([
-        'SUBSCRIPTION_IP_RANGE_RANGE',
-        'SUBSCRIPTION_IP_RANGE_WILDCARD',
-    ] as $constantName) {
-        define($constantName, constant('\InstitutionalSubscription::' . $constantName));
-    }
 }
