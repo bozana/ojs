@@ -20,13 +20,15 @@ namespace APP\payment\ojs;
 
 use APP\facades\Repo;
 
+use APP\subscription\Subscription;
+use APP\subscription\SubscriptionAction;
+use PKP\core\PKPApplication;
+use PKP\db\DAORegistry;
 use PKP\payment\CompletedPayment;
 use PKP\payment\PaymentManager;
+
 use PKP\payment\QueuedPayment;
 use PKP\plugins\PluginRegistry;
-
-use APP\subscription\SubscriptionAction;
-use APP\subscription\Subscription;
 
 class OJSPaymentManager extends PaymentManager
 {
