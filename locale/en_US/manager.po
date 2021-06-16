@@ -1229,6 +1229,9 @@ msgstr "A subscription type is required."
 msgid "manager.subscriptions.form.typeIdValid"
 msgstr "Please select a valid subscription type."
 
+msgid "manager.subscriptions.form.institutionIdValid"
+msgstr "Please select a valid institution."
+
 msgid "manager.subscriptions.form.dateStart"
 msgstr "Start date"
 
@@ -1342,6 +1345,9 @@ msgstr "This user already has a subscription for this journal."
 
 msgid "manager.subscriptions.form.typeRequired"
 msgstr "A subscription type must be created before new subscriptions can be made."
+
+msgid "manager.subscriptions.form.institutionRequired"
+msgstr "An institution must be created before new subscriptions can be made."
 
 msgid "manager.subscriptions.ipRange"
 msgstr "IP Range"
@@ -1720,3 +1726,6 @@ msgstr "\"{$issueId}\" - \"{$issueIdentification}\""
 
 msgid "plugins.importexport.issueGalleys.exportFailed"
 msgstr "Process failed to parse issue galleys"
+
+msgid "manager.institutions.noContext"
+msgstr "This institution's journal could not be found."

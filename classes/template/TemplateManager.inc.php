@@ -136,6 +136,11 @@ class TemplateManager extends PKPTemplateManager
 
         // Add payments link before settings
         if ($request->getContext()->getData('paymentsEnabled') && array_intersect([Role::ROLE_ID_SITE_ADMIN, Role::ROLE_ID_MANAGER, Role::ROLE_ID_SUBSCRIPTION_MANAGER], $userRoles)) {
+            $institutionsLink = [
+                'name' => __('institution.institutions'),
+                'url' => $router->url($request, null, 'management', 'settings', 'institutions'),
+                'isCurrent' => $request->getRequestedPage() === 'management' && in_array('institutions', (array) $request->getRequestedArgs()),
+            ];
             $paymentsLink = [
                 'name' => __('common.payments'),
                 'url' => $router->url($request, null, 'payments'),
@@ -144,11 +149,13 @@ class TemplateManager extends PKPTemplateManager
 
             $index = array_search('settings', array_keys($menu));
             if ($index === false || count($menu) === $index) {
+                $menu['institutions'] = $institutionsLink;
                 $menu['payments'] = $paymentsLink;
             } else {
                 $menu = array_slice($menu, 0, $index, true) +
-                        ['payments' => $paymentsLink] +
-                        array_slice($menu, $index, null, true);
+                    ['institutions' => $institutionsLink] +
+                    ['payments' => $paymentsLink] +
+                    array_slice($menu, $index, null, true);
             }
         }
 

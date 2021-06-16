@@ -57,9 +57,17 @@
 				<div class="subscription_institution">
 					<label>
 						<span class="label">
-							{translate key="user.subscriptions.form.institutionName"}
+							{translate key="user.subscriptions.form.institutionId"}
+							<span class="required">*</span>
+							<span class="pkp_screen_reader">
+								{translate key="common.required"}
+							</span>
 						</span>
-						<input type="text" name="institutionName" id="institutionName" value="{$institutionName|escape}">
+						<select name="institutionId" id="institutionId" required>
+							{foreach name=institutions from=$institutions key=id item=name}
+								<option value="{$id}"{if $id == $institutionId} selected{/if}>{$name|escape}</option>
+							{/foreach}
+						</select>
 					</label>
 				</div>
 				<div class="subscription_address">
@@ -83,15 +91,6 @@
 						<input type="text" name="domain" id="domain" value="{$domain|escape}" aria-describedby="subscriptionDomainDescription">
 					</label>
 					<p class="description" id="subscriptionDomainDescription">{translate key="user.subscriptions.form.domainInstructions"}</p>
-				</div>
-				<div class="subscription_ips">
-					<label>
-						<span class="label">
-							{translate key="user.subscriptions.form.ipRange"}
-						</span>
-						<input type="text" name="ipRanges" id="ipRanges" value="{$ipRanges|escape}" aria-describedby="subscriptionIPDescription">
-					</label>
-					<p class="description" id="subscriptionIPDescription">{translate key="user.subscriptions.form.ipRangeInstructions"}</p>
 				</div>
 			</div>
 		</fieldset>
