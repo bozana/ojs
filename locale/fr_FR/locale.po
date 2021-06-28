@@ -1737,9 +1737,6 @@ msgstr "Information d'adhésion, si obligatoire pour le type d'abonnement sélec
 msgid "user.subscriptions.form.institutionName"
 msgstr "Nom de l'institution"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Le nom de l'institution est obligatoire."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Adresse de courriel"
 

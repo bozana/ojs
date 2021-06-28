@@ -1355,9 +1355,6 @@ msgstr "Πληροφορίες μέλους, αν απαιτούνται για 
 msgid "user.subscriptions.form.institutionName"
 msgstr "Όνομασία ιδρύματος"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Απαιτείται μια ονομασία ιδρύματος."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Ταχυδρομική διεύθυνση"
 

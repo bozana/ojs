@@ -1308,9 +1308,6 @@ msgstr "Information om medlemskap om det krävs för vald prenumerationstyp."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Institutionens namn"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Ett namn på institutionen krävs."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Postadress"
 

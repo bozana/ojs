@@ -828,9 +828,6 @@ msgstr "삭제"
 msgid "user.subscriptions.form.ipRange"
 msgstr "IP 범위"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "기관 이름을 입력하세요."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "기관 이름"
 
