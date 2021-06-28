@@ -1181,9 +1181,6 @@ msgstr "دۆمەین"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "ناونیشانی پۆستی"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "ناوی دەزگا داوا کراوە."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "ناوی دەزگا"
 

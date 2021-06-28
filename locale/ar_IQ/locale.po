@@ -1350,9 +1350,6 @@ msgstr "بيانات العضوية، فيما لو كانت مطلوبة لنو
 msgid "user.subscriptions.form.institutionName"
 msgstr "اسم المؤسسة"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "اسم المؤسسة مطلوب حتماً."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "عنوان المراسلة"
 

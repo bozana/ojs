@@ -1306,9 +1306,6 @@ msgstr "Članske informacije (če so potrebne za to vrsto naročnine)."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Ime ustanove"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Ime ustanove je obvezno."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Naslov ustanove"
 

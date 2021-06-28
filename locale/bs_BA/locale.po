@@ -790,9 +790,6 @@ msgstr "Informacija o članstvu je obavezna za odabrani tip pretplate."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Ime institucije"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Obavezno je ime institucije."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Poštanska adresa"
 

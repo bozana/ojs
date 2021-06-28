@@ -2434,9 +2434,6 @@ msgstr ""
 msgid "user.subscriptions.form.institutionName"
 msgstr "Ainm na h-institiuide"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Tha feum air ainm institiuid."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Seòladh puist"
 

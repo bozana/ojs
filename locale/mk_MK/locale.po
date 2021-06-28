@@ -931,9 +931,6 @@ msgstr "Избриши"
 msgid "user.subscriptions.form.ipRangeItem"
 msgstr "&#8226;"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Потребно е име на институција."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "Име на институција"
 

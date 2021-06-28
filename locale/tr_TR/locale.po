@@ -1156,9 +1156,6 @@ msgstr "Seçilen abonelik türü için üyelik bilgileri gerekir."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Kurum adı"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Kurum adı gerekli."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Gönderi adresi"
 

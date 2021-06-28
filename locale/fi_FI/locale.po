@@ -1293,9 +1293,6 @@ msgstr "Valittu tilausvaihtoehto edellyttää jäsenyystietoja."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Instituution nimi"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Instituution nimi vaaditaan."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Postiosoite"
 

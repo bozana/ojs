@@ -1229,9 +1229,6 @@ msgstr "اطلاعات عضویت در صورتی که برای نوع اشتر�
 msgid "user.subscriptions.form.institutionName"
 msgstr "نام سازمان"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "نام سازمان لازم است"
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "آدرس پستی"
 

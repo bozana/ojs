@@ -1135,9 +1135,6 @@ msgstr "Informació d'afiliació, si és necessària, pel tipus de subscripció 
 msgid "user.subscriptions.form.institutionName"
 msgstr "Nom de la institució"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Heu d'introduir el nom de la institució."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Adreça postal"
 
