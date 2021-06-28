@@ -1201,9 +1201,6 @@ msgstr "Je třeba zadat informace o členství pro vybraný typ předplatného."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Jméno organizace"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Je vyžadováno zadání jména organizace."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Poštovní adresa"
 

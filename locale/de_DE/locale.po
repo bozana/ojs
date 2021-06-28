@@ -1315,9 +1315,6 @@ msgstr "Für die ausgewählte Abonnement-Art sind Mitgliedschaftsinformationen e
 msgid "user.subscriptions.form.institutionName"
 msgstr "Name der Einrichtung"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Ein Einrichtungsname ist erforderlich."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Adresse"
 

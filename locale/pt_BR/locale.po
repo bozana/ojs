@@ -1393,9 +1393,6 @@ msgstr "Informações sobre o registro em entidade de classe caso sejam exigidas
 msgid "user.subscriptions.form.institutionName"
 msgstr "Instituição/Afiliação"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "O nome da instituição é obrigatório."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Endereço postal"
 

@@ -1732,9 +1732,6 @@ msgstr ""
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Საფოსტო მისამართი"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "აუცილებელია დაწესებულების სახელი."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "დაწესებულების დასახელება"
 

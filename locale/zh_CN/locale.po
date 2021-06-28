@@ -1113,9 +1113,6 @@ msgstr "所选的订阅类型需要会员信息."
 msgid "user.subscriptions.form.institutionName"
 msgstr "机构名称"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "需要机构名称."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "通信地址"
 

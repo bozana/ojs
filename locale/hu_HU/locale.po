@@ -1322,9 +1322,6 @@ msgstr "A tagsági adatok, ha szükséges az előfizetés típusához."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Intézmény neve"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Intézmény neve kötelező."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Levelezési cím"
 

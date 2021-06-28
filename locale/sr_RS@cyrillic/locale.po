@@ -1619,9 +1619,6 @@ msgstr "Кориснички налог већ има индивидуалну �
 msgid "user.subscriptions.form.institutionName"
 msgstr "Име институције"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Име институције је неопходно."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Адреса поште"
 

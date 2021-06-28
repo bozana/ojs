@@ -1338,9 +1338,6 @@ msgstr "Lidmaatschapsinformatie indien vereist voor de gekozen abonnementsoort."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Naam van het instituut"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "De naam van het instituut is verplicht."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Postadres"
 
