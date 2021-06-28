@@ -1884,9 +1884,6 @@ msgstr ""
 msgid "user.subscriptions.form.institutionName"
 msgstr "Institusjonsnavn"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Du må oppgi et institusjonsnavn."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Postadresse"
 

@@ -2292,9 +2292,6 @@ msgstr "Tên miền"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Địa chỉ gửi thư"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Một tên tổ chức là bắt buộc."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "Tên tổ chức"
 

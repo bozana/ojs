@@ -1268,10 +1268,6 @@ msgstr "ドメイン名"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Mailing address"
 
-#, fuzzy
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "An institution name is required."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "機関名"
 

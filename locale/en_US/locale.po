@@ -1333,9 +1333,6 @@ msgstr "Membership information if required for the selected subscription type."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Institution name"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "An institution name is required."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Mailing address"
 
