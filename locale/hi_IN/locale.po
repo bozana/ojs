@@ -886,9 +886,6 @@ msgstr "डोमेन"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "डाक पता"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "एक संस्था का नाम आवश्यक है।"
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "संस्था का नाम"
 

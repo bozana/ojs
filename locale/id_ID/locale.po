@@ -1294,9 +1294,6 @@ msgstr "Informasi keanggotaan dibutuhkan untuk tipe langganan yang dipilih."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Nama Institusi"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Nama insitusi dibutuhkan."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Alamat Surat Menyurat"
 

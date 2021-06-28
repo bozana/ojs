@@ -1419,9 +1419,6 @@ msgstr "Doména"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Poštová adresa"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Je vyžadované zadanie mena organizácie."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "Meno organizácie"
 

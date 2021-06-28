@@ -1924,9 +1924,6 @@ msgstr ""
 msgid "user.subscriptions.form.institutionName"
 msgstr "Erakundearen izena"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Erakunde baten izena zehaztu behar da."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Posta-helbidea"
 

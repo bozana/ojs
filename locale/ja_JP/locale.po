@@ -1174,9 +1174,6 @@ msgstr "ドメイン名"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "送付先"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "機関名が必要です。"
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "機関名"
 

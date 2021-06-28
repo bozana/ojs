@@ -1357,9 +1357,6 @@ msgstr "Інформація про членство, якщо вона потр
 msgid "user.subscriptions.form.institutionName"
 msgstr "Назва установи"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Необхідно вказати назву установи."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Поштова адреса"
 

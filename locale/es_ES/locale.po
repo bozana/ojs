@@ -1127,9 +1127,6 @@ msgstr "Podría necesitar información de afiliación para el tipo de suscripci�
 msgid "user.subscriptions.form.institutionName"
 msgstr "Nombre de la institución"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "El nombre de la institución es obligatorio."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Dirección postal"
 

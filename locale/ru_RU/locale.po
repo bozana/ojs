@@ -1351,9 +1351,6 @@ msgstr "Информация о членстве (если необходима 
 msgid "user.subscriptions.form.institutionName"
 msgstr "Название организации"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Название организации обязательно."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Почтовый адрес"
 
