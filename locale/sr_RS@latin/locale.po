@@ -1611,9 +1611,6 @@ msgstr "Korisnički nalog već ima individualnu pretplatu."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Ime institucije"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Ime institucije je neophodno."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Adresa pošte"
 

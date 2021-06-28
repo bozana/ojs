@@ -1751,9 +1751,6 @@ msgstr "Medlemsinformation, hvis påkrævet, for den valgte abonnementstype."
 msgid "user.subscriptions.form.institutionName"
 msgstr "Institutionsnavn"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Institutionsnavn påkrævet."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Postadresse"
 

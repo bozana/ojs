@@ -2102,9 +2102,6 @@ msgstr ""
 msgid "user.subscriptions.form.institutionName"
 msgstr "Nazwa instytucji"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Wymagana jest nazwa instytucji."
-
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Adres"
 

@@ -2358,9 +2358,6 @@ msgstr "Domeniu"
 msgid "user.subscriptions.form.institutionMailingAddress"
 msgstr "Adresa de poștă"
 
-msgid "user.subscriptions.form.institutionNameRequired"
-msgstr "Este solicitat numele instituției."
-
 msgid "user.subscriptions.form.institutionName"
 msgstr "Numele instituției"
 
