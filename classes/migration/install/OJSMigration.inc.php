@@ -290,6 +290,20 @@ class OJSMigration extends \PKP\migration\Migration
             $table->string('payment_method_plugin_name', 80)->nullable();
         });
 
+        // metrics_issue: metrics for the issue TOC and galleys pages
+        Schema::create('metrics_issue', function (Blueprint $table) {
+            $table->string('load_id', 255);
+            $table->bigInteger('context_id');
+            $table->bigInteger('issue_id');
+            $table->bigInteger('issue_galley_id')->nullable();
+            $table->date('date');
+            $table->integer('metric');
+            $table->foreign('context_id')->references('journal_id')->on('journals');
+            $table->foreign('issue_id')->references('issue_id')->on('issues');
+            $table->index(['load_id'], 'metrics_issue_load_id');
+            $table->index(['context_id', 'issue_id'], 'metrics_issue_context_id_issue_id');
+        });
+
         // Add additional foreign key constraints once all tables have been created
         Schema::table('journals', function (Blueprint $table) {
             $table->foreign('current_issue_id')->references('issue_id')->on('issues');
