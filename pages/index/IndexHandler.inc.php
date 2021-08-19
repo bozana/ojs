@@ -17,7 +17,7 @@ import('lib.pkp.pages.index.PKPIndexHandler');
 
 use APP\facades\Repo;
 use APP\template\TemplateManager;
-
+use APP\observers\events\UsageEvent;
 use PKP\db\DAORegistry;
 
 class IndexHandler extends PKPIndexHandler
@@ -72,6 +72,10 @@ class IndexHandler extends PKPIndexHandler
             $this->_setupAnnouncements($journal, $templateMgr);
 
             $templateMgr->display('frontend/pages/indexJournal.tpl');
+            if (!$request->isDNTSet()) {
+                event(new UsageEvent(ASSOC_TYPE_JOURNAL, $journal->getId(), $journal->getId()));
+            }
+            return;
         } else {
             $journalDao = DAORegistry::getDAO('JournalDAO'); /* @var $journalDao JournalDAO */
             $site = $request->getSite();

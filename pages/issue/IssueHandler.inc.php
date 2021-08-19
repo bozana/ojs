@@ -21,7 +21,7 @@ use APP\handler\Handler;
 use APP\i18n\AppLocale;
 use APP\issue\Collector;
 use APP\issue\IssueAction;
-
+use APP\observers\events\UsageEvent;
 use APP\payment\ojs\OJSPaymentManager;
 use APP\security\authorization\OjsIssueRequiredPolicy;
 use APP\security\authorization\OjsJournalMustPublishPolicy;
@@ -127,6 +127,10 @@ class IssueHandler extends Handler
             $pubIdPlugins = PluginRegistry::loadCategory('pubIds', true);
             $templateMgr->assign('pubIdPlugins', $pubIdPlugins);
             $templateMgr->display('frontend/pages/issue.tpl');
+            if ($issue->getPublished() && !$request->isDNTSet()) {
+                event(new UsageEvent(ASSOC_TYPE_ISSUE, $issue->getId(), $journal->getId(), null, null, null, $issue->getId()));
+            }
+            return;
         }
     }
 
@@ -187,7 +191,16 @@ class IssueHandler extends Handler
 
             if (!HookRegistry::call('IssueHandler::download', [&$issue, &$galley])) {
                 $issueFileManager = new IssueFileManager($issue->getId());
-                return $issueFileManager->downloadById($galley->getFileId(), $request->getUserVar('inline') ? true : false);
+                if ($issueFileManager->downloadById($galley->getFileId(), $request->getUserVar('inline') ? true : false)) {
+                    if ($issue->getPublished() && !$request->isDNTSet()) {
+                        $issueFileDao = DAORegistry::getDAO('IssueFileDAO'); /* @var $issueFileDao IssueFileDAO */
+                        $issueFile = $issueFileDao->getById($galley->getFileId());
+                        $mimetype = $issueFile->getFileType();
+                        event(new UsageEvent(ASSOC_TYPE_ISSUE_GALLEY, $galley->getId(), $issue->getJournalId(), null, null, $mimetype, $issue->getId()));
+                    }
+                    return true;
+                }
+                return false;
             }
         }
     }
