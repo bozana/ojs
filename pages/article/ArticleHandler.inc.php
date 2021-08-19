@@ -17,6 +17,7 @@
 use APP\facades\Repo;
 use APP\handler\Handler;
 use APP\issue\IssueAction;
+use APP\observers\events\UsageEvent;
 use APP\payment\ojs\OJSPaymentManager;
 use APP\security\authorization\OjsJournalMustPublishPolicy;
 use APP\submission\Submission;
@@ -25,6 +26,7 @@ use Firebase\JWT\JWT;
 use PKP\security\authorization\ContextRequiredPolicy;
 use PKP\submission\PKPSubmission;
 use PKP\submissionFile\SubmissionFile;
+
 
 class ArticleHandler extends Handler
 {
@@ -344,7 +346,11 @@ class ArticleHandler extends Handler
             }
 
             if (!HookRegistry::call('ArticleHandler::view', [&$request, &$issue, &$article, $publication])) {
-                return $templateMgr->display('frontend/pages/article.tpl');
+                $templateMgr->display('frontend/pages/article.tpl');
+                if ($article->getStatus() == Submission::STATUS_PUBLISHED && !$request->isDNTSet()) {
+                    event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION, $article->getId(), $context->getId(), $article->getId(), null, null, $publication->getData('issueId')));
+                }
+                return;
             }
         } else {
 
@@ -478,6 +484,19 @@ class ArticleHandler extends Handler
 
                 $filename = Services::get('file')->formatFilename($submissionFile->getData('path'), $submissionFile->getLocalizedData('name'));
 
+                // if the file is a gallay file (i.e. not a dependent file e.g. CSS or images),
+                // and if DoNotTrack is not set, fire an usage event.
+                if ($this->article->getStatus() == Submission::STATUS_PUBLISHED && $this->galley->getData('submissionFileId') == $this->fileId && !$request->isDNTSet()) {
+                    $assocType = Application::ASSOC_TYPE_SUBMISSION_FILE;
+                    $genreDao = DAORegistry::getDAO('GenreDAO');
+                    $genre = $genreDao->getById($submissionFile->getGenreId());
+                    // TO-DO: is this correct ?
+                    if ($genre->getCategory() != GENRE_CATEGORY_DOCUMENT || $genre->getSupplementary() || $genre->getDependent()) {
+                        $assocType = Application::ASSOC_TYPE_SUBMISSION_FILE_COUNTER_OTHER;
+                    }
+                    $mimetype = $submissionFile->getData('mimetype');
+                    event(new UsageEvent($assocType, $this->fileId, $this->article->getContextId(), $this->article->getId(), $this->galley->getId(), $mimetype, $this->publication->getData('issueId')));
+                }
                 $returner = true;
                 HookRegistry::call('FileManager::downloadFileFinished', [&$returner]);
                 Services::get('file')->download($submissionFile->getData('fileId'), $filename);
