@@ -103,7 +103,7 @@ class InstitutionalSubscriptionForm extends SubscriptionForm
     /**
      * @copydoc Form::fetch
      *
-     * @param null|mixed $template
+     * @param null|string $template
      */
     public function fetch($request, $template = null, $display = false)
     {
