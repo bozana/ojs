@@ -15,6 +15,7 @@
 
 import('lib.pkp.pages.user.PKPUserHandler');
 
+use APP\facades\Repo;
 use APP\journal\Journal;
 use APP\payment\ojs\OJSPaymentManager;
 use APP\template\TemplateManager;
@@ -56,9 +57,15 @@ class UserHandler extends PKPUserHandler
         }
 
         if ($institutionalSubscriptionTypesExist) {
-            $subscriptionDao = DAORegistry::getDAO('InstitutionalSubscriptionDAO'); /** @var InstitutionalSubscriptionDAO $subscriptionDao */
-            $userInstitutionalSubscriptions = $subscriptionDao->getByUserIdForJournal($user->getId(), $journal->getId());
+            $subscriptionDao = DAORegistry::getDAO('InstitutionalSubscriptionDAO'); /* @var InstitutionalSubscriptionDAO $subscriptionDao */
+            $userInstitutionalSubscriptions = $subscriptionDao->getByUserIdForJournal($user->getId(), $journal->getId())->toArray();
             $templateMgr->assign('userInstitutionalSubscriptions', $userInstitutionalSubscriptions);
+            $institutions = [];
+            foreach ($userInstitutionalSubscriptions as $userInstitutionalSubscription) {
+                $institution = Repo::institution()->get($userInstitutionalSubscription->getInstitutionId());
+                $institutions[$userInstitutionalSubscription->getId()] = $institution;
+            }
+            $templateMgr->assign('institutions', $institutions);
         }
 
         $paymentManager = Application::getPaymentManager($journal);
