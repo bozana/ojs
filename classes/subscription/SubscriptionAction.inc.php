@@ -15,6 +15,7 @@
 
 namespace APP\subscription;
 
+use APP\facades\Repo;
 use APP\notification\NotificationManager;
 use APP\facades\Repo;
 use PKP\db\DAORegistry;
@@ -75,11 +76,12 @@ class SubscriptionAction
                 break;
             case 'SUBSCRIPTION_PURCHASE_INSTL':
             case 'SUBSCRIPTION_RENEW_INSTL':
+                $institution = Repo::institution()->get($subscription->getInstitutionId());
                 $paramArray['subscriptionUrl'] = $request->url($journal->getPath(), 'payments', null, null, null, 'institutional');
-                $paramArray['institutionName'] = $subscription->getInstitutionName();
+                $paramArray['institutionName'] = $institution->getLocalizedName();
                 $paramArray['institutionMailingAddress'] = $subscription->getInstitutionMailingAddress();
                 $paramArray['domain'] = $subscription->getDomain();
-                $paramArray['ipRanges'] = $subscription->getIPRangesString();
+                $paramArray['ipRanges'] = implode(' ', $institution->getIPRanges());
                 break;
         }
 

@@ -41,7 +41,7 @@
 	</task>
 	<task class="lib.pkp.classes.task.UpdateIPGeoDB">
 		<descr>Update the DB-IP city lite database automatically.</descr>
-		<frequency dayOfMonth="2"/>
+		<frequency dayofmonth="2"/>
 	</task>
 	<task class="lib.pkp.classes.task.UsageStatsLoader">
 		<descr>Process the usage stats logs and load the numbers into the DB tables.</descr>
