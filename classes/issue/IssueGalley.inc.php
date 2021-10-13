@@ -23,7 +23,7 @@
 namespace APP\issue;
 
 use APP\core\Application;
-
+use APP\core\Services;
 use APP\i18n\AppLocale;
 use PKP\db\DAORegistry;
 
@@ -53,18 +53,26 @@ class IssueGalley extends IssueFile
     //
     // Get/set methods
     //
-
     /**
      * Get views count.
+     *
+     * @deprecated 3.4
      *
      * @return int
      */
     public function getViews()
     {
-        $application = Application::getApplication();
-        return $application->getPrimaryMetricByAssoc(ASSOC_TYPE_ISSUE_GALLEY, $this->getId());
+        $views = 0;
+        $filters = [
+            'contextIds' => [Application::get()->getRequest()->getContext()->getId()],
+            'issueGalleyIds' => [$this->getId()],
+        ];
+        $metrics = Services::get('issueStats')->getMetrics([], [], $filters)->toArray();
+        if (!empty($metrics)) {
+            $views = current($metrics)->metric;
+        }
+        return $views;
     }
-
     /**
      * Get the localized value of the galley label.
      *

@@ -17,8 +17,7 @@
 
 namespace APP\article;
 
-use APP\core\Application;
-
+use App\core\Application;
 use APP\core\Services;
 use APP\i18n\AppLocale;
 use PKP\submission\Representation;
@@ -35,17 +34,23 @@ class ArticleGalley extends Representation
     /**
      * Get views count.
      *
+     * @deprecated 3.4
+     *
      * @return int
      */
     public function getViews()
     {
-        $application = Application::get();
+        $views = 0;
         $fileId = $this->getFileId();
-        if ($fileId) {
-            return $application->getPrimaryMetricByAssoc(ASSOC_TYPE_SUBMISSION_FILE, $fileId);
-        } else {
-            return 0;
+        $filters = [
+            'contextIds' => [Application::get()->getRequest()->getContext()->getId()],
+            'fileIds' => [$this->getId()],
+        ];
+        $metrics = Services::get('publicationStats')->getMetrics([], [], $filters)->toArray();
+        if (!empty($metrics)) {
+            $views = current($metrics)->metric;
         }
+        return $views;
     }
 
     /**

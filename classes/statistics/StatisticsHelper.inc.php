@@ -15,13 +15,15 @@
 
 namespace APP\statistics;
 
+use APP\core\Application;
 use APP\i18n\AppLocale;
 
 use PKP\statistics\PKPStatisticsHelper;
 
 class StatisticsHelper extends PKPStatisticsHelper
 {
-    public const STATISTICS_DIMENSION_ISSUE_ID = self::STATISTICS_DIMENSION_ASSOC_OBJECT_ID;
+    public const STATISTICS_DIMENSION_ISSUE_GALLEY_ID = 'issue_galley_id';
+    public const STATISTICS_DIMENSION_ISSUE_ID = 'issue_id';
 
     /**
      * @see PKPStatisticsHelper::getAppColumnTitle()
@@ -45,9 +47,11 @@ class StatisticsHelper extends PKPStatisticsHelper
      */
     protected function getReportColumnsArray()
     {
+        AppLocale::requireComponents(LOCALE_COMPONENT_APP_EDITOR);
         return array_merge(
             parent::getReportColumnsArray(),
-            [self::STATISTICS_DIMENSION_ISSUE_ID => __('issue.issue')]
+            [self::STATISTICS_DIMENSION_ISSUE_ID => __('issue.issue'),
+                self::STATISTICS_DIMENSION_ISSUE_GALLEY_ID => __('editor.issues.galley')]
         );
     }
 
@@ -59,14 +63,14 @@ class StatisticsHelper extends PKPStatisticsHelper
         $objectTypes = parent::getReportObjectTypesArray();
         AppLocale::requireComponents(LOCALE_COMPONENT_APP_EDITOR);
         $objectTypes = $objectTypes + [
-            ASSOC_TYPE_JOURNAL => __('context.context'),
-            ASSOC_TYPE_SECTION => __('section.section'),
-            ASSOC_TYPE_ISSUE => __('issue.issue'),
-            ASSOC_TYPE_ISSUE_GALLEY => __('editor.issues.galley'),
-            ASSOC_TYPE_SUBMISSION => __('common.publication'),
-            ASSOC_TYPE_SUBMISSION_FILE => __('submission.galleyFiles')
+            Application::ASSOC_TYPE_JOURNAL => __('context.context'),
+            Application::ASSOC_TYPE_SECTION => __('section.section'),
+            Application::ASSOC_TYPE_ISSUE => __('issue.issue'),
+            Application::ASSOC_TYPE_ISSUE_GALLEY => __('editor.issues.galley'),
+            Application::ASSOC_TYPE_SUBMISSION => __('common.publication'),
+            Application::ASSOC_TYPE_SUBMISSION_FILE => __('submission.galleyFiles'),
+            Application::ASSOC_TYPE_SUBMISSION_FILE_COUNTER_OTHER => __('submission.supplementary'), // __('article.suppFile')
         ];
-
         return $objectTypes;
     }
 }
