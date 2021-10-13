@@ -98,10 +98,10 @@ class ArticleReportPlugin extends ReportPlugin
         // (This must be stored before display because we won't know the data
         // dimensions until it has all been loaded.)
         $results = $sectionTitles = [];
-        $collector = Repo::submission()->getCollector()->filterByContextIds([$context->getId()]);
+        $collector = Repo::submission()->getCollector()->filterByContextIds([$journal->getId()]);
         $submissions = Repo::submission()->getMany($collector);
         $maxAuthors = $maxEditors = $maxDecisions = 0;
-        while ($submission = $submissions->next()) {
+        foreach ($submissions as $submission) {
             $publication = $submission->getCurrentPublication();
             $maxAuthors = max($maxAuthors, count($publication->getData('authors')));
             $editDecisions = $editDecisionDao->getEditorDecisions($submission->getId());
