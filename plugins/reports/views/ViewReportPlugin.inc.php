@@ -16,6 +16,8 @@
 
 import('lib.pkp.classes.plugins.ReportPlugin');
 
+use APP\core\Application;
+use APP\core\Services;
 use APP\facades\Repo;
 use APP\submission\Submission;
 
@@ -82,7 +84,7 @@ class ViewReportPlugin extends ReportPlugin
             Repo::submission()
                 ->getCollector()
                 ->filterByContextIds([$context->getId()])
-                ->filterByStageIds([Submission::STATUS_PUBLISHED])
+                ->filterByStatus([Submission::STATUS_PUBLISHED])
         );
         foreach ($submissions as $submission) {
             $articleId = $submission->getId();
@@ -90,7 +92,13 @@ class ViewReportPlugin extends ReportPlugin
             $articleTitles[$articleId] = PKPString::regexp_replace("/\r|\n/", '', $submission->getLocalizedTitle());
 
             // Store the abstract view count
-            $abstractViewCounts[$articleId] = $submission->getViews();
+            $submissionFilter = [
+                'contextIds' => [$context->getId()],
+                'assocTypes' => [Application::ASSOC_TYPE_SUBMISSION],
+                'submissionIds' => [$submission->getId()]
+            ];
+            $metrics = Services::get('publicationStats')->getMetrics([], [], $submissionFilter);
+            $abstractViewCounts[$articleId] = $metrics[0]->metric;
             // Make sure we get the issue identification
             $articleIssueIdentificationMap[$articleId] = $issueId;
             if (!isset($issueIdentifications[$issueId])) {
@@ -115,10 +123,20 @@ class ViewReportPlugin extends ReportPlugin
                 // Make sure the array is the same size as in previous iterations
                 //  so that we insert values into the right location
                 $galleyViews[$articleId] = array_pad($galleyViews[$articleId], count($galleyLabels), '');
-
-                $views = $galley->getViews();
-                $galleyViews[$articleId][$i] = $views;
-                $galleyViewTotals[$articleId] += $views;
+                $galleyViewCount = 0;
+                $fileId = $galley->getData('submissionFileId');
+                if ($fileId) {
+                    $galleyFilter = [
+                        'contextIds' => [$context->getId()],
+                        'assocTypes' => [Application::ASSOC_TYPE_SUBMISSION_FILE],
+                        'submissionIds' => [$submission->getId()],
+                        'fileIds' => [$fileId]
+                    ];
+                    $metrics = Services::get('publicationStats')->getMetrics([], [], $galleyFilter);
+                    $galleyViewCount = $metrics[0]->metric;
+                }
+                $galleyViews[$articleId][$i] = $galleyViewCount;
+                $galleyViewTotals[$articleId] += $galleyViewCount;
             }
         }
 
