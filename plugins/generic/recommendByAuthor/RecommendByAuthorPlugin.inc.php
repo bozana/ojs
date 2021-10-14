@@ -13,15 +13,19 @@
  * @brief Plugin to recommend articles from the same author.
  */
 
+use APP\core\Application;
+use APP\core\Services;
 use APP\facades\Repo;
+use APP\statistics\StatisticsHelper;
+use PKP\config\Config;
 use PKP\plugins\GenericPlugin;
-use PKP\statistics\PKPStatisticsHelper;
+use PKP\plugins\HookRegistry;
 use PKP\submission\PKPSubmission;
-
-define('RECOMMEND_BY_AUTHOR_PLUGIN_COUNT', 10);
 
 class RecommendByAuthorPlugin extends GenericPlugin
 {
+    public const RECOMMEND_BY_AUTHOR_PLUGIN_COUNT = 10;
+
     //
     // Implement template methods from Plugin.
     //
@@ -44,7 +48,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
     }
 
     /**
-     * @see Plugin::getDisplayName()
+     * @copydoc Plugin::getDisplayName()
      */
     public function getDisplayName()
     {
@@ -52,7 +56,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
     }
 
     /**
-     * @see Plugin::getDescription()
+     * @copydoc Plugin::getDescription()
      */
     public function getDescription()
     {
@@ -64,7 +68,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
     // View level hook implementations.
     //
     /**
-     * @see templates/article/footer.tpl
+     * @copydoc templates/article/footer.tpl
      */
     public function callbackTemplateArticlePageFooter($hookName, $params)
     {
@@ -107,21 +111,19 @@ class RecommendByAuthorPlugin extends GenericPlugin
         });
 
         // Order results by metric.
-        $application = Application::get();
-        $metricType = $application->getDefaultMetricType();
-        if (empty($metricType)) {
-            $smarty->assign('noMetricSelected', true);
-        }
-        $column = PKPStatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID;
-        $filter = [
-            PKPStatisticsHelper::STATISTICS_DIMENSION_ASSOC_TYPE => [ASSOC_TYPE_GALLEY, ASSOC_TYPE_SUBMISSION],
-            PKPStatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID => [$results]
+        $columns = [StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID];
+        $filters = [
+            StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID => [$displayedArticle->getData('contextId')],
+            StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID => $results,
+            StatisticsHelper::STATISTICS_DIMENSION_ASSOC_TYPE => [Application::ASSOC_TYPE_SUBMISSION, Application::ASSOC_TYPE_SUBMISSION_FILE]
         ];
-        $orderBy = [PKPStatisticsHelper::STATISTICS_METRIC => PKPStatisticsHelper::STATISTICS_ORDER_DESC];
-        $statsReport = $application->getMetrics($metricType, $column, $filter, $orderBy);
+        $orderBy = [StatisticsHelper::STATISTICS_METRIC => StatisticsHelper::STATISTICS_ORDER_DESC];
+        $statsReport = Services::get('publicationStats')->getMetrics($columns, $orderBy, $filters)->toArray();
+
         $orderedResults = [];
         foreach ((array) $statsReport as $reportRow) {
-            $orderedResults[] = $reportRow['submission_id'];
+            $reportRow = json_decode(json_encode($reportRow), true);
+            $orderedResults[] = $reportRow[StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID];
         }
         // Make sure we even get results that have no statistics (yet) and that
         // we get them in some consistent order for paging.
@@ -131,14 +133,14 @@ class RecommendByAuthorPlugin extends GenericPlugin
 
         // Pagination.
         $request = Application::get()->getRequest();
-        $rangeInfo = Handler::getRangeInfo($request, 'articlesBySameAuthor');
+        $rangeInfo = \APP\handler\Handler::getRangeInfo($request, 'articlesBySameAuthor');
         if ($rangeInfo && $rangeInfo->isValid()) {
             $page = $rangeInfo->getPage();
         } else {
             $page = 1;
         }
         $totalResults = count($orderedResults);
-        $itemsPerPage = RECOMMEND_BY_AUTHOR_PLUGIN_COUNT;
+        $itemsPerPage = self::RECOMMEND_BY_AUTHOR_PLUGIN_COUNT;
         $offset = $itemsPerPage * ($page - 1);
         $length = max($totalResults - $offset, 0);
         $length = min($itemsPerPage, $length);
@@ -154,10 +156,10 @@ class RecommendByAuthorPlugin extends GenericPlugin
 
         // Visualization.
         import('classes.search.ArticleSearch');
-        $articleSearch = new ArticleSearch();
+        $articleSearch = new \APP\search\ArticleSearch();
         $pagedResults = $articleSearch->formatResults($pagedResults);
         import('lib.pkp.classes.core.VirtualArrayIterator');
-        $returner = new VirtualArrayIterator($pagedResults, $totalResults, $page, $itemsPerPage);
+        $returner = new \PKP\core\VirtualArrayIterator($pagedResults, $totalResults, $page, $itemsPerPage);
         $smarty->assign('articlesBySameAuthor', $returner);
         $output .= $smarty->fetch($this->getTemplateResource('articleFooter.tpl'));
         return false;
