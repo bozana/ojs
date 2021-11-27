@@ -26,36 +26,6 @@ class StatisticsHelper extends PKPStatisticsHelper
     public const STATISTICS_DIMENSION_ISSUE_ID = 'issue_id';
 
     /**
-     * @see PKPStatisticsHelper::getAppColumnTitle()
-     */
-    protected function getAppColumnTitle($column)
-    {
-        switch ($column) {
-            case self::STATISTICS_DIMENSION_SUBMISSION_ID:
-                return __('common.publication');
-            case self::STATISTICS_DIMENSION_PKP_SECTION_ID:
-                return __('section.section');
-            case self::STATISTICS_DIMENSION_CONTEXT_ID:
-                return __('context.context');
-            default:
-                assert(false);
-        }
-    }
-
-    /**
-     * @see PKPStatisticsHelper::getReportColumnsArray()
-     */
-    protected function getReportColumnsArray()
-    {
-        AppLocale::requireComponents(LOCALE_COMPONENT_APP_EDITOR);
-        return array_merge(
-            parent::getReportColumnsArray(),
-            [self::STATISTICS_DIMENSION_ISSUE_ID => __('issue.issue'),
-                self::STATISTICS_DIMENSION_ISSUE_GALLEY_ID => __('editor.issues.galley')]
-        );
-    }
-
-    /**
      * @see PKPStatisticsHelper::getReportObjectTypesArray()
      */
     protected function getReportObjectTypesArray()
