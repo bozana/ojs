@@ -86,6 +86,11 @@ class OJSServiceProvider implements \Pimple\ServiceProviderInterface
             return new PKPStatsGeoService();
         };
 
+        // SUSHI statistics service
+        $pimple['sushiStats'] = function () {
+            return new StatsSushiService();
+        };
+
         // Editorial statistics service
         $pimple['editorialStats'] = function () {
             return new StatsEditorialService();
