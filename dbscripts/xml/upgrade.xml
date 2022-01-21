@@ -159,6 +159,8 @@
 		<code function="installEmailTemplate" key="EDITOR_DECISION_SKIP_REVIEW" locales="en_US" />
 		<migration class="PKP\migration\install\InstitutionsMigration" />
 		<migration class="APP\migration\upgrade\v3_4_0\I6895_Institutions" />
+		<migration class="APP\migration\install\MetricsMigration" />
+		<migration class="APP\migration\upgrade\v3_4_0\I6782_Metrics" />
 		<note file="docs/release-notes/README-3.4.0" />
 	</upgrade>
 
