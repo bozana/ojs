@@ -16,9 +16,9 @@
 use APP\core\Application;
 use APP\facades\Repo;
 use APP\notification\NotificationManager;
+use APP\subscription\form\SubscriptionForm;
 use APP\subscription\InstitutionalSubscription;
 use APP\subscription\SubscriptionType;
-use APP\subscription\form\SubscriptionForm;
 use APP\template\TemplateManager;
 use PKP\db\DAORegistry;
 use PKP\notification\PKPNotification;

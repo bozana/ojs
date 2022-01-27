@@ -1688,6 +1688,24 @@ msgstr "The specified objects could not be found."
 msgid "manager.setup.notifications.copyPrimaryContact"
 msgstr "Send a copy to the primary contact, identified in the Journal Settings."
 
+msgid "stats.totalDownloads"
+msgstr "Total Downloads"
+
+msgid "stats.totalViews"
+msgstr "Total Views"
+
+msgid "stats.uniqueDownloads"
+msgstr "Unique Downloads"
+
+msgid "stats.uniqueViews"
+msgstr "Unique Views"
+
+msgid "stats.issueTOCViews"
+msgstr "Issue TOC Views"
+
+msgid "stats.issueGalleyViews"
+msgstr "Issue Galley Views"
+
 msgid "stats.publicationStats"
 msgstr "Article Stats"
 

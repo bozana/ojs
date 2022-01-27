@@ -18,9 +18,10 @@
 namespace APP\article;
 
 use APP\core\Application;
-
+use APP\core\Services;
 use APP\facades\Repo;
 use APP\i18n\AppLocale;
+use APP\statistics\StatisticsHelper;
 use PKP\submission\Representation;
 
 class ArticleGalley extends Representation
@@ -35,17 +36,30 @@ class ArticleGalley extends Representation
     /**
      * Get views count.
      *
+     * @deprecated 3.4
+     *
      * @return int
      */
     public function getViews()
     {
-        $application = Application::get();
+        $views = 0;
         $fileId = $this->getFileId();
         if ($fileId) {
-            return $application->getPrimaryMetricByAssoc(ASSOC_TYPE_SUBMISSION_FILE, $fileId);
-        } else {
-            return 0;
+            $filters = [
+                'dateStart' => StatisticsHelper::STATISTICS_EARLIEST_DATE,
+                'dateEnd' => date('Y-m-d', strtotime('yesterday')),
+                'contextIds' => [Application::get()->getRequest()->getContext()->getId()],
+                'submissionFileIds' => [$fileId],
+            ];
+            $metrics = Services::get('publicationStats')
+                ->getQueryBuilder($filters)
+                ->getSum([])
+                ->get()->toArray();
+            if (!empty($metrics)) {
+                $views = (int) current($metrics)->metric;
+            }
         }
+        return $views;
     }
 
     /**
