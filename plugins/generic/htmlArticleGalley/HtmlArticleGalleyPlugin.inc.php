@@ -13,11 +13,17 @@
  * @brief Class for HtmlArticleGalley plugin
  */
 
+
 use APP\facades\Repo;
 use APP\file\PublicFileManager;
 use APP\template\TemplateManager;
 use PKP\plugins\HookRegistry;
 use PKP\submissionFile\SubmissionFile;
+use APP\core\Application;
+use APP\core\Services;
+use APP\observers\events\UsageEvent;
+use APP\submission\Submission;
+
 
 class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
 {
@@ -130,6 +136,10 @@ class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
                 echo $this->_getHTMLContents($request, $galley);
                 $returner = true;
                 HookRegistry::call('HtmlArticleGalleyPlugin::articleDownloadFinished', [&$returner]);
+                if ($article->getStatus() == Submission::STATUS_PUBLISHED && !$request->isDNTSet()) {
+                    $publication = $article->getCurrentPublication();
+                    event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION_FILE, $fileId, $article->getContextId(), $article->getId(), $galley->getId(), $submissionFile->getData('mimetype'), $publication  ->getData('issueId')));
+                }
             }
             return true;
         }
@@ -156,7 +166,7 @@ class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
         $collector = Repo::submissionFile()
             ->getCollector()
             ->filterByAssoc(
-                ASSOC_TYPE_SUBMISSION_FILE,
+                Application::ASSOC_TYPE_SUBMISSION_FILE,
                 [$submissionFile->getId()]
             )
             ->filterByFileStages([SubmissionFile::SUBMISSION_FILE_DEPENDENT])

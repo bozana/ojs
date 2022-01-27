@@ -22,32 +22,46 @@ use PKP\core\PKPApplication;
 use PKP\db\DAORegistry;
 use PKP\security\Role;
 
-define('REQUIRES_XSL', false);
-
-define('ASSOC_TYPE_ARTICLE', PKPApplication::ASSOC_TYPE_SUBMISSION); // DEPRECATED but needed by filter framework
-define('ASSOC_TYPE_GALLEY', PKPApplication::ASSOC_TYPE_REPRESENTATION);
-
-define('ASSOC_TYPE_JOURNAL', 0x0000100);
-define('ASSOC_TYPE_ISSUE', 0x0000103);
-define('ASSOC_TYPE_ISSUE_GALLEY', 0x0000105);
-
-define('CONTEXT_JOURNAL', 1);
-
-define('LANGUAGE_PACK_DESCRIPTOR_URL', 'http://pkp.sfu.ca/ojs/xml/%s/locales.xml');
-define('LANGUAGE_PACK_TAR_URL', 'http://pkp.sfu.ca/ojs/xml/%s/%s.tar.gz');
-
-define('METRIC_TYPE_COUNTER', 'ojs::counter');
-
 class Application extends PKPApplication
 {
+    public const ASSOC_TYPE_ARTICLE = PKPApplication::ASSOC_TYPE_SUBMISSION; // DEPRECATED but needed by filter framework;
+    public const ASSOC_TYPE_GALLEY = PKPApplication::ASSOC_TYPE_REPRESENTATION;
+
+    public const ASSOC_TYPE_JOURNAL = 0x0000100;
+    public const ASSOC_TYPE_ISSUE = 0x0000103;
+    public const ASSOC_TYPE_ISSUE_GALLEY = 0x0000105;
+
+    public const CONTEXT_JOURNAL = 1; // not used?
+    public const LANGUAGE_PACK_DESCRIPTOR_URL = 'http://pkp.sfu.ca/ojs/xml/%s/locales.xml'; // not used?
+    public const LANGUAGE_PACK_TAR_URL = 'http://pkp.sfu.ca/ojs/xml/%s/%s.tar.gz'; // not used?
+
+    public const REQUIRES_XSL = false;
+
     /**
      * Constructor
      */
     public function __construct()
     {
         parent::__construct();
-        if (!PKP_STRICT_MODE && !class_exists('\Application')) {
-            class_alias('\APP\core\Application', '\Application');
+        if (!PKP_STRICT_MODE) {
+            foreach ([
+                'REQUIRES_XSL',
+                'ASSOC_TYPE_ARTICLE',
+                'ASSOC_TYPE_GALLEY',
+                'ASSOC_TYPE_JOURNAL',
+                'ASSOC_TYPE_ISSUE',
+                'ASSOC_TYPE_ISSUE_GALLEY',
+                'CONTEXT_JOURNAL',
+                'LANGUAGE_PACK_DESCRIPTOR_URL',
+                'LANGUAGE_PACK_TAR_URL',
+            ] as $constantName) {
+                if (!defined($constantName)) {
+                    define($constantName, constant('self::' . $constantName));
+                }
+            }
+            if (!class_exists('\Application')) {
+                class_alias('\APP\core\Application', '\Application');
+            }
         }
     }
 
