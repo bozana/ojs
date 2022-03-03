@@ -17,126 +17,58 @@ namespace APP\tasks;
 
 use APP\core\Application;
 use APP\statistics\StatisticsHelper;
-use PKP\core\Core;
-
 use PKP\db\DAORegistry;
-use PKP\scheduledTask\ScheduledTaskHelper;
-use PKP\task\FileLoader;
 use PKP\task\PKPUsageStatsLoader;
+use stdClass;
 
 class UsageStatsLoader extends PKPUsageStatsLoader
 {
+    private $statsInstitutionDao;
+    private $statsTotalDao;
+    private $statsUniqueItemInvestigationsDao;
+    private $statsUniqueItemRequestsDao;
+
     /**
-     * @copydoc FileLoader::processFile()
-     * The file's entries MUST be ordered by date-time to successfully identify double-clicks and unique items.
+     * Constructor.
      */
-    protected function processFile(string $filePath)
+    public function __construct($args)
     {
-        $fhandle = fopen($filePath, 'r');
-        if (!$fhandle) {
-            // TO-DO: move plugins.generic.usageStats.openFileFailed to usageStats.openFileFailed
-            throw new \Exception(__('usageStats.openFileFailed', ['file' => $filePath]));
-        }
+        $this->statsInstitutionDao = DAORegistry::getDAO('UsageStatsInstitutionTemporaryRecordDAO'); /* @var UsageStatsInstitutionTemporaryRecordDAO $statsInstitutionDao */
+        $this->statsTotalDao = DAORegistry::getDAO('UsageStatsTotalTemporaryRecordDAO'); /* @var UsageStatsTotalTemporaryRecordDAO $statsTotalDao */
+        $this->statsUniqueItemInvestigationsDao = DAORegistry::getDAO('UsageStatsUniqueItemInvestigationsTemporaryRecordDAO'); /* @var UsageStatsUniqueItemInvestigationsTemporaryRecordDAO $statsUniqueItemInvestigationsDao */
+        $this->statsUniqueItemRequestsDao = DAORegistry::getDAO('UsageStatsUniqueItemRequestsTemporaryRecordDAO'); /* @var UsageStatsUniqueItemRequestsTemporaryRecordDAO $statsUniqueItemRequestsDao */
+        parent::__construct($args);
+    }
 
-        $loadId = basename($filePath);
+    protected function deleteByLoadId(string $loadId)
+    {
+        $this->statsInstitutionDao->deleteByLoadId($loadId);
+        $this->statsTotalDao->deleteByLoadId($loadId);
+        $this->statsUniqueItemInvestigationsDao->deleteByLoadId($loadId);
+        $this->statsUniqueItemRequestsDao->deleteByLoadId($loadId);
+    }
 
-        $statsInstitutionDao = DAORegistry::getDAO('UsageStatsInstitutionTemporaryRecordDAO'); /* @var $statsInstitutionDao UsageStatsInstitutionTemporaryRecordDAO */
-        $statsTotalDao = DAORegistry::getDAO('UsageStatsTotalTemporaryRecordDAO'); /* @var $statsTotalDao UsageStatsTotalTemporaryRecordDAO */
-        $statsUniqueItemInvestigationsDao = DAORegistry::getDAO('UsageStatsUniqueItemInvestigationsTemporaryRecordDAO'); /* @var $statsUniqueItemInvestigationsDao UsageStatsUniqueItemInvestigationsTemporaryRecordDAO */
-        $statsUniqueItemRequestsDao = DAORegistry::getDAO('UsageStatsUniqueItemRequestsTemporaryRecordDAO'); /* @var $statsUniqueItemRequestsDao UsageStatsUniqueItemRequestsTemporaryRecordDAO */
-
-        // Make sure we don't have any temporary records associated
-        // with the current load id in database.
-        $statsInstitutionDao->deleteByLoadId($loadId);
-        $statsTotalDao->deleteByLoadId($loadId);
-        $statsUniqueItemInvestigationsDao->deleteByLoadId($loadId);
-        $statsUniqueItemRequestsDao->deleteByLoadId($loadId);
-
-        $lineNumber = 0;
-        while (!feof($fhandle)) {
-            $lineNumber++;
-            $line = trim(fgets($fhandle));
-            if (empty($line) || substr($line, 0, 1) === '#') {
-                continue;
-            } // Spacing or comment lines. Should not occur.
-
-            $entryData = json_decode($line);
-
-            try {
-                $this->_isLogEntryValid($entryData);
-            } catch (\Exception $e) {
-                // reject the file ???
-                throw new \Exception(__(
-                    'usageStats.invalidLogEntry',
-                    ['file' => $filePath, 'lineNumber' => $lineNumber, 'error' => $e->getMessage()]
-                ));
-            }
-
-            // Avoid bots.
-            if (Core::isUserAgentBot($entryData->userAgent)) {
-                continue;
-            }
-
-            $foreignKeyErrors = $statsTotalDao->checkForeignKeys($entryData);
-            if (!empty($foreignKeyErrors)) {
-                $missingForeignKeys = implode(', ', $foreignKeyErrors);
-                $this->addExecutionLogEntry(__('usageStats.logfileProcessing.foreignKeyError', ['missingForeignKeys' => $missingForeignKeys, 'loadId' => $loadId, 'lineNumber' => $lineNumber]), ScheduledTaskHelper::SCHEDULED_TASK_MESSAGE_TYPE_ERROR);
-                $file = 'debug.txt';
-                $current = file_get_contents($file);
-                $current .= print_r("++++ missingForeignKeys ++++\n", true);
-                $current .= print_r($missingForeignKeys, true);
-                $current .= print_r("++++ loadId ++++\n", true);
-                $current .= print_r($loadId, true);
-                $current .= print_r("++++ lineNumber ++++\n", true);
-                $current .= print_r($lineNumber, true);
-                file_put_contents($file, $current);
-            } else {
-                $statsInstitutionDao->insert($entryData->institutionIds, $lineNumber, $loadId);
-                $statsTotalDao->insert($entryData, $lineNumber, $loadId);
-                if (!empty($entryData->submissionId)) {
-                    $statsUniqueItemInvestigationsDao->insert($entryData, $lineNumber, $loadId);
-                    if ($entryData->assocType == Application::ASSOC_TYPE_SUBMISSION_FILE) {
-                        $statsUniqueItemRequestsDao->insert($entryData, $lineNumber, $loadId);
-                    }
-                }
+    protected function insertTemporaryUsageStatsData(stdClass $entry, int $lineNumber, string $loadId)
+    {
+        $this->statsInstitutionDao->insert($entry->institutionIds, $lineNumber, $loadId);
+        $this->statsTotalDao->insert($entry, $lineNumber, $loadId);
+        if (!empty($entry->submissionId)) {
+            $this->statsUniqueItemInvestigationsDao->insert($entry, $lineNumber, $loadId);
+            if ($entry->assocType == Application::ASSOC_TYPE_SUBMISSION_FILE) {
+                $this->statsUniqueItemRequestsDao->insert($entry, $lineNumber, $loadId);
             }
         }
-        fclose($fhandle);
+    }
 
-        dispatch(new LoadMetricsDataJob($loadId));
-
-        $statsTotalDao->removeDoubleClicks(self::COUNTER_DOUBLE_CLICK_TIME_FILTER_SECONDS);
-        $statsUniqueItemInvestigationsDao->removeUniqueClicks();
-        $statsUniqueItemRequestsDao->removeUniqueClicks();
-
-        // load data from temporary tables into the actual metrics tables
-        // when would $loadSuccessful be false?
-        $loadSuccessful = $this->_loadData($loadId);
-
-        // TO-DO: remove comments
-        //$statsTotalDao->deleteByLoadId($loadId);
-        //$statsUniqueItemInvestigationsDao->deleteByLoadId($loadId);
-        //$statsUniqueItemRequestsDao->deleteByLoadId($loadId);
-        //$statsInstitutionDao->deleteByLoadId($loadId);
-
-        if (!$loadSuccessful) {
-            // TO-DO: move plugins.generic.usageStats.loadDataError to usageStats.loadDataError
-            $this->addExecutionLogEntry(__(
-                'usageStats.loadDataError',
-                ['file' => $filePath]
-            ), ScheduledTaskHelper::SCHEDULED_TASK_MESSAGE_TYPE_ERROR);
-            return FileLoader::FILE_LOADER_RETURN_TO_STAGING;
-        } else {
-            return true;
-        }
-
-        return true;
+    protected function checkForeignKeys(stdClass $entry): array
+    {
+        return $this->statsTotalDao->checkForeignKeys($entry);
     }
 
     /**
      * Validate an usage log entry.
      */
-    private function _isLogEntryValid(\stdClass $entry)
+    protected function isLogEntryValid(stdClass $entry)
     {
         if (!$this->_validateDate($entry->time)) {
             throw new \Exception(__('usageStats.invalidLogEntry.time'));
@@ -203,38 +135,6 @@ class UsageStatsLoader extends PKPUsageStatsLoader
         if (!is_array($entry->institutionIds)) {
             throw new \Exception(__('usageStats.invalidLogEntry.institutionIds'));
         }
-    }
-
-    /**
-     * Load the entries inside the temporary database associated with
-     * the passed load id to the metrics tables.
-     */
-    private function _loadData(string $loadId): bool
-    {
-        $statsTotalDao = DAORegistry::getDAO('UsageStatsTotalTemporaryRecordDAO'); /* @var $statsTotalDao UsageStatsTotalTemporaryRecordDAO */
-        $statsUniqueItemInvestigationsDao = DAORegistry::getDAO('UsageStatsUniqueItemInvestigationsTemporaryRecordDAO'); /* @var $statsUniqueItemInvestigationsDao UsageStatsUniqueItemInvestigationsTemporaryRecordDAO */
-        $statsUniqueItemRequestsDao = DAORegistry::getDAO('UsageStatsUniqueItemRequestsTemporaryRecordDAO'); /* @var $statsUniqueItemRequestsDao UsageStatsUniqueItemRequestsTemporaryRecordDAO */
-
-        $statsTotalDao->loadMetricsContext($loadId);
-        $statsTotalDao->loadMetricsIssue($loadId);
-        $statsTotalDao->loadMetricsSubmission($loadId);
-
-        // Geo database only contains total and unique views, no requests
-        $statsTotalDao->deleteSubmissionGeoDailyByLoadId($loadId); // always call first, before loading the data
-        $statsTotalDao->loadMetricsSubmissionGeoDaily($loadId);
-        $statsUniqueItemInvestigationsDao->loadMetricsSubmissionGeoDaily($loadId);
-
-        $statsTotalDao->deleteCounterSubmissionDailyByLoadId($loadId); // always call first, before loading the data
-        $statsTotalDao->loadMetricsCounterSubmissionDaily($loadId);
-        $statsUniqueItemInvestigationsDao->loadMetricsCounterSubmissionDaily($loadId);
-        $statsUniqueItemRequestsDao->loadMetricsCounterSubmissionDaily($loadId);
-
-        $statsTotalDao->deleteCounterSubmissionInstitutionDailyByLoadId($loadId); // always call first, before loading the data
-        $statsTotalDao->loadMetricsCounterSubmissionInstitutionDaily($loadId);
-        $statsUniqueItemInvestigationsDao->loadMetricsCounterSubmissionInstitutionDaily($loadId);
-        $statsUniqueItemRequestsDao->loadMetricsCounterSubmissionInstitutionDaily($loadId);
-
-        return true;
     }
 }
 
