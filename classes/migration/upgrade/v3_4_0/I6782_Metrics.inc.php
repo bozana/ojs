@@ -38,9 +38,9 @@ class I6782_Metrics extends Migration
             ->where('setting_name', '=', 'optionalColumns')
             ->value('setting_value');
 
-        $enableGeoUsageStats = $geoUsageStatsKeepDaily = 0;
+        $enableGeoUsageStats = $usageStatsKeepDaily = 0;
         if (!is_null($optionalColumns)) {
-            $geoUsageStatsKeepDaily = 1;
+            $usageStatsKeepDaily = 1;
             if (str_contains($optionalColumns, 'city')) {
                 $enableGeoUsageStats = 3;
             } elseif (str_contains($optionalColumns, 'region')) {
@@ -58,7 +58,7 @@ class I6782_Metrics extends Migration
         DB::table('site_settings')->insertOrIgnore([
             ['setting_name' => 'archivedUsageStatsLogFiles', 'setting_value' => $compressArchives],
             ['setting_name' => 'enableGeoUsageStats', 'setting_value' => $enableGeoUsageStats],
-            ['setting_name' => 'geoUsageStatsKeepDaily', 'setting_value' => $geoUsageStatsKeepDaily]
+            ['setting_name' => 'usageStatsKeepDaily', 'setting_value' => $usageStatsKeepDaily]
         ]);
 
         // Display site settings
