@@ -47,7 +47,7 @@ class UsageStatsMonthly extends ScheduledTask
 			",
             [$currentMonth]
         );
-        if ($site->getData('geoUsageStatsKeepDaily') == 0) {
+        if ($site->getData('usageStatsKeepDaily') == 0) {
             DB::statement("DELETE FROM metrics_submission_geo_daily WHERE DATE_FORMAT(date, '%Y%m') <> ?", [$currentMonth]);
         }
 
@@ -59,7 +59,7 @@ class UsageStatsMonthly extends ScheduledTask
 			",
             [$currentMonth]
         );
-        if ($site->getData('submissionUsageStatsKeepDaily') == 0) {
+        if ($site->getData('usageStatsKeepDaily') == 0) {
             DB::statement("DELETE FROM metrics_counter_submission_daily WHERE DATE_FORMAT(date, '%Y%m') <> ?", [$currentMonth]);
         }
 
@@ -71,7 +71,7 @@ class UsageStatsMonthly extends ScheduledTask
 			",
             [$currentMonth]
         );
-        if ($site->getData('institutionUsageStatsKeepDaily') == 0) {
+        if ($site->getData('usageStatsKeepDaily') == 0) {
             DB::statement("DELETE FROM metrics_counter_submission_institution_daily WHERE DATE_FORMAT(date, '%Y%m') <> ?", [$currentMonth]);
         }
 
