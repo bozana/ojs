@@ -26,7 +26,6 @@
 	<migration class="PKP\migration\install\LibraryFilesMigration" />
 	<migration class="PKP\migration\install\LogMigration" />
 	<migration class="PKP\migration\install\MetadataMigration" />
-	<migration class="PKP\migration\install\MetricsMigration" />
 	<migration class="PKP\migration\install\NavigationMenusMigration" />
 	<migration class="PKP\migration\install\NotesMigration" />
 	<migration class="PKP\migration\install\ReviewFormsMigration" />
@@ -43,6 +42,7 @@
 
 	<!-- OJS schema -->
 	<migration class="APP\migration\install\OJSMigration" />
+	<migration class="APP\migration\install\MetricsMigration" />
 
 	<migration class="PKP\migration\install\AnnouncementsMigration" />
 	<migration class="PKP\migration\install\CategoriesMigration" />
