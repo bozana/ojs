@@ -30,8 +30,6 @@ class I6782_Metrics extends Migration
     public function up(): void
     {
         // Read old usage stats settings
-        // ??? createLogFiles
-        // ??? enableInstitutionUsageStats
         // Geo data stats settings
         $optionalColumns = DB::table('plugin_settings')
             ->where('plugin_name', '=', 'usagestatsplugin')
@@ -89,9 +87,8 @@ class I6782_Metrics extends Migration
         }
 
         // Migrate context settings
-        $contextIds = Services::get('context')->getIds([
-            'isEnabled' => true, // only enabled contexts?
-        ]);
+        // Get all, also disabled, contexts
+        $contextIds = Services::get('context')->getIds();
         foreach ($contextIds as $contextId) {
             $contextDisplayStatistics = $contextChartType = null;
             $contextDisplayStatistics = DB::table('plugin_settings')
@@ -223,21 +220,19 @@ class I6782_Metrics extends Migration
             GROUP BY gd.context_id, gd.submission_id, gd.country, gd.region, gd.city, month
         ");
 
-        /*
         // Delete the entries with the metric type ojs::counter from the DB table metrics -> they were migrated above
         if (Schema::hasTable('metrics')) {
             DB::statement("DELETE FROM metrics WHERE metric_type = 'ojs::counter'");
             if (substr(Config::getVar('database', 'driver'), 0, strlen('postgres')) === 'postgres') {
-                DB::statement("ALTER TABLE metrics RENAME TO metrics_old;");
+                DB::statement('ALTER TABLE metrics RENAME TO metrics_old;');
             } else {
-                DB::statement("ALTER TABLE metrics RENAME metrics_old;");
+                DB::statement('ALTER TABLE metrics RENAME metrics_old;');
             }
         }
         // Deletethe the old usage_stats_temporary_records table
         if (Schema::hasTable('usage_stats_temporary_records')) {
             Schema::drop('usage_stats_temporary_records');
         }
-        */
     }
 
     /**

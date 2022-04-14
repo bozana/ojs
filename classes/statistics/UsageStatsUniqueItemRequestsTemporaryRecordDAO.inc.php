@@ -10,7 +10,7 @@
  * @class UsageStatsUniqueItemRequestsTemporaryRecordDAO
  * @ingroup statistics
  *
- * @brief Operations for retrieving and adding unique item requests.
+ * @brief Operations for retrieving and adding unique item (submission) requests (primary files downloads).
  */
 
 namespace APP\statistics;
@@ -22,7 +22,10 @@ use PKP\db\DAORegistry;
 
 class UsageStatsUniqueItemRequestsTemporaryRecordDAO
 {
-    /** The name of the table */
+    /**
+     * The name of the table.
+     * This table contains all primary files downloads.
+     */
     public string $table = 'usage_stats_unique_item_requests_temporary_records';
 
     /**
@@ -63,7 +66,6 @@ class UsageStatsUniqueItemRequestsTemporaryRecordDAO
             'country' => !empty($entryData->country) ? $entryData->country : '',
             'region' => !empty($entryData->region) ? $entryData->region : '',
             'city' => !empty($entryData->city) ? $entryData->city : '',
-            'institution_ids' => json_encode($entryData->institutionIds), // TO-DO: remove
             'load_id' => $loadId,
         ]);
     }
@@ -79,6 +81,11 @@ class UsageStatsUniqueItemRequestsTemporaryRecordDAO
 
     /**
      * Remove Unique Clicks
+     * If multiple transactions represent the same item and occur in the same user-sessions, only one unique activity MUST be counted for that item.
+     * Unique item is a submission.
+     * A user session is defined by the combination of IP address + user agent + transaction date + hour of day.
+     * Only the last unique activity will be retained (and thus counted), all the other will be removed.
+     *
      * See https://www.projectcounter.org/code-of-practice-five-sections/7-processing-rules-underlying-counter-reporting-data/#counting
      */
     public function removeUniqueClicks(): void
@@ -90,6 +97,9 @@ class UsageStatsUniqueItemRequestsTemporaryRecordDAO
         }
     }
 
+    /**
+     * Load unique COUNTER item (submission) requests (primary files downloads)
+     */
     public function loadMetricsCounterSubmissionDaily(string $loadId): void
     {
         // construct metric_requests_unique upsert
@@ -115,6 +125,9 @@ class UsageStatsUniqueItemRequestsTemporaryRecordDAO
         DB::statement($metricRequestsUniqueUpsertSql, [$loadId, Application::ASSOC_TYPE_SUBMISSION_FILE]);
     }
 
+    /**
+     * Load unique institutional COUNTER item (submisison) requests (primary files downloads)
+     */
     public function loadMetricsCounterSubmissionInstitutionDaily(string $loadId): void
     {
         // construct metric_requests_unique upsert

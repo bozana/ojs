@@ -170,7 +170,6 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
-            $table->json('institution_ids'); // TO-DO: remove
             $table->string('load_id', 255);
         });
         // Usage stats unique item investigations temporary records
@@ -189,7 +188,6 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
-            $table->json('institution_ids'); // TO-DO: remove
             $table->string('load_id', 255);
         });
         // Usage stats unique item requests temporary records
@@ -208,7 +206,6 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
-            $table->json('institution_ids'); // TO-DO: remove
             $table->string('load_id', 255);
         });
         // Usage stats institution temporary records

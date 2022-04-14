@@ -10,7 +10,13 @@
  * @class UsageStatsTotalTemporaryRecordDAO
  * @ingroup statistics
  *
- * @brief Operations for retrieving and adding total temporary usage statistics records.
+ * @brief Operations for retrieving and adding total usage.
+ *
+ * It considers:
+ * context index page views,
+ * submission abstract, primary and supp file views,
+ * geo submission usage,
+ * COUNTER submission stats.
  */
 
 namespace APP\statistics;
@@ -22,7 +28,9 @@ use PKP\db\DAORegistry;
 
 class UsageStatsTotalTemporaryRecordDAO
 {
-    /** The name of the table */
+    /**
+     * The name of the table. This table conteins all usage events.
+     */
     public string $table = 'usage_stats_total_temporary_records';
 
     /**
@@ -64,7 +72,6 @@ class UsageStatsTotalTemporaryRecordDAO
             'country' => !empty($entryData->country) ? $entryData->country : '',
             'region' => !empty($entryData->region) ? $entryData->region : '',
             'city' => !empty($entryData->city) ? $entryData->city : '',
-            'institution_ids' => json_encode($entryData->institutionIds), // TO-DO: remove
             'load_id' => $loadId,
         ]);
     }
@@ -114,6 +121,11 @@ class UsageStatsTotalTemporaryRecordDAO
 
     /**
      * Remove Double Clicks
+     * Remove the potential of over-counting which could occur when a user clicks the same link multiple times.
+     * Double-clicks, i.e. two clicks in succession, on a link by the same user within a 30-second period MUST be counted as one action.
+     * When two actions are made for the same URL within 30 seconds the first request MUST be removed and the second retained.
+     * A user is identified by IP address combined with the browser’s user-agent.
+     *
      * See https://www.projectcounter.org/code-of-practice-five-sections/7-processing-rules-underlying-counter-reporting-data/#doubleclick
      */
     public function removeDoubleClicks(int $counterDoubleClickTimeFilter): void
@@ -125,6 +137,9 @@ class UsageStatsTotalTemporaryRecordDAO
         }
     }
 
+    /**
+     * Load usage for context index pages
+     */
     public function loadMetricsContext(string $loadId): void
     {
         DB::table('metrics_context')->where('load_id', '=', $loadId)->delete();
@@ -140,6 +155,9 @@ class UsageStatsTotalTemporaryRecordDAO
         );
     }
 
+    /**
+     * Load usage for issue (TOC and galleys views)
+     */
     public function loadMetricsIssue(string $loadId): void
     {
         DB::table('metrics_issue')->where('load_id', '=', $loadId)->delete();
@@ -165,6 +183,9 @@ class UsageStatsTotalTemporaryRecordDAO
         );
     }
 
+    /**
+     * Load usage for submissions (abstract, primary and supp files)
+     */
     public function loadMetricsSubmission(string $loadId): void
     {
         DB::table('metrics_submission')->where('load_id', '=', $loadId)->delete();
@@ -200,13 +221,25 @@ class UsageStatsTotalTemporaryRecordDAO
         );
     }
 
-    // For the DB tables that contain also the unique metrics, this deletion by loadId is in a separate function
-    // The unique metrics are loaded in UnsageStatsUnique... classes
+    // For the DB tables that contain also the unique metrics, this deletion by loadId is in a separate function,
+    // differently to the deletion for the tables above (metrics_context, metrics_issue and metrics_submission)
+    // The total metrics will be loaded here (s. load... functions below), unique metrics are loaded in UnsageStatsUnique... classes
     public function deleteSubmissionGeoDailyByLoadId(string $loadId): void
     {
         DB::table('metrics_submission_geo_daily')->where('load_id', '=', $loadId)->delete();
     }
+    public function deleteCounterSubmissionDailyByLoadId(string $loadId): void
+    {
+        DB::table('metrics_counter_submission_daily')->where('load_id', '=', $loadId)->delete();
+    }
+    public function deleteCounterSubmissionInstitutionDailyByLoadId(string $loadId): void
+    {
+        DB::table('metrics_counter_submission_institution_daily')->where('load_id', '=', $loadId)->delete();
+    }
 
+    /**
+     * Load total geographical usage on the submission level
+     */
     public function loadMetricsSubmissionGeoDaily(string $loadId): void
     {
         // construct metric upsert
@@ -214,7 +247,7 @@ class UsageStatsTotalTemporaryRecordDAO
             INSERT INTO metrics_submission_geo_daily (load_id, context_id, submission_id, date, country, region, city, metric, metric_unique)
             SELECT * FROM (SELECT load_id, context_id, submission_id, DATE(date) as date, country, region, city, count(*) as metric_tmp, 0 as metric_unique
                 FROM {$this->table}
-                WHERE load_id = ? AND submission_id IS NOT NULL
+                WHERE load_id = ? AND submission_id IS NOT NULL AND (country <> '' OR region <> '' OR city <> '')
                 GROUP BY load_id, context_id, submission_id, DATE(date), country, region, city) AS t
             ";
         if (substr(Config::getVar('database', 'driver'), 0, strlen('postgres')) === 'postgres') {
@@ -231,11 +264,9 @@ class UsageStatsTotalTemporaryRecordDAO
         DB::statement($metricUpsertSql, [$loadId]);
     }
 
-    public function deleteCounterSubmissionDailyByLoadId(string $loadId): void
-    {
-        DB::table('metrics_counter_submission_daily')->where('load_id', '=', $loadId)->delete();
-    }
-
+    /**
+     * Load total COUNTER submission usage (investigations and requests)
+     */
     public function loadMetricsCounterSubmissionDaily(string $loadId): void
     {
         // construct metric_investigations upsert
@@ -281,11 +312,9 @@ class UsageStatsTotalTemporaryRecordDAO
         DB::statement($metricRequestsUpsertSql, [$loadId, Application::ASSOC_TYPE_SUBMISSION_FILE]);
     }
 
-    public function deleteCounterSubmissionInstitutionDailyByLoadId(string $loadId): void
-    {
-        DB::table('metrics_counter_submission_institution_daily')->where('load_id', '=', $loadId)->delete();
-    }
-
+    /**
+     * Load total institutional COUNTER submission usage (investigations and requests)
+     */
     public function loadMetricsCounterSubmissionInstitutionDaily(string $loadId): void
     {
         // construct metric_investigations upsert

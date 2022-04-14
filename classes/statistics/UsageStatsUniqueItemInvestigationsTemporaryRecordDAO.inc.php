@@ -10,7 +10,7 @@
  * @class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
  * @ingroup statistics
  *
- * @brief Operations for retrieving and adding unique item investigations.
+ * @brief Operations for retrieving and adding unique item (submission) investigations (abstract, primary and supp file views).
  */
 
 namespace APP\statistics;
@@ -21,7 +21,11 @@ use PKP\db\DAORegistry;
 
 class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
 {
-    /** The name of the table */
+    /**
+     * The name of the table.
+     * This table contains all usage (clicks) for an item (submission),
+     * considering abstract, primary and supp file views.
+     */
     public string $table = 'usage_stats_unique_item_investigations_temporary_records';
 
     /**
@@ -62,7 +66,6 @@ class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
             'country' => !empty($entryData->country) ? $entryData->country : '',
             'region' => !empty($entryData->region) ? $entryData->region : '',
             'city' => !empty($entryData->city) ? $entryData->city : '',
-            'institution_ids' => json_encode($entryData->institutionIds), // TO-DO: remove
             'load_id' => $loadId,
         ]);
     }
@@ -78,6 +81,11 @@ class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
 
     /**
      * Remove Unique Clicks
+     * If multiple transactions represent the same item and occur in the same user-sessions, only one unique activity MUST be counted for that item.
+     * Unique item is a submission.
+     * A user session is defined by the combination of IP address + user agent + transaction date + hour of day.
+     * Only the last unique activity will be retained (and thus counted), all the other will be removed.
+     *
      * See https://www.projectcounter.org/code-of-practice-five-sections/7-processing-rules-underlying-counter-reporting-data/#counting
      */
     public function removeUniqueClicks(): void
@@ -89,6 +97,9 @@ class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
         }
     }
 
+    /**
+     * Load unique geographical usage on the submission level
+     */
     public function loadMetricsSubmissionGeoDaily(string $loadId): void
     {
         // construct metric_unique upsert
@@ -113,6 +124,9 @@ class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
         DB::statement($metricUniqueUpsertSql, [$loadId]);
     }
 
+    /**
+     * Load unique COUNTER item (submission) investigations
+     */
     public function loadMetricsCounterSubmissionDaily(string $loadId): void
     {
         // construct metric_investigations_unique upsert
@@ -137,6 +151,9 @@ class UsageStatsUniqueItemInvestigationsTemporaryRecordDAO
         DB::statement($metricInvestigationsUniqueUpsertSql, [$loadId]);
     }
 
+    /**
+     * Load unique institutional COUNTER item (submission) investigations
+     */
     public function loadMetricsCounterSubmissionInstitutionDaily(string $loadId): void
     {
         // construct metric_investigations_unique upsert
