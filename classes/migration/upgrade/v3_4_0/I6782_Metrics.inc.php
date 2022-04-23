@@ -87,7 +87,7 @@ class I6782_Metrics extends Migration
         if (isset($activeSiteTheme)) {
             $siteUsageStatsDisplay = !$displayStatistics ? 'none' : $chartType;
             DB::table('plugin_settings')->insertOrIgnore([
-                ['plugin_name' => $activeSiteTheme->getName(), 'context_id' => 0, 'setting_name' => 'usageStatsDisplay', 'setting_value' => $siteUsageStatsDisplay],
+                ['plugin_name' => $activeSiteTheme->getName(), 'context_id' => 0, 'setting_name' => 'usageStatsDisplay', 'setting_value' => $siteUsageStatsDisplay, 'setting_type' => 'string'],
             ]);
         }
 
@@ -118,7 +118,7 @@ class I6782_Metrics extends Migration
             if (isset($activeContextTheme)) {
                 $contextUsageStatsDisplay = !$contextDisplayStatistics ? 'none' : $contextChartType;
                 DB::table('plugin_settings')->insertOrIgnore([
-                    ['plugin_name' => $activeContextTheme->getName(), 'context_id' => $contextId, 'setting_name' => 'usageStatsDisplay', 'setting_value' => $contextUsageStatsDisplay],
+                    ['plugin_name' => $activeContextTheme->getName(), 'context_id' => $contextId, 'setting_name' => 'usageStatsDisplay', 'setting_value' => $contextUsageStatsDisplay, 'setting_type' => 'string'],
                 ]);
             }
         }
