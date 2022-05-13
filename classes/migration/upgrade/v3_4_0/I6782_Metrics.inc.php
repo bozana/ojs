@@ -41,15 +41,16 @@ class I6782_Metrics extends Migration
             ->where('setting_name', '=', 'optionalColumns')
             ->value('setting_value');
 
-        $enableGeoUsageStats = $usageStatsKeepDaily = 0;
+        $enableGeoUsageStats = 'disabled';
+        $keepDailyUsageStats = false;
         if (!is_null($optionalColumns)) {
-            $usageStatsKeepDaily = 1;
+            $keepDailyUsageStats = true;
             if (str_contains($optionalColumns, 'city')) {
-                $enableGeoUsageStats = 3;
+                $enableGeoUsageStats = 'country+region+city';
             } elseif (str_contains($optionalColumns, 'region')) {
-                $enableGeoUsageStats = 2;
+                $enableGeoUsageStats = 'country+region';
             } else {
-                $enableGeoUsageStats = 1;
+                $enableGeoUsageStats = 'country';
             }
         }
         // Compress archives settings
@@ -59,9 +60,9 @@ class I6782_Metrics extends Migration
             ->value('setting_value');
         // Migrate site settings
         DB::table('site_settings')->insertOrIgnore([
-            ['setting_name' => 'archivedUsageStatsLogFiles', 'setting_value' => $compressArchives],
+            ['setting_name' => 'compressStatsLogs', 'setting_value' => $compressArchives],
             ['setting_name' => 'enableGeoUsageStats', 'setting_value' => $enableGeoUsageStats],
-            ['setting_name' => 'usageStatsKeepDaily', 'setting_value' => $usageStatsKeepDaily]
+            ['setting_name' => 'keepDailyUsageStats', 'setting_value' => $keepDailyUsageStats]
         ]);
 
         // Display site settings
@@ -87,7 +88,7 @@ class I6782_Metrics extends Migration
         if (isset($activeSiteTheme)) {
             $siteUsageStatsDisplay = !$displayStatistics ? 'none' : $chartType;
             DB::table('plugin_settings')->insertOrIgnore([
-                ['plugin_name' => $activeSiteTheme->getName(), 'context_id' => 0, 'setting_name' => 'usageStatsDisplay', 'setting_value' => $siteUsageStatsDisplay, 'setting_type' => 'string'],
+                ['plugin_name' => $activeSiteTheme->getName(), 'context_id' => 0, 'setting_name' => 'displayStats', 'setting_value' => $siteUsageStatsDisplay, 'setting_type' => 'string'],
             ]);
         }
 
@@ -118,7 +119,7 @@ class I6782_Metrics extends Migration
             if (isset($activeContextTheme)) {
                 $contextUsageStatsDisplay = !$contextDisplayStatistics ? 'none' : $contextChartType;
                 DB::table('plugin_settings')->insertOrIgnore([
-                    ['plugin_name' => $activeContextTheme->getName(), 'context_id' => $contextId, 'setting_name' => 'usageStatsDisplay', 'setting_value' => $contextUsageStatsDisplay, 'setting_type' => 'string'],
+                    ['plugin_name' => $activeContextTheme->getName(), 'context_id' => $contextId, 'setting_name' => 'displayStats', 'setting_value' => $contextUsageStatsDisplay, 'setting_type' => 'string'],
                 ]);
             }
         }
