@@ -66,17 +66,17 @@ class InstitutionalSubscriptionForm extends SubscriptionForm
         }
 
         $collector = Repo::institution()->getCollector()->filterByContextIds([$journalId]);
-        $institutions = Repo::institution()->getMany($collector);
+        $institutions = Repo::institution()->getMany($collector)->values();
         $this->institutions = [];
         foreach ($institutions as $institution) {
             $this->institutions[$institution->getId()] = $institution->getLocalizedName();
         }
         if (isset($subscriptionInstitutionId) && !array_key_exists($subscriptionInstitutionId, $this->institutions)) {
             // The institution is soft deleted, add it to the institutions list
-            $subscriptionIinstitution = Repo::institution()->get($subscriptionInstitutionId);
-            $this->institutions[$subscriptionInstitutionId] = $subscriptionIinstitution->getLocalizedName();
+            $subscriptionInstitution = Repo::institution()->get($subscriptionInstitutionId);
+            $this->institutions[$subscriptionInstitutionId] = $subscriptionInstitution->getLocalizedName();
         }
-        if (count($this->institutions) == 0) {
+        if (!count($this->institutions)) {
             $this->addError('institutionId', __('manager.subscriptions.form.institutionRequired'));
             $this->addErrorField('institutionId');
         }
@@ -89,7 +89,7 @@ class InstitutionalSubscriptionForm extends SubscriptionForm
 
         // Ensure institution ID exists
         $this->addCheck(new \PKP\form\validation\FormValidatorCustom($this, 'institutionId', 'required', 'manager.subscriptions.form.institutionIdValid', function ($institutionId) use ($journalId, $subscriptionInstitutionId) {
-            return ($institutionId == $subscriptionInstitutionId) || Repo::institution()->existsByContextId($institutionId, $journalId);
+            return ($institutionId == $subscriptionInstitutionId) || Repo::institution()->existsInContext($institutionId, $journalId);
         }));
 
         // If provided, domain is valid

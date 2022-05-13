@@ -272,7 +272,7 @@ class InstitutionalSubscriptionDAO extends SubscriptionDAO
 				domain = ?
 			WHERE	subscription_id = ?',
             [
-                (int) $institutionalSubscription->getInstitutionId(),
+                $institutionalSubscription->getInstitutionId(),
                 $institutionalSubscription->getInstitutionMailingAddress(),
                 $institutionalSubscription->getDomain(),
                 (int) $institutionalSubscription->getId()
@@ -525,23 +525,19 @@ class InstitutionalSubscriptionDAO extends SubscriptionDAO
                     JOIN institution_ip iip ON (iip.institution_id = iss.institution_id)
                     JOIN subscriptions s ON (iss.subscription_id = s.subscription_id)
                     JOIN subscription_types st ON (s.type_id = st.type_id)
-                WHERE	((iip.ip_end IS NOT NULL
-                    AND ? >= iip.ip_start AND ? <= iip.ip_end
-                    AND s.journal_id = ?
+                WHERE	s.journal_id = ?
+                    AND ? BETWEEN iip.ip_start AND COALESCE(iip.ip_end, iip.ip_start)
                     AND s.status = ' . Subscription::SUBSCRIPTION_STATUS_ACTIVE . '
                     AND st.institutional = 1
-                    AND ((st.duration IS NULL) OR (st.duration IS NOT NULL AND (' . $dateSql . ')))
-                    AND (st.format = ' . SubscriptionType::SUBSCRIPTION_TYPE_FORMAT_ONLINE . '
-                        OR st.format = ' . SubscriptionType::SUBSCRIPTION_TYPE_FORMAT_PRINT_ONLINE . '))
-                    OR  (iip.ip_end IS NULL
-                    AND ? = iip.ip_start
-                    AND s.journal_id = ?
-                    AND s.status = ' . Subscription::SUBSCRIPTION_STATUS_ACTIVE . '
-                    AND st.institutional = 1
-                    AND ((st.duration IS NULL) OR (st.duration IS NOT NULL AND (' . $dateSql . ')))
-                    AND (st.format = ' . SubscriptionType::SUBSCRIPTION_TYPE_FORMAT_ONLINE . '
-                    OR st.format = ' . SubscriptionType::SUBSCRIPTION_TYPE_FORMAT_PRINT_ONLINE . ')))',
-                [$IP, $IP, (int) $journalId, $IP, (int) $journalId]
+                    AND (
+                        st.duration IS NULL
+                        OR (' . $dateSql . ')
+                    )
+                    AND (
+                        st.format = ' . SubscriptionType::SUBSCRIPTION_TYPE_FORMAT_ONLINE . '
+                        OR st.format = ' . SubscriptionType::SUBSCRIPTION_TYPE_FORMAT_PRINT_ONLINE . '
+                    )',
+                [(int) $journalId, $IP]
             );
             $row = $result->current();
             if ($row) {
