@@ -81,7 +81,7 @@ class MetricsMigration extends \PKP\migration\Migration
         Schema::create('metrics_counter_submission_monthly', function (Blueprint $table) {
             $table->bigInteger('context_id');
             $table->bigInteger('submission_id');
-            $table->string('month', 6);
+            $table->integer('month', 6);
             $table->integer('metric_investigations');
             $table->integer('metric_investigations_unique');
             $table->integer('metric_requests');
@@ -112,7 +112,7 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->bigInteger('context_id');
             $table->bigInteger('submission_id');
             $table->bigInteger('institution_id');
-            $table->string('month', 6);
+            $table->integer('month', 6);
             $table->integer('metric_investigations');
             $table->integer('metric_investigations_unique');
             $table->integer('metric_requests');
@@ -145,7 +145,7 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
-            $table->string('month', 6);
+            $table->integer('month', 6);
             $table->integer('metric');
             $table->integer('metric_unique');
             $table->foreign('context_id', 'msgm_context_id_foreign')->references('journal_id')->on('journals');
