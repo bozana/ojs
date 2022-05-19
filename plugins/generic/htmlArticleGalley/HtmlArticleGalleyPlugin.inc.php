@@ -19,7 +19,6 @@ use APP\core\Services;
 use APP\facades\Repo;
 use APP\file\PublicFileManager;
 use APP\observers\events\UsageEvent;
-use APP\submission\Submission;
 use APP\template\TemplateManager;
 use PKP\plugins\HookRegistry;
 use PKP\submissionFile\SubmissionFile;
@@ -135,10 +134,14 @@ class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
                 echo $this->_getHTMLContents($request, $galley);
                 $returner = true;
                 HookRegistry::call('HtmlArticleGalleyPlugin::articleDownloadFinished', [&$returner]);
-                if ($article->getData('status') == Submission::STATUS_PUBLISHED && !$request->isDNTSet()) {
-                    $publication = Repo::publication()->get($galley->getData('publicationId'));
-                    event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION_FILE, $fileId, $article->getData('contextId'), $article->getId(), $galley->getId(), $submissionFile->getData('mimetype'), $publication->getData('issueId')));
+                $publication = Repo::publication()->get($galley->getData('publicationId'));
+                // This part is the same as in ArticleHandler::initialize():
+                if ($publication->getData('issueId')) {
+                    // TODO: Previously fetched issue from cache. Reimplement when caching added.
+                    $issue = Repo::issue()->get($publication->getData('issueId'));
+                    $issue = $issue->getJournalId() == $article->getData('contextId') ? $issue : null;
                 }
+                event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION_FILE, $article, $galley, $submissionFile, $issue));
             }
             return true;
         }

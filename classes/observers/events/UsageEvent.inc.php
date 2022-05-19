@@ -17,34 +17,38 @@
 namespace APP\observers\events;
 
 use APP\core\Application;
+use APP\issue\Issue;
+use APP\issue\IssueGalley;
+use APP\submission\Submission;
 use PKP\observers\events\PKPUsageEvent;
+use PKP\submission\Representation;
+use PKP\submissionFile\SubmissionFile;
 
 class UsageEvent extends PKPUsageEvent
 {
-    /** Issue ID */
-    public ?int $issueId;
+    public ?Issue $issue;
+    public ?IssueGalley $issueGalley;
 
-    public function __construct(int $assocType, int $assocId, int $contextId, int $submissionId = null, int $representationId = null, string $mimetype = null, int $issueId = null)
+    public function __construct(int $assocType, Submission $submission = null, Representation $galley = null, SubmissionFile $submissionFile = null, Issue $issue = null, IssueGalley $issueGalley = null)
     {
-        parent::__construct($assocType, $assocId, $contextId, $submissionId, $representationId, $mimetype);
+        parent::__construct($assocType, $submission, $galley, $submissionFile);
 
         if (in_array($assocType, [Application::ASSOC_TYPE_ISSUE, Application::ASSOC_TYPE_ISSUE_GALLEY])) {
-            $application = Application::get();
-            $request = $application->getRequest();
             $canonicalUrlPage = $canonicalUrlOp = $canonicalUrlParams = null;
             switch ($assocType) {
                 case Application::ASSOC_TYPE_ISSUE_GALLEY:
                     $canonicalUrlOp = 'download';
-                    $canonicalUrlParams = [$issueId, $assocId];
+                    $canonicalUrlParams = [$issue->getId(), $issueGalley->getId()];
                     break;
                 case Application::ASSOC_TYPE_ISSUE:
                     $canonicalUrlOp = 'view';
-                    $canonicalUrlParams = [$assocId];
+                    $canonicalUrlParams = [$issue->getId()];
                     break;
             }
-            $canonicalUrl = $this->getCanonicalUrl($request, $canonicalUrlPage, $canonicalUrlOp, $canonicalUrlParams);
+            $canonicalUrl = $this->getCanonicalUrl($this->request, $canonicalUrlPage, $canonicalUrlOp, $canonicalUrlParams);
             $this->canonicalUrl = $canonicalUrl;
         }
-        $this->issueId = $issueId;
+        $this->issue = $issue;
+        $this->issueGalley = $issueGalley;
     }
 }

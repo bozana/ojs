@@ -346,9 +346,7 @@ class ArticleHandler extends Handler
 
             if (!HookRegistry::call('ArticleHandler::view', [&$request, &$issue, &$article, $publication])) {
                 $templateMgr->display('frontend/pages/article.tpl');
-                if ($article->getData('status') == Submission::STATUS_PUBLISHED && !$request->isDNTSet()) {
-                    event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION, $article->getId(), $context->getId(), $article->getId(), null, null, $publication->getData('issueId')));
-                }
+                event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION, $article, null, null, $this->issue));
                 return;
             }
         } else {
@@ -486,9 +484,8 @@ class ArticleHandler extends Handler
 
                 $filename = Services::get('file')->formatFilename($submissionFile->getData('path'), $submissionFile->getLocalizedData('name'));
 
-                // if the file is a gallay file (i.e. not a dependent file e.g. CSS or images),
-                // and if DoNotTrack is not set, fire an usage event.
-                if ($this->article->getData('status') == Submission::STATUS_PUBLISHED && $this->galley->getData('submissionFileId') == $this->fileId && !$request->isDNTSet()) {
+                // if the file is a gallay file (i.e. not a dependent file e.g. CSS or images), fire an usage event.
+                if ($this->galley->getData('submissionFileId') == $this->fileId) {
                     $assocType = Application::ASSOC_TYPE_SUBMISSION_FILE;
                     $genreDao = DAORegistry::getDAO('GenreDAO');
                     $genre = $genreDao->getById($submissionFile->getData('genreId'));
@@ -496,8 +493,7 @@ class ArticleHandler extends Handler
                     if ($genre->getCategory() != Genre::GENRE_CATEGORY_DOCUMENT || $genre->getSupplementary() || $genre->getDependent()) {
                         $assocType = Application::ASSOC_TYPE_SUBMISSION_FILE_COUNTER_OTHER;
                     }
-                    $mimetype = $submissionFile->getData('mimetype');
-                    event(new UsageEvent($assocType, $this->fileId, $this->article->getData('contextId'), $this->article->getId(), $this->galley->getId(), $mimetype, $this->publication->getData('issueId')));
+                    event(new UsageEvent($assocType, $this->article, $this->galley, $submissionFile, $this->issue));
                 }
                 $returner = true;
                 HookRegistry::call('FileManager::downloadFileFinished', [&$returner]);

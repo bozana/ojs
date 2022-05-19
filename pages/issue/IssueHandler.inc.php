@@ -127,9 +127,7 @@ class IssueHandler extends Handler
             $pubIdPlugins = PluginRegistry::loadCategory('pubIds', true);
             $templateMgr->assign('pubIdPlugins', $pubIdPlugins);
             $templateMgr->display('frontend/pages/issue.tpl');
-            if ($issue->getPublished() && !$request->isDNTSet()) {
-                event(new UsageEvent(Application::ASSOC_TYPE_ISSUE, $issue->getId(), $journal->getId(), null, null, null, $issue->getId()));
-            }
+            event(new UsageEvent(Application::ASSOC_TYPE_ISSUE, null, null, null, $issue));
             return;
         }
     }
@@ -192,12 +190,7 @@ class IssueHandler extends Handler
             if (!HookRegistry::call('IssueHandler::download', [&$issue, &$galley])) {
                 $issueFileManager = new IssueFileManager($issue->getId());
                 if ($issueFileManager->downloadById($galley->getFileId(), $request->getUserVar('inline') ? true : false)) {
-                    if ($issue->getPublished() && !$request->isDNTSet()) {
-                        $issueFileDao = DAORegistry::getDAO('IssueFileDAO'); /* @var $issueFileDao IssueFileDAO */
-                        $issueFile = $issueFileDao->getById($galley->getFileId());
-                        $mimetype = $issueFile->getFileType();
-                        event(new UsageEvent(Application::ASSOC_TYPE_ISSUE_GALLEY, $galley->getId(), $issue->getJournalId(), null, null, $mimetype, $issue->getId()));
-                    }
+                    event(new UsageEvent(Application::ASSOC_TYPE_ISSUE_GALLEY, null, null, null, $issue, $galley));
                     return true;
                 }
                 return false;
