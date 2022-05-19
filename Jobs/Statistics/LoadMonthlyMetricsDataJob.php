@@ -48,14 +48,14 @@ class LoadMonthlyMetricsDataJob extends BaseJob
         // geo
         $geoService = Services::get('geoStats');
         $geoService->aggregateMetrics($this->month);
-        if (!$site->getData('usageStatsKeepDaily') && $this->month != $currentMonth) {
+        if (!$site->getData('keepDailyUsageStats') && $this->month != $currentMonth) {
             $geoService->deleteDailyMetrics($this->month);
         }
 
         // COUNTER submissions and insitutions
         $counterService = Services::get('sushiStats');
         $counterService->aggregateMetrics($this->month);
-        if (!$site->getData('usageStatsKeepDaily') && $this->month != $currentMonth) {
+        if (!$site->getData('keepDailyUsageStats') && $this->month != $currentMonth) {
             $counterService->deleteDailyMetrics($this->month);
         }
     }

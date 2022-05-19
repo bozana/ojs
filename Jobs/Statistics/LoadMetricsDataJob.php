@@ -63,15 +63,15 @@ class LoadMetricsDataJob extends BaseJob
             return;
         }
 
-        $statsTotalDao = DAORegistry::getDAO('UsageStatsTotalTemporaryRecordDAO'); /* @var UsageStatsTotalTemporaryRecordDAO $statsTotalDao */
-        $statsUniqueItemInvestigationsDao = DAORegistry::getDAO('UsageStatsUniqueItemInvestigationsTemporaryRecordDAO'); /* @var UsageStatsUniqueItemInvestigationsTemporaryRecordDAO $statsUniqueItemInvestigationsDao */
-        $statsUniqueItemRequestsDao = DAORegistry::getDAO('UsageStatsUniqueItemRequestsTemporaryRecordDAO'); /* @var UsageStatsUniqueItemRequestsTemporaryRecordDAO $statsUniqueItemRequestsDao */
-        $statsInstitutionDao = DAORegistry::getDAO('UsageStatsInstitutionTemporaryRecordDAO'); /* @var UsageStatsInstitutionTemporaryRecordDAO $statsInstitutionDao */
+        $temporaryTotalsDao = DAORegistry::getDAO('TemporaryTotalsDAO'); /* @var TemporaryTotalsDAO $temporaryTotalsDao */
+        $temporaryItemInvestigationsDao = DAORegistry::getDAO('TemporaryItemInvestigationsDAO'); /* @var TemporaryItemInvestigationsDAO $temporaryItemInvestigationsDao */
+        $temporaryItemRequestsDao = DAORegistry::getDAO('TemporaryItemRequestsDAO'); /* @var TemporaryItemRequestsDAO $temporaryItemRequestsDao */
+        $temporaryInstitutionDao = DAORegistry::getDAO('TemporaryInstitutionsDAO'); /* @var TemporaryInstitutionsDAO $temporaryInstitutionDao */
 
-        $statsTotalDao->deleteByLoadId($this->loadId);
-        $statsUniqueItemInvestigationsDao->deleteByLoadId($this->loadId);
-        $statsUniqueItemRequestsDao->deleteByLoadId($this->loadId);
-        $statsInstitutionDao->deleteByLoadId($this->loadId);
+        $temporaryTotalsDao->deleteByLoadId($this->loadId);
+        $temporaryItemInvestigationsDao->deleteByLoadId($this->loadId);
+        $temporaryItemRequestsDao->deleteByLoadId($this->loadId);
+        $temporaryInstitutionDao->deleteByLoadId($this->loadId);
     }
 
     /**
@@ -80,32 +80,32 @@ class LoadMetricsDataJob extends BaseJob
      */
     private function _loadData(): bool
     {
-        $statsTotalDao = DAORegistry::getDAO('UsageStatsTotalTemporaryRecordDAO'); /* @var UsageStatsTotalTemporaryRecordDAO $statsTotalDao */
-        $statsUniqueItemInvestigationsDao = DAORegistry::getDAO('UsageStatsUniqueItemInvestigationsTemporaryRecordDAO'); /* @var UsageStatsUniqueItemInvestigationsTemporaryRecordDAO $statsUniqueItemInvestigationsDao */
-        $statsUniqueItemRequestsDao = DAORegistry::getDAO('UsageStatsUniqueItemRequestsTemporaryRecordDAO'); /* @var UsageStatsUniqueItemRequestsTemporaryRecordDAO $statsUniqueItemRequestsDao */
+        $temporaryTotalsDao = DAORegistry::getDAO('TemporaryTotalsDAO'); /* @var TemporaryTotalsDAO $temporaryTotalsDao */
+        $temporaryItemInvestigationsDao = DAORegistry::getDAO('TemporaryItemInvestigationsDAO'); /* @var TemporaryItemInvestigationsDAO $temporaryItemInvestigationsDao */
+        $temporaryItemRequestsDao = DAORegistry::getDAO('TemporaryItemRequestsDAO'); /* @var TemporaryItemRequestsDAO $temporaryItemRequestsDao */
 
-        $statsTotalDao->removeDoubleClicks(StatisticsHelper::COUNTER_DOUBLE_CLICK_TIME_FILTER_SECONDS);
-        $statsUniqueItemInvestigationsDao->removeUniqueClicks();
-        $statsUniqueItemRequestsDao->removeUniqueClicks();
+        $temporaryTotalsDao->removeDoubleClicks(StatisticsHelper::COUNTER_DOUBLE_CLICK_TIME_FILTER_SECONDS);
+        $temporaryItemInvestigationsDao->removeUniqueClicks();
+        $temporaryItemRequestsDao->removeUniqueClicks();
 
-        $statsTotalDao->loadMetricsContext($this->loadId);
-        $statsTotalDao->loadMetricsIssue($this->loadId);
-        $statsTotalDao->loadMetricsSubmission($this->loadId);
+        $temporaryTotalsDao->loadMetricsContext($this->loadId);
+        $temporaryTotalsDao->loadMetricsIssue($this->loadId);
+        $temporaryTotalsDao->loadMetricsSubmission($this->loadId);
 
         // Geo database only contains total and unique investigations (no extra requests differentiation)
-        $statsTotalDao->deleteSubmissionGeoDailyByLoadId($this->loadId); // always call first, before loading the data
-        $statsTotalDao->loadMetricsSubmissionGeoDaily($this->loadId);
-        $statsUniqueItemInvestigationsDao->loadMetricsSubmissionGeoDaily($this->loadId);
+        $temporaryTotalsDao->deleteSubmissionGeoDailyByLoadId($this->loadId); // always call first, before loading the data
+        $temporaryTotalsDao->loadMetricsSubmissionGeoDaily($this->loadId);
+        $temporaryItemInvestigationsDao->loadMetricsSubmissionGeoDaily($this->loadId);
 
-        $statsTotalDao->deleteCounterSubmissionDailyByLoadId($this->loadId); // always call first, before loading the data
-        $statsTotalDao->loadMetricsCounterSubmissionDaily($this->loadId);
-        $statsUniqueItemInvestigationsDao->loadMetricsCounterSubmissionDaily($this->loadId);
-        $statsUniqueItemRequestsDao->loadMetricsCounterSubmissionDaily($this->loadId);
+        $temporaryTotalsDao->deleteCounterSubmissionDailyByLoadId($this->loadId); // always call first, before loading the data
+        $temporaryTotalsDao->loadMetricsCounterSubmissionDaily($this->loadId);
+        $temporaryItemInvestigationsDao->loadMetricsCounterSubmissionDaily($this->loadId);
+        $temporaryItemRequestsDao->loadMetricsCounterSubmissionDaily($this->loadId);
 
-        $statsTotalDao->deleteCounterSubmissionInstitutionDailyByLoadId($this->loadId); // always call first, before loading the data
-        $statsTotalDao->loadMetricsCounterSubmissionInstitutionDaily($this->loadId);
-        $statsUniqueItemInvestigationsDao->loadMetricsCounterSubmissionInstitutionDaily($this->loadId);
-        $statsUniqueItemRequestsDao->loadMetricsCounterSubmissionInstitutionDaily($this->loadId);
+        $temporaryTotalsDao->deleteCounterSubmissionInstitutionDailyByLoadId($this->loadId); // always call first, before loading the data
+        $temporaryTotalsDao->loadMetricsCounterSubmissionInstitutionDaily($this->loadId);
+        $temporaryItemInvestigationsDao->loadMetricsCounterSubmissionInstitutionDaily($this->loadId);
+        $temporaryItemRequestsDao->loadMetricsCounterSubmissionInstitutionDaily($this->loadId);
 
         return true;
     }
