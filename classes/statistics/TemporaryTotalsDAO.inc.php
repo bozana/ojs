@@ -24,6 +24,20 @@ use PKP\statistics\PKPTemporaryTotalsDAO;
 
 class TemporaryTotalsDAO extends PKPTemporaryTotalsDAO
 {
+    /**
+     * Get Laravel optimized array of data to insert into the table based on the log entry
+     */
+    protected function getInsertData(object $entryData): array
+    {
+        return array_merge(
+            parent::getInsertData($entryData),
+            [
+                'issue_id' => $entryData->issueId,
+                'issue_galley_id' => $entryData->issueGalleyId,
+            ]
+        );
+    }
+
     public function checkForeignKeys(object $entryData): array
     {
         $errorMsg = [];
@@ -61,25 +75,18 @@ class TemporaryTotalsDAO extends PKPTemporaryTotalsDAO
     public function loadMetricsIssue(string $loadId): void
     {
         DB::table('metrics_issue')->where('load_id', '=', $loadId)->delete();
-        DB::statement(
-            "
-            INSERT INTO metrics_issue (load_id, context_id, issue_id, date, metric)
-                SELECT load_id, context_id, issue_id, DATE(date) as date, count(*) as metric
-                FROM {$this->table}
-                WHERE load_id = ? AND assoc_type = ?
-                GROUP BY load_id, context_id, issue_id, DATE(date)
-            ",
-            [$loadId, Application::ASSOC_TYPE_ISSUE]
-        );
-        DB::statement(
-            "
-            INSERT INTO metrics_issue (load_id, context_id, issue_id, issue_galley_id, date, metric)
-                SELECT load_id, context_id, issue_id, assoc_id, DATE(date) as date, count(*) as metric
-                FROM {$this->table}
-                WHERE load_id = ? AND assoc_type = ?
-                GROUP BY load_id, context_id, issue_id, assoc_id, DATE(date)
-            ",
-            [$loadId, Application::ASSOC_TYPE_ISSUE_GALLEY]
-        );
+        $selectIssueMetrics = DB::table($this->table)
+            ->select(DB::raw('load_id, context_id, issue_id, DATE(date) as date, count(*) as metric'))
+            ->where('load_id', '=', $loadId)
+            ->where('assoc_type', '=', Application::ASSOC_TYPE_ISSUE)
+            ->groupBy(DB::raw('load_id, context_id, issue_id, DATE(date)'));
+        DB::table('metrics_issue')->insertUsing(['load_id', 'context_id', 'issue_id', 'date', 'metric'], $selectIssueMetrics);
+
+        $selectIssueGalleyMetrics = DB::table($this->table)
+            ->select(DB::raw('load_id, context_id, issue_id, assoc_id, DATE(date) as date, count(*) as metric'))
+            ->where('load_id', '=', $loadId)
+            ->where('assoc_type', '=', Application::ASSOC_TYPE_ISSUE_GALLEY)
+            ->groupBy(DB::raw('load_id, context_id, issue_id, assoc_id, DATE(date)'));
+        DB::table('metrics_issue')->insertUsing(['load_id', 'context_id', 'issue_id', 'issue_galley_id', 'date', 'metric'], $selectIssueGalleyMetrics);
     }
 }
