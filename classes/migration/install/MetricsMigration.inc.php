@@ -24,6 +24,7 @@ class MetricsMigration extends \PKP\migration\Migration
      */
     public function up(): void
     {
+        /*
         Schema::create('metrics_context', function (Blueprint $table) {
             $table->string('load_id', 255);
             $table->bigInteger('context_id');
@@ -153,6 +154,7 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->index(['context_id', 'submission_id'], 'msgm_context_id_submission_id');
             $table->unique(['context_id', 'submission_id', 'country', 'region', 'city', 'month'], 'msgm_uc_context_submission_c_r_c_month');
         });
+        */
         // Usage stats total item temporary records
         Schema::create('usage_stats_total_temporary_records', function (Blueprint $table) {
             $table->dateTime('date', $precision = 0);
@@ -161,58 +163,77 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->bigInteger('line_number');
             $table->string('canonical_url', 255);
             $table->bigInteger('issue_id')->nullable();
+            $table->bigInteger('issue_galley_id')->nullable();
             $table->bigInteger('context_id');
             $table->bigInteger('submission_id')->nullable();
             $table->bigInteger('representation_id')->nullable();
+            $table->bigInteger('submission_file_id')->nullable();
             $table->bigInteger('assoc_type');
-            $table->bigInteger('assoc_id');
             $table->smallInteger('file_type')->nullable();
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
             $table->string('load_id', 255);
+            $table->foreign('issue_id', 'ust_issue_id_foreign')->references('issue_id')->on('issues');
+            $table->foreign('issue_galley_id', 'ust_issue_galley_id_foreign')->references('galley_id')->on('issue_galleys');
+            $table->foreign('context_id', 'ust_context_id_foreign')->references('journal_id')->on('journals');
+            $table->foreign('submission_id', 'ust_submission_id_foreign')->references('submission_id')->on('submissions');
+            $table->foreign('representation_id', 'ust_representation_id_foreign')->references('galley_id')->on('publication_galleys');
+            $table->foreign('submission_file_id', 'ust_submission_file_id_foreign')->references('submission_file_id')->on('submission_files');
         });
         // Usage stats unique item investigations temporary records
+        // No need to consider issue_id and issue_galley_id here because
+        // investigations are only relevant/calculated on submission level.
         Schema::create('usage_stats_unique_item_investigations_temporary_records', function (Blueprint $table) {
             $table->dateTime('date', $precision = 0);
             $table->string('ip', 255);
             $table->string('user_agent', 255);
             $table->bigInteger('line_number');
-            $table->bigInteger('issue_id')->nullable();
             $table->bigInteger('context_id');
             $table->bigInteger('submission_id');
             $table->bigInteger('representation_id')->nullable();
+            $table->bigInteger('submission_file_id')->nullable();
             $table->bigInteger('assoc_type');
-            $table->bigInteger('assoc_id');
             $table->smallInteger('file_type')->nullable();
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
             $table->string('load_id', 255);
+            $table->foreign('context_id', 'usii_context_id_foreign')->references('journal_id')->on('journals');
+            $table->foreign('submission_id', 'usii_submission_id_foreign')->references('submission_id')->on('submissions');
+            $table->foreign('representation_id', 'usii_representation_id_foreign')->references('galley_id')->on('publication_galleys');
+            $table->foreign('submission_file_id', 'usii_submission_file_id_foreign')->references('submission_file_id')->on('submission_files');
         });
         // Usage stats unique item requests temporary records
+        // No need to consider issue_id and issue_galley_id here because
+        // requests are only relevant/calculated on submission level.
         Schema::create('usage_stats_unique_item_requests_temporary_records', function (Blueprint $table) {
             $table->dateTime('date', $precision = 0);
             $table->string('ip', 255);
             $table->string('user_agent', 255);
             $table->bigInteger('line_number');
-            $table->bigInteger('issue_id')->nullable();
             $table->bigInteger('context_id');
             $table->bigInteger('submission_id');
             $table->bigInteger('representation_id')->nullable();
+            $table->bigInteger('submission_file_id')->nullable();
             $table->bigInteger('assoc_type');
-            $table->bigInteger('assoc_id');
             $table->smallInteger('file_type')->nullable();
             $table->string('country', 2)->default('');
             $table->string('region', 3)->default('');
             $table->string('city', 255)->default('');
             $table->string('load_id', 255);
+            $table->foreign('context_id', 'usir_context_id_foreign')->references('journal_id')->on('journals');
+            $table->foreign('submission_id', 'usir_submission_id_foreign')->references('submission_id')->on('submissions');
+            $table->foreign('representation_id', 'usir_representation_id_foreign')->references('galley_id')->on('publication_galleys');
+            $table->foreign('submission_file_id', 'usir_submission_file_id_foreign')->references('submission_file_id')->on('submission_files');
         });
         // Usage stats institution temporary records
+        // This table is needed because of data normalization
         Schema::create('usage_stats_institution_temporary_records', function (Blueprint $table) {
             $table->string('load_id', 255);
             $table->bigInteger('line_number');
             $table->bigInteger('institution_id');
+            $table->foreign('institution_id', 'usi_institution_id_foreign')->references('institution_id')->on('institutions');
             $table->unique(['load_id', 'line_number', 'institution_id'], 'usitr_load_id_line_number_institution_id');
         });
     }
@@ -222,6 +243,7 @@ class MetricsMigration extends \PKP\migration\Migration
      */
     public function down(): void
     {
+        /*
         Schema::drop('metrics_context');
         Schema::drop('metrics_submission');
         Schema::drop('metrics_issue');
@@ -231,6 +253,7 @@ class MetricsMigration extends \PKP\migration\Migration
         Schema::drop('metrics_counter_submission_institution_monthly');
         Schema::drop('metrics_submission_geo_daily');
         Schema::drop('metrics_submission_geo_monthly');
+        */
         Schema::drop('usage_stats_total_temporary_records');
         Schema::drop('usage_stats_unique_item_investigations_temporary_records');
         Schema::drop('usage_stats_unique_item_requests_temporary_records');
