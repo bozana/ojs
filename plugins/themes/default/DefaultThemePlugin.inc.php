@@ -34,7 +34,7 @@ class DefaultThemePlugin extends \PKP\plugins\ThemePlugin
     public function register($category, $path, $mainContextId = null)
     {
         $success = parent::register($category, $path, $mainContextId);
-        if ($success && $this->isActive() && ($this->getOption('usageStatsDisplay') !== 'none')) {
+        if ($success && $this->isActive() && ($this->getOption('displayStats') !== 'none')) {
             HookRegistry::register('Templates::Article::Main', [$this, 'displayUsageStatsGraph']);
         }
         return $success;
@@ -123,21 +123,21 @@ class DefaultThemePlugin extends \PKP\plugins\ThemePlugin
             ],
             'default' => false,
         ]);
-        $this->addOption('usageStatsDisplay', 'FieldOptions', [
+        $this->addOption('displayStats', 'FieldOptions', [
             'type' => 'radio',
-            'label' => __('plugins.themes.default.option.usageStatsDisplay.label'),
+            'label' => __('plugins.themes.default.option.displayStats.label'),
             'options' => [
                 [
                     'value' => 'none',
-                    'label' => __('plugins.themes.default.option.usageStatsDisplay.none'),
+                    'label' => __('plugins.themes.default.option.displayStats.none'),
                 ],
                 [
                     'value' => 'bar',
-                    'label' => __('plugins.themes.default.option.usageStatsDisplay.bar'),
+                    'label' => __('plugins.themes.default.option.displayStats.bar'),
                 ],
                 [
                     'value' => 'line',
-                    'label' => __('plugins.themes.default.option.usageStatsDisplay.line'),
+                    'label' => __('plugins.themes.default.option.displayStats.line'),
                 ],
             ],
             'default' => 'none',
@@ -342,10 +342,10 @@ class DefaultThemePlugin extends \PKP\plugins\ThemePlugin
         );
 
         // Add locale and configuration data
-        $chartType = $this->getOption('usageStatsDisplay');
+        $chartType = $this->getOption('displayStats');
         $script_data = 'var pkpUsageStats = pkpUsageStats || {};';
         $script_data .= 'pkpUsageStats.locale = pkpUsageStats.locale || {};';
-        $script_data .= 'pkpUsageStats.locale.months = ' . json_encode(explode(' ', __('plugins.themes.default.usageStatsDisplay.monthInitials'))) . ';';
+        $script_data .= 'pkpUsageStats.locale.months = ' . json_encode(explode(' ', __('plugins.themes.default.displayStats.monthInitials'))) . ';';
         $script_data .= 'pkpUsageStats.config = pkpUsageStats.config || {};';
         $script_data .= 'pkpUsageStats.config.chartType = ' . json_encode($chartType) . ';';
 

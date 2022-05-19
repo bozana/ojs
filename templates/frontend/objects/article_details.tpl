@@ -175,15 +175,15 @@
 			{call_hook name="Templates::Article::Main"}
 
 			{* Usage statistics chart*}
-			{if $activeTheme->getOption('usageStatsDisplay') != 'none'}
+			{if $activeTheme->getOption('displayStats') != 'none'}
 				<section class="item downloads_chart">
 					<h2 class="label">
-						{translate key="plugins.themes.default.usageStatsDisplay.downloads"}
+						{translate key="plugins.themes.default.displayStats.downloads"}
 					</h2>
 					<div class="value">
 						<canvas class="usageStatsGraph" data-object-type="Submission" data-object-id="{$article->getId()|escape}"></canvas>
 						<div class="usageStatsUnavailable" data-object-type="Submission" data-object-id="{$article->getId()|escape}">
-							{translate key="plugins.themes.default.usageStatsDisplay.noStats"}
+							{translate key="plugins.themes.default.displayStats.noStats"}
 						</div>
 					</div>
 				</section>
