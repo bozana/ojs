@@ -42,7 +42,7 @@ class LoadMetricsDataJob extends BaseJob
      */
     public function handle(): void
     {
-        $loadSuccessful = $this->_loadData();
+        $loadSuccessful = $this->loadData();
         if (!$loadSuccessful) {
             // Move the archived file back to staging
             $filename = $this->loadId;
@@ -78,7 +78,7 @@ class LoadMetricsDataJob extends BaseJob
      * Load the entries inside the temporary database associated with
      * the passed load id to the metrics tables.
      */
-    private function _loadData(): bool
+    protected function loadData(): bool
     {
         $temporaryTotalsDao = DAORegistry::getDAO('TemporaryTotalsDAO'); /* @var TemporaryTotalsDAO $temporaryTotalsDao */
         $temporaryItemInvestigationsDao = DAORegistry::getDAO('TemporaryItemInvestigationsDAO'); /* @var TemporaryItemInvestigationsDAO $temporaryItemInvestigationsDao */
