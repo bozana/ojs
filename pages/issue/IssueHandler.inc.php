@@ -20,7 +20,7 @@ use APP\file\IssueFileManager;
 use APP\handler\Handler;
 use APP\issue\Collector;
 use APP\issue\IssueAction;
-use APP\observers\events\UsageEvent;
+use APP\observers\events\Usage;
 use APP\payment\ojs\OJSPaymentManager;
 use APP\security\authorization\OjsIssueRequiredPolicy;
 use APP\security\authorization\OjsJournalMustPublishPolicy;
@@ -127,7 +127,7 @@ class IssueHandler extends Handler
             $pubIdPlugins = PluginRegistry::loadCategory('pubIds', true);
             $templateMgr->assign('pubIdPlugins', $pubIdPlugins);
             $templateMgr->display('frontend/pages/issue.tpl');
-            event(new UsageEvent(Application::ASSOC_TYPE_ISSUE, null, null, null, $issue));
+            event(new Usage(Application::ASSOC_TYPE_ISSUE, null, null, null, $issue));
             return;
         }
     }
@@ -190,7 +190,7 @@ class IssueHandler extends Handler
             if (!HookRegistry::call('IssueHandler::download', [&$issue, &$galley])) {
                 $issueFileManager = new IssueFileManager($issue->getId());
                 if ($issueFileManager->downloadById($galley->getFileId(), $request->getUserVar('inline') ? true : false)) {
-                    event(new UsageEvent(Application::ASSOC_TYPE_ISSUE_GALLEY, null, null, null, $issue, $galley));
+                    event(new Usage(Application::ASSOC_TYPE_ISSUE_GALLEY, null, null, null, $issue, $galley));
                     return true;
                 }
                 return false;

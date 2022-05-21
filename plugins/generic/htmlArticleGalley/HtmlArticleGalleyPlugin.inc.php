@@ -18,7 +18,7 @@ use APP\core\Application;
 use APP\core\Services;
 use APP\facades\Repo;
 use APP\file\PublicFileManager;
-use APP\observers\events\UsageEvent;
+use APP\observers\events\Usage;
 use APP\template\TemplateManager;
 use PKP\plugins\HookRegistry;
 use PKP\submissionFile\SubmissionFile;
@@ -141,7 +141,7 @@ class HtmlArticleGalleyPlugin extends \PKP\plugins\GenericPlugin
                     $issue = Repo::issue()->get($publication->getData('issueId'));
                     $issue = $issue->getJournalId() == $article->getData('contextId') ? $issue : null;
                 }
-                event(new UsageEvent(Application::ASSOC_TYPE_SUBMISSION_FILE, $article, $galley, $submissionFile, $issue));
+                event(new Usage(Application::ASSOC_TYPE_SUBMISSION_FILE, $article, $galley, $submissionFile, $issue));
             }
             return true;
         }

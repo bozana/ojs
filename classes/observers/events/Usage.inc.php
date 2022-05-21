@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @file classes/observers/events/UsageEvent.inc.php
+ * @file classes/observers/events/Usage.inc.php
  *
  * Copyright (c) 2014-2021 Simon Fraser University
  * Copyright (c) 2000-2021 John Willinsky
  * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
  *
- * @class UsageEvent
+ * @class Usage
  * @ingroup observers_events
  *
  * @brief Usage event.
@@ -20,18 +20,20 @@ use APP\core\Application;
 use APP\issue\Issue;
 use APP\issue\IssueGalley;
 use APP\submission\Submission;
-use PKP\observers\events\PKPUsageEvent;
+use PKP\observers\traits\UsageEvent;
 use PKP\submission\Representation;
 use PKP\submissionFile\SubmissionFile;
 
-class UsageEvent extends PKPUsageEvent
+class Usage
 {
+    use UsageEvent;
+
     public ?Issue $issue;
     public ?IssueGalley $issueGalley;
 
     public function __construct(int $assocType, Submission $submission = null, Representation $galley = null, SubmissionFile $submissionFile = null, Issue $issue = null, IssueGalley $issueGalley = null)
     {
-        parent::__construct($assocType, $submission, $galley, $submissionFile);
+        $this->constructUsageEvent($assocType, $submission, $galley, $submissionFile);
 
         if (in_array($assocType, [Application::ASSOC_TYPE_ISSUE, Application::ASSOC_TYPE_ISSUE_GALLEY])) {
             $canonicalUrlPage = $canonicalUrlOp = $canonicalUrlParams = null;
