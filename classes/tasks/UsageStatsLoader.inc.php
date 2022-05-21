@@ -16,66 +16,10 @@
 namespace APP\tasks;
 
 use APP\core\Application;
-use APP\statistics\TemporaryItemInvestigationsDAO;
-use APP\statistics\TemporaryItemRequestsDAO;
-use APP\statistics\TemporaryTotalsDAO;
-use PKP\db\DAORegistry;
-use PKP\statistics\TemporaryInstitutionsDAO;
 use PKP\task\PKPUsageStatsLoader;
 
 class UsageStatsLoader extends PKPUsageStatsLoader
 {
-    private TemporaryInstitutionsDAO $temporaryInstitutionsDao;
-    private TemporaryTotalsDAO $temporaryTotalsDao;
-    private TemporaryItemInvestigationsDAO $temporaryItemInvestigationsDao;
-    private TemporaryItemRequestsDAO $temporaryItemRequestsDao;
-
-    /**
-     * Constructor.
-     */
-    public function __construct($args)
-    {
-        $this->temporaryInstitutionsDao = DAORegistry::getDAO('TemporaryInstitutionsDAO'); /* @var TemporaryInstitutionsDAO $statsInstitutionDao */
-        $this->temporaryTotalsDao = DAORegistry::getDAO('TemporaryTotalsDAO'); /* @var TemporaryTotalsDAO $temporaryTotalsDao */
-        $this->temporaryItemInvestigationsDao = DAORegistry::getDAO('TemporaryItemInvestigationsDAO'); /* @var TemporaryItemInvestigationsDAO $temporaryItemInvestigationsDao */
-        $this->temporaryItemRequestsDao = DAORegistry::getDAO('TemporaryItemRequestsDAO'); /* @var TemporaryItemRequestsDAO $temporaryItemRequestsDao */
-        parent::__construct($args);
-    }
-
-    /**
-     * @copydoc PKPUsageStatsLoader::deleteByLoadId()
-     */
-    protected function deleteByLoadId(string $loadId): void
-    {
-        $this->temporaryInstitutionsDao->deleteByLoadId($loadId);
-        $this->temporaryTotalsDao->deleteByLoadId($loadId);
-        $this->temporaryItemInvestigationsDao->deleteByLoadId($loadId);
-        $this->temporaryItemRequestsDao->deleteByLoadId($loadId);
-    }
-
-    /**
-     * @copydoc PKPUsageStatsLoader::insertTemporaryUsageStatsData()
-     */
-    protected function insertTemporaryUsageStatsData(object $entry, int $lineNumber, string $loadId): void
-    {
-        $this->temporaryInstitutionsDao->insert($entry->institutionIds, $lineNumber, $loadId);
-        $this->temporaryTotalsDao->insert($entry, $lineNumber, $loadId);
-        if (!empty($entry->submissionId)) {
-            $this->temporaryItemInvestigationsDao->insert($entry, $lineNumber, $loadId);
-            if ($entry->assocType == Application::ASSOC_TYPE_SUBMISSION_FILE) {
-                $this->temporaryItemRequestsDao->insert($entry, $lineNumber, $loadId);
-            }
-        }
-    }
-
-    /**
-     * @copydoc PKPUsageStatsLoader::checkForeignKeys()
-     */
-    protected function checkForeignKeys(object $entry): array
-    {
-        return $this->temporaryTotalsDao->checkForeignKeys($entry);
-    }
-
     /**
      * @copydoc PKPUsageStatsLoader::getValidAssocTypes()
      */
@@ -107,8 +51,4 @@ class UsageStatsLoader extends PKPUsageStatsLoader
             }
         }
     }
-}
-
-if (!PKP_STRICT_MODE) {
-    class_alias('\APP\tasks\UsageStatsLoader', '\UsageStatsLoader');
 }
