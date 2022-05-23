@@ -170,7 +170,7 @@ class I6782_Metrics extends Migration
                 $table->string('iso', 3)->nullable();
             });
             // read the FIPS to ISO mappings and isert them into the temporary table
-            $mappings = include Core::getBaseDir() . DIRECTORY_SEPARATOR . PKP_LIB_PATH . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'regionMapping.php';
+            $mappings = include Core::getBaseDir() . '/' . PKP_LIB_PATH . '/lib/regionMapping.php';
             foreach ($mappings as $country => $regionMapping) {
                 foreach ($regionMapping as $fips => $iso) {
                     DB::table('region_mapping_tmp')->insert([
