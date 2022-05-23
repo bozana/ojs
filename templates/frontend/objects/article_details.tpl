@@ -176,6 +176,7 @@
 
 			{* Usage statistics chart*}
 			{if $activeTheme->getOption('displayStats') != 'none'}
+				{$activeTheme->displayUsageStatsGraph($article->getId())}
 				<section class="item downloads_chart">
 					<h2 class="label">
 						{translate key="plugins.themes.default.displayStats.downloads"}

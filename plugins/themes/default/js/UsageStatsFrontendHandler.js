@@ -18,11 +18,8 @@
 	// Check for .querySelectorAll in browser support
 	try {
 		graphs = document.querySelectorAll('.usageStatsGraph');
-		console.log("hello world");
-		console.log(graphs);
 		noStatsNotice = document.querySelectorAll('.usageStatsUnavailable');
 	} catch (e) {
-		console.log('Usage stats graph could not be loaded because your browser is too old. Please update your browser.');
 		return;
 	}
 
@@ -101,7 +98,6 @@
 
 		// Check for markup we can use
 		if (typeof graph.dataset.objectType === 'undefined' || typeof graph.dataset.objectId === 'undefined' ) {
-			console.log('Usage stats graph is missing data-object-type and data-object-id attributes', graph);
 			continue;
 		}
 
@@ -110,7 +106,6 @@
 
 		// Check that data exists for this graph
 		if (typeof pkpUsageStats.data[objectType] === 'undefined' || pkpUsageStats.data[objectType][objectId] === 'undefined' ) {
-			console.log('Could not find data for this usage stats graph.', objectType, objectId);
 			continue;
 		}
 
