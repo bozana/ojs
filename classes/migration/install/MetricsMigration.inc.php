@@ -24,7 +24,6 @@ class MetricsMigration extends \PKP\migration\Migration
      */
     public function up(): void
     {
-        /*
         Schema::create('metrics_context', function (Blueprint $table) {
             $table->string('load_id', 255);
             $table->bigInteger('context_id');
@@ -154,7 +153,6 @@ class MetricsMigration extends \PKP\migration\Migration
             $table->index(['context_id', 'submission_id'], 'msgm_context_id_submission_id');
             $table->unique(['context_id', 'submission_id', 'country', 'region', 'city', 'month'], 'msgm_uc_context_submission_c_r_c_month');
         });
-        */
         // Usage stats total item temporary records
         Schema::create('usage_stats_total_temporary_records', function (Blueprint $table) {
             $table->dateTime('date', $precision = 0);
@@ -243,7 +241,6 @@ class MetricsMigration extends \PKP\migration\Migration
      */
     public function down(): void
     {
-        /*
         Schema::drop('metrics_context');
         Schema::drop('metrics_submission');
         Schema::drop('metrics_issue');
@@ -253,7 +250,6 @@ class MetricsMigration extends \PKP\migration\Migration
         Schema::drop('metrics_counter_submission_institution_monthly');
         Schema::drop('metrics_submission_geo_daily');
         Schema::drop('metrics_submission_geo_monthly');
-        */
         Schema::drop('usage_stats_total_temporary_records');
         Schema::drop('usage_stats_unique_item_investigations_temporary_records');
         Schema::drop('usage_stats_unique_item_requests_temporary_records');
