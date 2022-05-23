@@ -39,8 +39,8 @@ class I6782_RemovePlugins extends Migration
             ->where('product', '=', $productName)
             ->exists();
         if ($pluginVersionsEntryExists) {
-            $pluginDest = Core::getBaseDir() . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $category . DIRECTORY_SEPARATOR . $productName;
-            $pluginLibDest = Core::getBaseDir() . DIRECTORY_SEPARATOR . PKP_LIB_PATH . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $category . DIRECTORY_SEPARATOR . $productName;
+            $pluginDest = Core::getBaseDir() . '/plugins/' . $category . '/' . $productName;
+            $pluginLibDest = Core::getBaseDir() . '/' . PKP_LIB_PATH . '/plugins/' . $category . '/' . $productName;
             // Delete files
             // Can we check permissions in the perflight spript?
             $fileManager->rmtree($pluginDest);
@@ -69,8 +69,8 @@ class I6782_RemovePlugins extends Migration
             ->where('product', '=', $productName)
             ->exists();
         if ($pluginVersionsEntryExists) {
-            $pluginDest = Core::getBaseDir() . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $category . DIRECTORY_SEPARATOR . $productName;
-            $pluginLibDest = Core::getBaseDir() . DIRECTORY_SEPARATOR . PKP_LIB_PATH . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $category . DIRECTORY_SEPARATOR . $productName;
+            $pluginDest = Core::getBaseDir() . '/plugins/' . $category . '/' . $productName;
+            $pluginLibDest = Core::getBaseDir() . '/' . PKP_LIB_PATH . '/plugins/' . $category . '/' . $productName;
             // Delete files
             // Can we check permissions in the perflight spript?
             $fileManager->rmtree($pluginDest);
