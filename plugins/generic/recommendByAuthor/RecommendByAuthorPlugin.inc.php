@@ -16,12 +16,13 @@
 use APP\core\Application;
 use APP\core\Services;
 use APP\facades\Repo;
+use APP\handler\Handler;
+use APP\search\ArticleSearch;
 use APP\statistics\StatisticsHelper;
+use PKP\core\VirtualArrayIterator;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\HookRegistry;
 use PKP\submission\PKPSubmission;
-use APP\search\ArticleSearch;
-use PKP\core\VirtualArrayIterator;
 
 class RecommendByAuthorPlugin extends GenericPlugin
 {
@@ -131,7 +132,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
 
         // Pagination.
         $request = Application::get()->getRequest();
-        $rangeInfo = \APP\handler\Handler::getRangeInfo($request, 'articlesBySameAuthor');
+        $rangeInfo = Handler::getRangeInfo($request, 'articlesBySameAuthor');
         if ($rangeInfo && $rangeInfo->isValid()) {
             $page = $rangeInfo->getPage();
         } else {
