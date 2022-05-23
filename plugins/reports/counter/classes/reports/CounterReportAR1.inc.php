@@ -35,11 +35,14 @@ class CounterReportAR1 extends CounterReport
 
     /**
      * Convert an OJS metrics request to a COUNTER ReportItem
+     *
      * @param string|array $columns column (aggregation level) selection
      * @param array $filters report-level filter selection
      * @param array $orderBy order criteria
      * @param null|DBResultRange $range paging specification
+     *
      * @see ReportPlugin::getMetrics for more details
+     *
      * @return array COUNTER\ReportItem
      */
     public function getReportItems($columns = [], $filters = [], $orderBy = [], $range = null)
@@ -103,6 +106,9 @@ class CounterReportAR1 extends CounterReport
             }
             if (!empty($submissionIds)) {
                 $validFilters['submissionIds'] = $submissionIds;
+            } else {
+                $this->setError(new Exception(__('plugins.reports.counter.exception.noData'), COUNTER_EXCEPTION_ERROR | COUNTER_EXCEPTION_NO_DATA));
+                return [];
             }
         }
         // TODO: range
