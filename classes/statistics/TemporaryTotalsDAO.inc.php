@@ -38,41 +38,10 @@ class TemporaryTotalsDAO extends PKPTemporaryTotalsDAO
         );
     }
 
-    public function checkForeignKeys(object $entryData): array
-    {
-        $errorMsg = [];
-        if (DB::table('journals')->where('journal_id', '=', $entryData->contextId)->doesntExist()) {
-            $errorMsg[] = "journal_id: {$entryData->contextId}";
-        }
-        if (!empty($entryData->issueId) && DB::table('issues')->where('issue_id', '=', $entryData->issueId)->doesntExist()) {
-            $errorMsg[] = "issue_id: {$entryData->issueId}";
-        }
-        if (!empty($entryData->submissionId) && DB::table('submissions')->where('submission_id', '=', $entryData->submissionId)->doesntExist()) {
-            $errorMsg[] = "submission_id: {$entryData->submissionId}";
-        }
-        if (!empty($entryData->representationId) && DB::table('publication_galleys')->where('galley_id', '=', $entryData->representationId)->doesntExist()) {
-            $errorMsg[] = "galley_id: {$entryData->representationId}";
-        }
-        if (in_array($entryData->assocType, [Application::ASSOC_TYPE_SUBMISSION_FILE, Application::ASSOC_TYPE_SUBMISSION_FILE_COUNTER_OTHER]) &&
-            DB::table('submission_files')->where('submission_file_id', '=', $entryData->assocId)->doesntExist()) {
-            $errorMsg[] = "submission_file_id: {$entryData->assocId}";
-        }
-        if (($entryData->assocType == Application::ASSOC_TYPE_ISSUE_GALLEY) &&
-            DB::table('issue_galleys')->where('galley_id', '=', $entryData->assocId)->doesntExist()) {
-            $errorMsg[] = "issue_galley_id: {$entryData->assocId}";
-        }
-        foreach ($entryData->institutionIds as $institutionId) {
-            if (DB::table('institutions')->where('institution_id', '=', $institutionId)->doesntExist()) {
-                $errorMsg[] = "institution_id: {$institutionId}";
-            }
-        }
-        return $errorMsg;
-    }
-
     /**
      * Load usage for issue (TOC and galleys views)
      */
-    public function loadMetricsIssue(string $loadId): void
+    public function compileIssueMetrics(string $loadId): void
     {
         DB::table('metrics_issue')->where('load_id', '=', $loadId)->delete();
         $selectIssueMetrics = DB::table($this->table)
