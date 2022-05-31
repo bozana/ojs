@@ -48,13 +48,13 @@ class CompileMonthlyMetrics extends BaseJob
         $currentMonth = date('Ym'); // shall we consider only current month or maybe rather previous month?
 
         $geoService = Services::get('geoStats');
-        $geoService->aggregateMetrics($this->month);
+        $geoService->addMonthlyMetrics($this->month);
         if (!$this->site->getData('keepDailyUsageStats') && $this->month != $currentMonth) {
             $geoService->deleteDailyMetrics($this->month);
         }
 
         $counterService = Services::get('sushiStats');
-        $counterService->aggregateMetrics($this->month);
+        $counterService->addMonthlyMetrics($this->month);
         if (!$this->site->getData('keepDailyUsageStats') && $this->month != $currentMonth) {
             $counterService->deleteDailyMetrics($this->month);
         }
