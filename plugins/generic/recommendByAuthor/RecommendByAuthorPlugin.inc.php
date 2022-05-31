@@ -117,7 +117,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
             'contextIds' => [$displayedArticle->getData('contextId')],
             'submissionIds' => $results,
         ];
-        $statsReport = Services::get('publicationStats')->getTotalMetrics($filters);
+        $statsReport = Services::get('publicationStats')->getTotals($filters);
 
         $orderedResults = [];
         foreach ((array) $statsReport as $reportRow) {
