@@ -63,7 +63,6 @@ class IssueGalley extends IssueFile
      */
     public function getViews()
     {
-        $views = 0;
         $filters = [
             'dateStart' => StatisticsHelper::STATISTICS_EARLIEST_DATE,
             'dateEnd' => date('Y-m-d', strtotime('yesterday')),
@@ -73,11 +72,8 @@ class IssueGalley extends IssueFile
         $metrics = Services::get('issueStats')
             ->getQueryBuilder($filters)
             ->getSum([])
-            ->get()->toArray();
-        if (!empty($metrics)) {
-            $views = (int) current($metrics)->metric;
-        }
-        return $views;
+            ->value('metric');
+        return $metrics ? $metrics : 0;
     }
 
     /**

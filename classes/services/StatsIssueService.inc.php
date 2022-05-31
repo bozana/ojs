@@ -16,20 +16,14 @@
 namespace APP\services;
 
 use APP\core\Application;
+use APP\services\queryBuilders\StatsIssueQueryBuilder;
 use APP\statistics\StatisticsHelper;
-use PKP\core\PKPString;
 use PKP\plugins\HookRegistry;
+use PKP\services\PKPStatsServiceTrait;
 
 class StatsIssueService
 {
-    /**
-     * A callback to be used with array_map() to return all
-     * issue IDs from the records.
-     */
-    public function filterIssueIds(object $record): int
-    {
-        return $record->issue_id;
-    }
+    use PKPStatsServiceTrait;
 
     /**
      * A callback to be used with array_filter() to return records for
@@ -50,46 +44,37 @@ class StatsIssueService
     }
 
     /**
-     * Get total count of issues matching the given parameters
+     * Get a count of all issues with stats that match the request arguments
      */
-    public function getTotalCount(array $args): int
+    public function getCount(array $args): int
     {
         $defaultArgs = $this->getDefaultArgs();
         $args = array_merge($defaultArgs, $args);
+        unset($args['count']);
+        unset($args['offset']);
         $metricsQB = $this->getQueryBuilder($args);
 
-        HookRegistry::call('StatsIssue::getTotalCount::queryBuilder', [&$metricsQB, $args]);
+        HookRegistry::call('StatsIssue::getCount::queryBuilder', [&$metricsQB, $args]);
 
-        $groupBy = [StatisticsHelper::STATISTICS_DIMENSION_ISSUE_ID];
-        $metricsQB = $metricsQB->getSum($groupBy);
-
-        return $metricsQB->get()->count();
+        return $metricsQB->getIssueIds()->get()->count();
     }
 
     /**
-     * Get total metrics for every issue, ordered by metrics, return just the requested offset
+     * Get the issues with total stats that match the request arguments
      */
-    public function getTotalMetrics(array $args): array
+    public function getTotals(array $args): array
     {
         $defaultArgs = $this->getDefaultArgs();
         $args = array_merge($defaultArgs, $args);
         $metricsQB = $this->getQueryBuilder($args);
 
-        HookRegistry::call('StatsIssue::getTotalMetrics::queryBuilder', [&$metricsQB, $args]);
+        HookRegistry::call('StatsIssue::getTotals::queryBuilder', [&$metricsQB, $args]);
 
         $groupBy = [StatisticsHelper::STATISTICS_DIMENSION_ISSUE_ID];
         $metricsQB = $metricsQB->getSum($groupBy);
 
-        $args['orderDirection'] === StatisticsHelper::STATISTICS_ORDER_ASC ? 'asc' : 'desc';
-        $metricsQB->orderBy(StatisticsHelper::STATISTICS_METRIC, $args['orderDirection']);
-
-        if (isset($args['count'])) {
-            $metricsQB->limit($args['count']);
-            if (isset($args['offset'])) {
-                $metricsQB->offset($args['offset']);
-            }
-        }
-
+        $orderDirection = $args['orderDirection'] === StatisticsHelper::STATISTICS_ORDER_ASC ? 'asc' : 'desc';
+        $metricsQB->orderBy(StatisticsHelper::STATISTICS_METRIC, $orderDirection);
         return $metricsQB->get()->toArray();
     }
 
@@ -97,100 +82,38 @@ class StatsIssueService
      * Get metrics by type (toc, issue galley) for an issue
      * Assumes that the issue ID is provided in parameters
      */
-    public function getMetricsByType(array $args): array
+    public function getTotalsByType(int $issueId, int $contextId, ?string $dateStart, ?string $dateEnd): array
     {
         $defaultArgs = $this->getDefaultArgs();
-        $args = array_merge($defaultArgs, $args);
+        $args = [
+            'issueIds' => [$issueId],
+            'contextIds' => [$contextId],
+            'dateStart' => $dateStart ?? $defaultArgs['dateStart'],
+            'dateEnd' => $dateEnd ?? $defaultArgs['dateEnd'],
+        ];
         $metricsQB = $this->getQueryBuilder($args);
 
-        HookRegistry::call('StatsIssue::getMetricsByType::queryBuilder', [&$metricsQB, $args]);
+        HookRegistry::call('StatsIssue::getTotalsByType::queryBuilder', [&$metricsQB, $args]);
 
         // get toc and galley views for the issue
         $groupBy = [StatisticsHelper::STATISTICS_DIMENSION_ASSOC_TYPE];
         $metricsQB = $metricsQB->getSum($groupBy);
-        return $metricsQB->get()->toArray();
-    }
+        $metricsByType = $metricsQB->get()->toArray();
 
-    /**
-     * Get the sum of a set of metrics broken down by day or month
-     *
-     * @param string $timelineInterval STATISTICS_DIMENSION_MONTH or STATISTICS_DIMENSION_DAY
-     * @param array $args Filter the records to include. See self::getQueryBuilder()
-     *
-     */
-    public function getTimeline(string $timelineInterval, array $args = []): array
-    {
-        $defaultArgs = array_merge($this->getDefaultArgs(), ['orderDirection' => StatisticsHelper::STATISTICS_ORDER_ASC]);
-        $args = array_merge($defaultArgs, $args);
-        $timelineQB = $this->getQueryBuilder($args);
-
-        HookRegistry::call('StatsIssue::::getTimeline::queryBuilder', [&$timelineQB, $args]);
-
-        $timelineQO = $timelineQB
-            ->getSum([$timelineInterval])
-            ->orderBy($timelineInterval, $args['orderDirection']);
-
-        $result = $timelineQO->get();
-
-        $dateValues = [];
-        foreach ($result as $row) {
-            $row = (array) $row;
-            $date = $row[$timelineInterval];
-            if ($timelineInterval === StatisticsHelper::STATISTICS_DIMENSION_MONTH) {
-                $date = substr($date, 0, 7);
-            }
-            $dateValues[$date] = (int) $row['metric'];
+        $tocViews = $issueGalleyViews = 0;
+        $tocRecord = array_filter($metricsByType, [$this, 'filterRecordTOC']);
+        if (!empty($tocRecord)) {
+            $tocViews = (int) current($tocRecord)->metric;
+        }
+        $issueGalleyRecord = array_filter($metricsByType, [$this, 'filterRecordIssueGalley']);
+        if (!empty($issueGalleyRecord)) {
+            $issueGalleyViews = current($issueGalleyRecord)->metric;
         }
 
-        $timeline = $this->getEmptyTimelineIntervals($args['dateStart'], $args['dateEnd'], $timelineInterval);
-
-        $timeline = array_map(function ($entry) use ($dateValues) {
-            foreach ($dateValues as $date => $value) {
-                if ($entry['date'] === $date) {
-                    $entry['value'] = $value;
-                    break;
-                }
-            }
-            return $entry;
-        }, $timeline);
-
-        return $timeline;
-    }
-
-    /**
-     * Get all time segments (months or days) between the start and end date
-     * with empty values.
-     *
-     * @param string $timelineInterval STATISTICS_DIMENSION_MONTH or STATISTICS_DIMENSION_DAY
-     *
-     * @return array of time segments in ASC order
-     */
-    public function getEmptyTimelineIntervals(string $startDate, string $endDate, string $timelineInterval): array
-    {
-        if ($timelineInterval === StatisticsHelper::STATISTICS_DIMENSION_MONTH) {
-            $dateFormat = 'Y-m';
-            $labelFormat = 'F Y';
-            $interval = 'P1M';
-        } elseif ($timelineInterval === StatisticsHelper::STATISTICS_DIMENSION_DAY) {
-            $dateFormat = 'Y-m-d';
-            $labelFormat = PKPString::convertStrftimeFormat(Application::get()->getRequest()->getContext()->getLocalizedDateFormatLong());
-            $interval = 'P1D';
-        }
-
-        $startDate = new \DateTime($startDate);
-        $endDate = new \DateTime($endDate);
-
-        $timelineIntervals = [];
-        while ($startDate->format($dateFormat) <= $endDate->format($dateFormat)) {
-            $timelineIntervals[] = [
-                'date' => $startDate->format($dateFormat),
-                'label' => date($labelFormat, $startDate->getTimestamp()),
-                'value' => 0,
-            ];
-            $startDate->add(new \DateInterval($interval));
-        }
-
-        return $timelineIntervals;
+        return [
+            'toc' => $tocViews,
+            'galley' => $issueGalleyViews,
+        ];
     }
 
     /**
@@ -211,9 +134,9 @@ class StatsIssueService
     /**
      * Get a QueryBuilder object with the passed args
      */
-    public function getQueryBuilder(array $args = []): \APP\services\queryBuilders\StatsIssueQueryBuilder
+    public function getQueryBuilder(array $args = []): StatsIssueQueryBuilder
     {
-        $statsQB = new \APP\services\queryBuilders\StatsIssueQueryBuilder();
+        $statsQB = new StatsIssueQueryBuilder();
         $statsQB
             ->filterByContexts($args['contextIds'])
             ->before($args['dateEnd'])
@@ -229,6 +152,13 @@ class StatsIssueService
 
         if (!empty($args['assocTypes'])) {
             $statsQB->filterByAssocTypes($args['assocTypes']);
+        }
+
+        if (isset($args['count'])) {
+            $statsQB->limit($args['count']);
+            if (isset($args['offset'])) {
+                $statsQB->offset($args['offset']);
+            }
         }
 
         HookRegistry::call('StatsIssue::queryBuilder', [&$statsQB, $args]);

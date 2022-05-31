@@ -110,10 +110,6 @@ class StatsIssueHandler extends APIHandler
         $request = $this->getRequest();
         $responseCSV = str_contains($slimRequest->getHeaderLine('Accept'), APIResponse::RESPONSE_CSV) ? true : false;
 
-        if (!$request->getContext()) {
-            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
-        }
-
         $defaultParams = [
             'count' => 30,
             'offset' => 0,
@@ -132,9 +128,9 @@ class StatsIssueHandler extends APIHandler
             'issueIds',
         ]);
 
-        $allowedParams['contextIds'] = $request->getContext()->getId();
-
         HookRegistry::call('API::stats::issues::params', [&$allowedParams, $slimRequest]);
+
+        $allowedParams['contextIds'] = [$request->getContext()->getId()];
 
         $result = $this->_validateStatDates($allowedParams);
         if ($result !== true) {
@@ -153,7 +149,7 @@ class StatsIssueHandler extends APIHandler
             if (empty($allowedParams['issueIds'])) {
                 $csvColumnNames = $this->_getIssueReportColumnNames();
                 if ($responseCSV) {
-                    return $response->withCSV(0, [], $csvColumnNames);
+                    return $response->withCSV([], $csvColumnNames, 0);
                 } else {
                     return $response->withJson([
                         'items' => [],
@@ -165,46 +161,27 @@ class StatsIssueHandler extends APIHandler
 
         // Get a list (count number) of top issues by total (toc + galley) views
         $statsService = Services::get('issueStats');
-        $totalMetrics = $statsService->getTotalMetrics($allowedParams);
+        $totalMetrics = $statsService->getTotals($allowedParams);
 
         // Get the stats for each issue
         $items = [];
         foreach ($totalMetrics as $totalMetric) {
-            if (empty($totalMetric->issue_id)) {
-                continue;
-            }
             $issueId = $totalMetric->issue_id;
-
-            $typeParams = $allowedParams;
-            $typeParams['issueIds'] = $issueId;
-            $metricsByType = $statsService->getMetricsByType($typeParams);
-
-            $tocViews = $issueGalleyViews = 0;
-            $tocRecord = array_filter($metricsByType, [$statsService, 'filterRecordTOC']);
-            if (!empty($tocRecord)) {
-                $tocViews = (int) current($tocRecord)->metric;
-            }
-            $issueGalleyRecord = array_filter($metricsByType, [$statsService, 'filterRecordIssueGalley']);
-            if (!empty($issueGalleyRecord)) {
-                $issueGalleyViews = current($issueGalleyRecord)->metric;
-            }
-            $totalViews = $tocViews + $issueGalleyViews;
+            $dateStart = array_key_exists('dateStart', $allowedParams) ? $allowedParams['dateStart'] : null;
+            $dateEnd = array_key_exists('dateEnd', $allowedParams) ? $allowedParams['dateEnd'] : null;
+            $metricsByType = $statsService->getTotalsByType($issueId, $this->getRequest()->getContext()->getId(), $dateStart, $dateEnd);
 
             if ($responseCSV) {
-                $items[] = $this->getCSVItem($issueId, $tocViews, $issueGalleyViews, $totalViews);
+                $items[] = $this->getItemForCSV($issueId, $metricsByType['toc'], $metricsByType['galley']);
             } else {
-                $items[] = $this->getJSONItem($issueId, $tocViews, $issueGalleyViews, $totalViews);
+                $items[] = $this->getItemForJSON($issueId, $metricsByType['toc'], $metricsByType['galley']);
             }
         }
 
-        $itemsMaxParams = $allowedParams;
-        unset($itemsMaxParams['count']);
-        unset($itemsMaxParams['offset']);
-        $itemsMax = $statsService->getTotalCount($itemsMaxParams);
-
+        $itemsMax = $statsService->getCount($allowedParams);
         $csvColumnNames = $this->_getIssueReportColumnNames();
         if ($responseCSV) {
-            return $response->withCSV($itemsMax, $items, $csvColumnNames);
+            return $response->withCSV($items, $csvColumnNames, $itemsMax);
         } else {
             return $response->withJson([
                 'items' => $items,
@@ -221,10 +198,6 @@ class StatsIssueHandler extends APIHandler
     {
         $request = $this->getRequest();
 
-        if (!$request->getContext()) {
-            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
-        }
-
         $defaultParams = [
             'timelineInterval' => StatisticsHelper::STATISTICS_DIMENSION_MONTH,
         ];
@@ -240,7 +213,7 @@ class StatsIssueHandler extends APIHandler
 
         HookRegistry::call('API::stats::issues::toc::params', [&$allowedParams, $slimRequest]);
 
-        if (!in_array($allowedParams['timelineInterval'], [StatisticsHelper::STATISTICS_DIMENSION_DAY, StatisticsHelper::STATISTICS_DIMENSION_MONTH])) {
+        if (!$this->isValidTimelineInterval($allowedParams['timelineInterval'])) {
             return $response->withStatus(400)->withJsonError('api.stats.400.wrongTimelineInterval');
         }
 
@@ -249,8 +222,8 @@ class StatsIssueHandler extends APIHandler
             return $response->withStatus(400)->withJsonError($result);
         }
 
-        $allowedParams['contextIds'] = $request->getContext()->getId();
-        $allowedParams['assocTypes'] = Application::ASSOC_TYPE_ISSUE;
+        $allowedParams['contextIds'] = [$request->getContext()->getId()];
+        $allowedParams['assocTypes'] = [Application::ASSOC_TYPE_ISSUE];
 
         // Identify issues which should be included in the results when a searchPhrase is passed
         if (!empty($allowedParams['searchPhrase'])) {
@@ -278,10 +251,6 @@ class StatsIssueHandler extends APIHandler
     {
         $request = $this->getRequest();
 
-        if (!$request->getContext()) {
-            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
-        }
-
         $defaultParams = [
             'timelineInterval' => StatisticsHelper::STATISTICS_DIMENSION_MONTH,
         ];
@@ -297,7 +266,7 @@ class StatsIssueHandler extends APIHandler
 
         HookRegistry::call('API::stats::issues::galley::params', [&$allowedParams, $slimRequest]);
 
-        if (!in_array($allowedParams['timelineInterval'], [StatisticsHelper::STATISTICS_DIMENSION_DAY, StatisticsHelper::STATISTICS_DIMENSION_MONTH])) {
+        if (!$this->isValidTimelineInterval($allowedParams['timelineInterval'])) {
             return $response->withStatus(400)->withJsonError('api.stats.400.wrongTimelineInterval');
         }
 
@@ -306,8 +275,8 @@ class StatsIssueHandler extends APIHandler
             return $response->withStatus(400)->withJsonError($result);
         }
 
-        $allowedParams['contextIds'] = $request->getContext()->getId();
-        $allowedParams['assocTypes'] = Application::ASSOC_TYPE_ISSUE_GALLEY;
+        $allowedParams['contextIds'] = [$request->getContext()->getId()];
+        $allowedParams['assocTypes'] = [Application::ASSOC_TYPE_ISSUE_GALLEY];
 
         // Identify issues which should be included in the results when a searchPhrase is passed
         if (!empty($allowedParams['searchPhrase'])) {
@@ -334,12 +303,7 @@ class StatsIssueHandler extends APIHandler
     {
         $request = $this->getRequest();
 
-        if (!$request->getContext()) {
-            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
-        }
-
         $issue = $this->getAuthorizedContextObject(Application::ASSOC_TYPE_ISSUE);
-        // No need to check if $issue is set, the function authorize does it
 
         $allowedParams = $this->_processAllowedParams($slimRequest->getQueryParams(), [
             'dateStart',
@@ -353,25 +317,14 @@ class StatsIssueHandler extends APIHandler
             return $response->withStatus(400)->withJsonError($result);
         }
 
-        $allowedParams['issueIds'] = [$issue->getId()];
-        $allowedParams['contextIds'] = $request->getContext()->getId();
-
         $statsService = Services::get('issueStats');
-        $metricsByType = $statsService->getMetricsByType($allowedParams);
-
-        $tocViews = $galleyViews = 0;
-        $tocRecord = array_filter($metricsByType, [$statsService, 'filterRecordTOC']);
-        if (!empty($tocRecord)) {
-            $tocViews = (int) current($tocRecord)->metric;
-        }
-        $galleyRecord = array_filter($metricsByType, [$statsService, 'filterRecordIssueGalley']);
-        if (!empty($galleyRecord)) {
-            $galleyViews = (int) current($galleyRecord)->metric;
-        }
+        $dateStart = array_key_exists('dateStart', $allowedParams) ? $allowedParams['dateStart'] : null;
+        $dateEnd = array_key_exists('dateEnd', $allowedParams) ? $allowedParams['dateEnd'] : null;
+        $metricsByType = $statsService->getTotalsByType($issue->getId(), $request->getContext()->getId(), $dateStart, $dateEnd);
 
         return $response->withJson([
-            'tocViews' => $tocViews,
-            'issueGalleyViews' => $galleyViews,
+            'tocViews' => $metricsByType['toc'],
+            'issueGalleyViews' => $metricsByType['galley'],
             'issue' => Repo::issue()->getSchemaMap()->mapToStats($issue),
         ], 200);
     }
@@ -384,12 +337,7 @@ class StatsIssueHandler extends APIHandler
     {
         $request = $this->getRequest();
 
-        if (!$request->getContext()) {
-            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
-        }
-
         $issue = $this->getAuthorizedContextObject(Application::ASSOC_TYPE_ISSUE);
-        // No need to check if $issue is set, the function authorize does it
 
         $defaultParams = [
             'timelineInterval' => StatisticsHelper::STATISTICS_DIMENSION_MONTH,
@@ -403,11 +351,15 @@ class StatsIssueHandler extends APIHandler
             'timelineInterval',
         ]);
 
-        $allowedParams['contextIds'] = $request->getContext()->getId();
-        $allowedParams['issueIds'] = $issue->getId();
-        $allowedParams['assocTypes'] = Application::ASSOC_TYPE_ISSUE;
-
         HookRegistry::call('API::stats::issue::toc::params', [&$allowedParams, $slimRequest]);
+
+        $allowedParams['contextIds'] = [$request->getContext()->getId()];
+        $allowedParams['issueIds'] = [$issue->getId()];
+        $allowedParams['assocTypes'] = [Application::ASSOC_TYPE_ISSUE];
+
+        if (!$this->isValidTimelineInterval($allowedParams['timelineInterval'])) {
+            return $response->withStatus(400)->withJsonError('api.stats.400.wrongTimelineInterval');
+        }
 
         $result = $this->_validateStatDates($allowedParams);
         if ($result !== true) {
@@ -428,12 +380,7 @@ class StatsIssueHandler extends APIHandler
     {
         $request = $this->getRequest();
 
-        if (!$request->getContext()) {
-            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
-        }
-
         $issue = $this->getAuthorizedContextObject(Application::ASSOC_TYPE_ISSUE);
-        // No need to check if $issue is set, the function authorize does it
 
         $defaultParams = [
             'timelineInterval' => StatisticsHelper::STATISTICS_DIMENSION_MONTH,
@@ -447,11 +394,15 @@ class StatsIssueHandler extends APIHandler
             'timelineInterval',
         ]);
 
-        $allowedParams['contextIds'] = $request->getContext()->getId();
-        $allowedParams['issueIds'] = $issue->getId();
-        $allowedParams['assocTypes'] = Application::ASSOC_TYPE_ISSUE_GALLEY;
-
         HookRegistry::call('API::stats::issue::galley::params', [&$allowedParams, $slimRequest]);
+
+        $allowedParams['contextIds'] = [$request->getContext()->getId()];
+        $allowedParams['issueIds'] = [$issue->getId()];
+        $allowedParams['assocTypes'] = [Application::ASSOC_TYPE_ISSUE_GALLEY];
+
+        if (!$this->isValidTimelineInterval($allowedParams['timelineInterval'])) {
+            return $response->withStatus(400)->withJsonError('api.stats.400.wrongTimelineInterval');
+        }
 
         $result = $this->_validateStatDates($allowedParams);
         if ($result !== true) {
@@ -529,11 +480,9 @@ class StatsIssueHandler extends APIHandler
         );
 
         if (!empty($issueIds)) {
-            $issueIds = array_intersect($issueIds, $searchPhraseIssueIds->toArray());
-        } else {
-            $issueIds = $searchPhraseIssueIds->toArray();
+            return array_intersect($issueIds, $searchPhraseIssueIds->toArray());
         }
-        return $issueIds;
+        return $searchPhraseIssueIds->toArray();
     }
 
     /**
@@ -553,15 +502,12 @@ class StatsIssueHandler extends APIHandler
     /**
      * Get CSV row with issue metrics
      */
-    protected function getCSVItem(int $issueId, int $tocViews, int $issueGalleyViews, int $totalViews): array
+    protected function getItemForCSV(int $issueId, int $tocViews, int $issueGalleyViews): array
     {
+        $totalViews = $tocViews + $issueGalleyViews;
         // Get issue identification for display
-        // Now that we use foreign keys, the stats should not exist for deleted issues, but consider it however?
-        $identification = '';
         $issue = Repo::issue()->get($issueId);
-        if ($issue) {
-            $identification = $issue->getIssueIdentification();
-        }
+        $identification = $issue->getIssueIdentification();
         return [
             $issueId,
             $identification,
@@ -574,20 +520,28 @@ class StatsIssueHandler extends APIHandler
     /**
      * Get JSON data with issue metrics
      */
-    protected function getJSONItem(int $issueId, int $tocViews, int $issueGalleyViews, int $totalViews): array
+    protected function getItemForJSON(int $issueId, int $tocViews, int $issueGalleyViews): array
     {
+        $totalViews = $tocViews + $issueGalleyViews;
         // Get basic issue details for display
-        // Now that we use foreign keys, the stats should not exist for deleted issues, but consider it however?
-        $issueProps = ['id' => $issueId];
         $issue = Repo::issue()->get($issueId);
-        if ($issue) {
-            $issueProps = Repo::issue()->getSchemaMap()->mapToStats($issue);
-        }
+        $issueProps = Repo::issue()->getSchemaMap()->mapToStats($issue);
         return [
             'totalViews' => $totalViews,
             'tocViews' => $tocViews,
             'issueGalleyViews' => $issueGalleyViews,
             'issue' => $issueProps,
         ];
+    }
+
+    /**
+     * Check if the timeline interval is valid
+     */
+    protected function isValidTimelineInterval(string $interval): bool
+    {
+        return in_array($interval, [
+            StatisticsHelper::STATISTICS_DIMENSION_DAY,
+            StatisticsHelper::STATISTICS_DIMENSION_MONTH
+        ]);
     }
 }

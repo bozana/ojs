@@ -18,6 +18,7 @@ namespace APP\services\queryBuilders;
 
 use APP\core\Application;
 use APP\statistics\StatisticsHelper;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use PKP\plugins\HookRegistry;
 use PKP\services\queryBuilders\PKPStatsQueryBuilder;
@@ -36,28 +37,38 @@ class StatsIssueQueryBuilder extends PKPStatsQueryBuilder
     /**
      * Set the issues to get records for
      */
-    public function filterByIssues(array|int $issueIds): self
+    public function filterByIssues(array $issueIds): self
     {
-        $this->issueIds = is_array($issueIds) ? $issueIds : [$issueIds];
+        $this->issueIds = $issueIds;
         return $this;
     }
 
     /**
      * Set the issues to get records for
      */
-    public function filterByIssueGalleys(array|int $issueGalleyIds): self
+    public function filterByIssueGalleys(array $issueGalleyIds): self
     {
-        $this->issueGalleyIds = is_array($issueGalleyIds) ? $issueGalleyIds : [$issueGalleyIds];
+        $this->issueGalleyIds = $issueGalleyIds;
         return $this;
     }
 
     /**
      * Set the assocTypes to get records for
      */
-    public function filterByAssocTypes(array|int $assocTypes): self
+    public function filterByAssocTypes(array $assocTypes): self
     {
-        $this->assocTypes = is_array($assocTypes) ? $assocTypes : [$assocTypes];
+        $this->assocTypes = $assocTypes;
         return $this;
+    }
+
+    /**
+     * Get issue IDs
+     */
+    public function getIssueIds(): Builder
+    {
+        return $this->_getObject()
+            ->select([StatisticsHelper::STATISTICS_DIMENSION_ISSUE_ID])
+            ->distinct();
     }
 
     /**
@@ -85,7 +96,7 @@ class StatsIssueQueryBuilder extends PKPStatsQueryBuilder
     /**
      * @copydoc PKPStatsQueryBuilder::_getObject()
      */
-    protected function _getObject(): \Illuminate\Database\Query\Builder
+    protected function _getObject(): Builder
     {
         $q = DB::table('metrics_issue');
 
@@ -110,6 +121,13 @@ class StatsIssueQueryBuilder extends PKPStatsQueryBuilder
         }
 
         $q->whereBetween(StatisticsHelper::STATISTICS_DIMENSION_DATE, [$this->dateStart, $this->dateEnd]);
+
+        if ($this->limit > 0) {
+            $q->limit($this->limit);
+            if ($this->offset > 0) {
+                $q->offset($this->offset);
+            }
+        }
 
         HookRegistry::call('StatsIssue::queryObject', [&$q, $this]);
 

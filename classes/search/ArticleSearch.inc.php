@@ -21,9 +21,9 @@ namespace APP\search;
 use APP\core\Application;
 use APP\core\Services;
 use APP\facades\Repo;
-use PKP\facades\Locale;
 use APP\issue\IssueAction;
 use PKP\db\DAORegistry;
+use PKP\facades\Locale;
 use PKP\plugins\HookRegistry;
 
 use PKP\search\SubmissionSearch;
@@ -67,7 +67,7 @@ class ArticleSearch extends SubmissionSearch
                 $filter['dateStart'] = $oneMonthAgo;
                 $filter['dateEnd'] = $today;
             }
-            $rawReport = Services::get('publicationStats')->getTotalMetrics($filter);
+            $rawReport = Services::get('publicationStats')->getTotals($filter);
             foreach ($rawReport as $row) {
                 $unorderedResults[$row['submission_id']]['metric'] = (int)$row['metric'];
             }

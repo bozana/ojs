@@ -207,9 +207,8 @@ class Schema extends \PKP\core\maps\Schema
         $props = $this->mapByProperties([
             '_href',
             'id',
+            'identification'
         ], $issue);
-        $props['issueIdentification'] = $issue->getIssueIdentification();
         return $props;
     }
-
 }
