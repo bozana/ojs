@@ -54,7 +54,6 @@ class CounterReportAR1 extends CounterReport
         }
         // Check filters for correct context(s)
         $validFilters = $this->filterForContext($filters);
-        $validFilters = $this->filterForContext($filters);
         // Filters defaults to last month, but can be provided by month or by day (which is defined in the $columns)
         if (!isset($filters['dateStart']) && !isset($filters['dateEnd'])) {
             $validFilters['dateStart'] = date_format(date_create('first day of previous month'), 'Ymd');
@@ -69,7 +68,7 @@ class CounterReportAR1 extends CounterReport
             unset($filters['dateEnd']);
         }
         if (!isset($filters['assocTypes'])) {
-            $validFilters['assocTypes'] = Application::ASSOC_TYPE_SUBMISSION_FILE;
+            $validFilters['assocTypes'] = [Application::ASSOC_TYPE_SUBMISSION_FILE];
             unset($filters['assocTypes']);
         } elseif ($filters['assocTypes'] != Application::ASSOC_TYPE_SUBMISSION_FILE) {
             $this->setError(new Exception(__('plugins.reports.counter.exception.filter'), COUNTER_EXCEPTION_ERROR | COUNTER_EXCEPTION_BAD_FILTERS));
@@ -80,7 +79,7 @@ class CounterReportAR1 extends CounterReport
                 case 'contextIds':
                 case 'issueIds':
                 case 'submissionIds':
-                    $validFilters[$key] = $filter;
+                    $validFilters[$key] = [$filter];
                     unset($filters[$key]);
             }
         }
@@ -124,9 +123,8 @@ class CounterReportAR1 extends CounterReport
             $metrics = [];
             $lastArticle = 0;
             foreach ($results as $rs) {
-                $rs = json_decode(json_encode($rs), true);
                 // Article changes trigger a new ReportItem
-                if ($lastArticle != $rs[StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID]) {
+                if ($lastArticle != $rs->{StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID}) {
                     if ($lastArticle != 0 && $metrics) {
                         $item = $this->_createReportItem($lastArticle, $metrics);
                         if ($item) {
@@ -137,8 +135,8 @@ class CounterReportAR1 extends CounterReport
                         $metrics = [];
                     }
                 }
-                $metrics[] = $this->createMetricByMonth($rs[StatisticsHelper::STATISTICS_DIMENSION_MONTH], [new COUNTER\PerformanceCounter('ft_total', $rs[StatisticsHelper::STATISTICS_METRIC])]);
-                $lastArticle = $rs[StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID];
+                $metrics[] = $this->createMetricByMonth($rs->{StatisticsHelper::STATISTICS_DIMENSION_MONTH}, [new COUNTER\PerformanceCounter('ft_total', $rs->{StatisticsHelper::STATISTICS_METRIC})]);
+                $lastArticle = $rs->{StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID};
             }
             // Capture the last unprocessed ItemPerformance and ReportItem entries, if applicable
             if ($metrics) {

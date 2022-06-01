@@ -33,11 +33,14 @@ class CounterReportJR1 extends CounterReport
 
     /**
      * Convert an OJS metrics request to COUNTER ReportItems
+     *
      * @param string|array $columns column (aggregation level) selection
      * @param array $filters report-level filter selection
      * @param array $orderBy order criteria
      * @param null|DBResultRange $range paging specification
+     *
      * @see ReportPlugin::getMetrics for more details
+     *
      * @return array COUNTER\ReportItem array
      */
     public function getReportItems($columns = [], $filters = [], $orderBy = [], $range = null)
@@ -63,7 +66,7 @@ class CounterReportJR1 extends CounterReport
             unset($filters['dateEnd']);
         }
         if (!isset($filters['assocTypes'])) {
-            $validFilters['assocTypes'] = Application::ASSOC_TYPE_SUBMISSION_FILE;
+            $validFilters['assocTypes'] = [Application::ASSOC_TYPE_SUBMISSION_FILE];
             unset($filters['assocTypes']);
         } elseif ($filters['assocTypes'] != Application::ASSOC_TYPE_SUBMISSION_FILE) {
             $this->setError(new Exception(__('plugins.reports.counter.exception.filter'), COUNTER_EXCEPTION_ERROR | COUNTER_EXCEPTION_BAD_FILTERS));
@@ -88,20 +91,19 @@ class CounterReportJR1 extends CounterReport
             $lastPeriod = 0;
             $lastJournal = 0;
             foreach ($results as $rs) {
-                $rs = json_decode(json_encode($rs), true);
                 // Identify the type of request
-                $metricTypeKey = $this->getKeyForFiletype($rs[StatisticsHelper::STATISTICS_DIMENSION_FILE_TYPE]);
+                $metricTypeKey = $this->getKeyForFiletype($rs->{StatisticsHelper::STATISTICS_DIMENSION_FILE_TYPE});
                 // Period changes or greater trigger a new ItemPerformace metric
-                if ($lastPeriod != $rs[StatisticsHelper::STATISTICS_DIMENSION_MONTH] || $lastJournal != $rs[StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID]) {
+                if ($lastPeriod != $rs->{StatisticsHelper::STATISTICS_DIMENSION_MONTH} || $lastJournal != $rs->{StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID}) {
                     if ($lastPeriod != 0) {
                         $metrics[] = $this->createMetricByMonth($lastPeriod, $counters);
                         $counters = [];
                     }
                 }
-                $lastPeriod = $rs[StatisticsHelper::STATISTICS_DIMENSION_MONTH];
-                $counters[] = new COUNTER\PerformanceCounter($metricTypeKey, $rs[StatisticsHelper::STATISTICS_METRIC]);
+                $lastPeriod = $rs->{StatisticsHelper::STATISTICS_DIMENSION_MONTH};
+                $counters[] = new COUNTER\PerformanceCounter($metricTypeKey, $rs->{StatisticsHelper::STATISTICS_METRIC});
                 // Journal changes trigger a new ReportItem
-                if ($lastJournal != $rs[StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID]) {
+                if ($lastJournal != $rs->{StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID}) {
                     if ($lastJournal != 0 && $metrics) {
                         $item = $this->_createReportItem($lastJournal, $metrics);
                         if ($item) {
@@ -112,7 +114,7 @@ class CounterReportJR1 extends CounterReport
                         $metrics = [];
                     }
                 }
-                $lastJournal = $rs[StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID];
+                $lastJournal = $rs->{StatisticsHelper::STATISTICS_DIMENSION_CONTEXT_ID};
             }
             // Capture the last unprocessed ItemPerformance and ReportItem entries, if applicable
             if ($counters) {
