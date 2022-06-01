@@ -120,7 +120,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
         $statsReport = Services::get('publicationStats')->getTotals($filters);
 
         $orderedResults = [];
-        foreach ((array) $statsReport as $reportRow) {
+        foreach ($statsReport as $reportRow) {
             $orderedResults[] = $reportRow->{StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID};
         }
         // Make sure we even get results that have no statistics (yet) and that
