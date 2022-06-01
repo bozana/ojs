@@ -20,7 +20,6 @@ class MetricsMigration extends \PKP\migration\Migration
 {
     /**
      * Run the migrations.
-     * This migration file is used during upgrades. If this schema changes, the upgrade scripts should be reviewed manually before a merging.
      */
     public function up(): void
     {
