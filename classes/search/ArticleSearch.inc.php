@@ -69,7 +69,7 @@ class ArticleSearch extends SubmissionSearch
             }
             $rawReport = Services::get('publicationStats')->getTotals($filter);
             foreach ($rawReport as $row) {
-                $unorderedResults[$row['submission_id']]['metric'] = (int)$row['metric'];
+                $unorderedResults[$row->submission_id]['metric'] = $row->metric;
             }
         }
 
