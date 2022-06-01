@@ -114,11 +114,14 @@ class CounterReport
     /**
      * Convert an OJS metrics request to COUNTER ReportItems
      * Abstract method must be implemented by subclass
+     *
      * @param string|array $columns column (aggregation level) selection
      * @param array $filters report-level filter selection
      * @param array $orderBy order criteria
      * @param null|DBResultRange $range paging specification
+     *
      * @see ReportPlugin::getMetrics for more details on parameters
+     *
      * @return array COUNTER\ReportItem array
      */
     public function getReportItems($columns = [], $filters = [], $orderBy = [], $range = null)
@@ -166,7 +169,7 @@ class CounterReport
             if (isset($filters['contextIds']) && $filters['contextIds'] != $journalId) {
                 $this->setError(new Exception(__('plugins.reports.counter.generic.exception.filter'), COUNTER_EXCEPTION_WARNING | COUNTER_EXCEPTION_BAD_FILTERS));
             }
-            $filters['contextIds'] = $journalId;
+            $filters['contextIds'] = [$journalId];
         }
         return $filters;
     }
@@ -174,7 +177,7 @@ class CounterReport
     /**
      * Given a Year-Month period and array of COUNTER\PerformanceCounters, create a COUNTER\Metric
      *
-     * @param string $period Date in Ym format
+     * @param string $period Date in the format Y-m-01 for month
      * @param array $counters COUNTER\PerformanceCounter array
      *
      * @return COUNTER\Metric
