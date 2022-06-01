@@ -121,8 +121,7 @@ class RecommendByAuthorPlugin extends GenericPlugin
 
         $orderedResults = [];
         foreach ((array) $statsReport as $reportRow) {
-            $reportRow = json_decode(json_encode($reportRow), true);
-            $orderedResults[] = $reportRow[StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID];
+            $orderedResults[] = $reportRow->{StatisticsHelper::STATISTICS_DIMENSION_SUBMISSION_ID};
         }
         // Make sure we even get results that have no statistics (yet) and that
         // we get them in some consistent order for paging.
