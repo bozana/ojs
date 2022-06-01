@@ -128,13 +128,13 @@ class I6782_Metrics extends Migration
         if (substr(Config::getVar('database', 'driver'), 0, strlen('postgres')) === 'postgres') {
             $dayFormatSql = "to_date(m.day, 'YYYYMMDD')";
         }
-        // Requires the new DB metrics tables
-        // The not existing foreign keys should already be removed in PreflightCheckStatsMigration
+
+        // The not existing foreign keys should already be moved to the metrics_tmp in I6782_OrphanedMetrics
         // Migrate context metrics, ASSOC_TYPE_JOURNAL
         DB::statement("INSERT INTO metrics_context (load_id, context_id, date, metric) SELECT m.load_id, m.assoc_id, {$dayFormatSql}, m.metric FROM metrics m WHERE m.assoc_type = 256 AND m.metric_type = 'ojs::counter'");
         // Migrate issue metrics; consider issue TOCs and galley files, ASSOC_TYPE_ISSUE and ASSOC_TYPE_ISSUE_GALLEY
         DB::statement("INSERT INTO metrics_issue (load_id, context_id, issue_id, issue_galley_id, date, metric) SELECT m.load_id, m.context_id, m.assoc_id, null, {$dayFormatSql}, m.metric FROM metrics m WHERE m.assoc_type = 259 AND m.metric_type = 'ojs::counter'");
-        DB::statement("INSERT INTO metrics_issue (load_id, context_id, issue_id, issue_galley_id, date, metric) SELECT m.load_id, m.context_id, m.assoc_object_id, m.assoc_id, {$dayFormatSql}, m.metric FROM metrics m WHERE m.assoc_type = 261 AND m.metric_type = 'ojs::counter'");
+        DB::statement("INSERT INTO metrics_issue (load_id, context_id, issue_id, issue_galley_id, date, metric) SELECT m.load_id, m.context_id, ig.issue_id, m.assoc_id, {$dayFormatSql}, m.metric FROM metrics m, issue_galleys ig WHERE m.assoc_type = 261 AND m.assoc_object_type = 259 AND m.metric_type = 'ojs::counter'");
         // Migrate submission metrics; consider abstracts, galley and supp files
         // ASSOC_TYPE_SUBMISSION, ASSOC_TYPE_SUBMISSION_FILE and ASSOC_TYPE_SUBMISSION_FILE_COUNTER_OTHER
         DB::statement("INSERT INTO metrics_submission (load_id, context_id, submission_id, representation_id, submission_file_id, file_type, assoc_type, date, metric) SELECT m.load_id, m.context_id, m.assoc_id, null, null, null, m.assoc_type, {$dayFormatSql}, m.metric FROM metrics m WHERE m.assoc_type = 1048585 AND m.metric_type = 'ojs::counter'");
@@ -231,9 +231,18 @@ class I6782_Metrics extends Migration
             GROUP BY gd.context_id, gd.submission_id, gd.country, gd.region, gd.city, month
         ");
 
+
         // Delete the entries with the metric type ojs::counter from the DB table metrics -> they were migrated above
         if (Schema::hasTable('metrics')) {
             DB::statement("DELETE FROM metrics WHERE metric_type = 'ojs::counter'");
+
+            // Move back the orphaned metrics form the temporary metrics_tmp
+            $metricsTmp = DB::table('metrics_tmp')->select('*')->get();
+            foreach ($metricsTmp as $record) {
+                DB::table('metrics')->insert(get_object_vars($record));
+            }
+            Schema::drop('metrics_tmp');
+
             $metricsExist = DB::table('metrics')->count();
             // if table metrics is now not empty rename it, else delete it
             if ($metricsExist > 0) {
