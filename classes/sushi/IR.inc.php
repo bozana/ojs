@@ -224,11 +224,11 @@ class IR
     public function getReportItems(): array
     {
         // prepare stats service parameters
-        $allowedParams['contextIds'] = $this->contextId;
+        $allowedParams['contextIds'] = [$this->contextId];
         $allowedParams['institutionId'] = $this->customerId;
         $allowedParams['dateStart'] = $this->beginDate;
         $allowedParams['dateEnd'] = $this->endDate;
-        $allowedParams['yearsOfPublication'] = $this->yearsOfPublication;
+        $allowedParams['yearsOfPublication'] = [$this->yearsOfPublication];
         if ($this->itemId > 0) {
             $allowedParams['submissionIds'] = $this->itemId;
         }

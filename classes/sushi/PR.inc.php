@@ -201,7 +201,7 @@ class PR
     public function getReportItems(): array
     {
         // prepare stats service parameters
-        $allowedParams['contextIds'] = $this->contextId;
+        $allowedParams['contextIds'] = [$this->contextId];
         $allowedParams['institutionId'] = $this->customerId;
         $allowedParams['dateStart'] = $this->beginDate;
         $allowedParams['dateEnd'] = $this->endDate;
