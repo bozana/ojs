@@ -255,12 +255,4 @@ class DefaultThemePlugin extends \PKP\plugins\ThemePlugin
     {
         return __('plugins.themes.default.description');
     }
-
-    /**
-     * Get the context for inclusion of usage stats display related JavaScripts in the submission view page
-     */
-    protected function getSubmissionViewContext(): string
-    {
-        return 'frontend-article-view';
-    }
 }
