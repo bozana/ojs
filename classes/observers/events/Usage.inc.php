@@ -34,25 +34,35 @@ class Usage
 
     public function __construct(int $assocType, Context $context, Submission $submission = null, Representation $galley = null, SubmissionFile $submissionFile = null, Issue $issue = null, IssueGalley $issueGalley = null)
     {
-        $this->constructUsageEvent($assocType, $context, $submission, $galley, $submissionFile);
+        $this->issue = $issue;
+        $this->issueGalley = $issueGalley;
+        $this->traitConstruct($assocType, $context, $submission, $galley, $submissionFile);
+    }
 
-        if (in_array($assocType, [Application::ASSOC_TYPE_ISSUE, Application::ASSOC_TYPE_ISSUE_GALLEY])) {
+    /**
+     * Get the canonical URL for the usage object
+     *
+     * @throws Exception
+     */
+    protected function getCanonicalUrl(): string
+    {
+        if (in_array($this->assocType, [Application::ASSOC_TYPE_ISSUE, Application::ASSOC_TYPE_ISSUE_GALLEY])) {
             $canonicalUrlPage = $canonicalUrlOp = null;
             $canonicalUrlParams = [];
-            switch ($assocType) {
+            switch ($this->assocType) {
                 case Application::ASSOC_TYPE_ISSUE_GALLEY:
                     $canonicalUrlOp = 'download';
-                    $canonicalUrlParams = [$issue->getId(), $issueGalley->getId()];
+                    $canonicalUrlParams = [$this->issue->getId(), $this->issueGalley->getId()];
                     break;
                 case Application::ASSOC_TYPE_ISSUE:
                     $canonicalUrlOp = 'view';
-                    $canonicalUrlParams = [$issue->getId()];
+                    $canonicalUrlParams = [$this->issue->getId()];
                     break;
             }
-            $canonicalUrl = $this->getCanonicalUrl($this->request, $canonicalUrlPage, $canonicalUrlOp, $canonicalUrlParams);
-            $this->canonicalUrl = $canonicalUrl;
+            $canonicalUrl = $this->getRouterCanonicalUrl($this->request, $canonicalUrlPage, $canonicalUrlOp, $canonicalUrlParams);
+            return $canonicalUrl;
+        } else {
+            return $this->getTraitCanonicalUrl();
         }
-        $this->issue = $issue;
-        $this->issueGalley = $issueGalley;
     }
 }
