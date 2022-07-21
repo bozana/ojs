@@ -37,4 +37,12 @@ if (strpos($requestPath, '/stats/publications')) {
 } elseif (strpos($requestPath, '/stats/sushi')) {
     import('api.v1.stats.sushi.StatsSushiHandler');
     return new StatsSushiHandler();
+} else {
+    http_response_code('404');
+    header('Content-Type: application/json');
+    echo json_encode([
+        'error' => 'api.404.endpointNotFound',
+        'errorMessage' => __('api.404.endpointNotFound'),
+    ]);
+    exit;
 }
