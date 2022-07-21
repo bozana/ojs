@@ -165,7 +165,7 @@
 		<code function="installEmailTemplate" key="EDITORIAL_REMINDER" locales="en_US" />
 		<migration class="APP\migration\upgrade\v3_4_0\I6895_Institutions" />
 		<migration class="APP\migration\upgrade\v3_4_0\I6782_OrphanedMetrics" />
-		<migration class="APP\migration\upgrade\v3_4_0\I6782_UsageStatsSettings" />
+		<migration class="PKP\migration\upgrade\v3_4_0\I6782_UsageStatsSettings" />
 		<migration class="APP\migration\upgrade\v3_4_0\I6782_MetricsContext" />
 		<migration class="APP\migration\upgrade\v3_4_0\I6782_MetricsIssue" />
 		<migration class="APP\migration\upgrade\v3_4_0\I6782_MetricsSubmission" />

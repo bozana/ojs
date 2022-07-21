@@ -13,44 +13,17 @@
 
 namespace APP\migration\upgrade\v3_4_0;
 
-use APP\migration\install\MetricsMigration;
-use Illuminate\Support\Facades\DB;
-use PKP\config\Config;
-use PKP\install\DowngradeNotSupportedException;
-use PKP\migration\Migration;
-
-class I6782_MetricsContext extends Migration
+class I6782_MetricsContext extends \PKP\migration\upgrade\v3_4_0\I6782_MetricsContext
 {
     private const ASSOC_TYPE_CONTEXT = 0x0000100;
 
-    /**
-     * Run the migration.
-     */
-    public function up(): void
+    protected function getMetricType(): string
     {
-        $metricsMigrations = new MetricsMigration($this->_installer, $this->_attributes);
-        $metricsMigrations->up();
-
-        $dayFormatSql = "DATE_FORMAT(STR_TO_DATE(m.day, '%Y%m%d'), '%Y-%m-%d')";
-        if (substr(Config::getVar('database', 'driver'), 0, strlen('postgres')) === 'postgres') {
-            $dayFormatSql = "to_date(m.day, 'YYYYMMDD')";
-        }
-
-        // The not existing foreign keys should already be moved to the metrics_tmp in I6782_OrphanedMetrics
-        $selectContextMetrics = DB::table('metrics as m')
-            ->select(DB::raw("m.load_id, m.assoc_id, {$dayFormatSql}, m.metric"))
-            ->where('m.assoc_type', '=', self::ASSOC_TYPE_CONTEXT)
-            ->where('m.metric_type', '=', 'ojs::counter');
-        DB::table('metrics_context')->insertUsing(['load_id', 'context_id', 'date', 'metric'], $selectContextMetrics);
+        return 'ojs::counter';
     }
 
-    /**
-     * Reverse the downgrades
-     *
-     * @throws DowngradeNotSupportedException
-     */
-    public function down(): void
+    protected function getContextAssocType(): int
     {
-        throw new DowngradeNotSupportedException();
+        return self::ASSOC_TYPE_CONTEXT;
     }
 }
