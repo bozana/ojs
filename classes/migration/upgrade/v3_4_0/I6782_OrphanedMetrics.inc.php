@@ -61,13 +61,13 @@ class I6782_OrphanedMetrics extends \PKP\migration\upgrade\v3_4_0\I6782_Orphaned
         // Metrics issue IDs
         // as m.assoc_id
         $orphanedIds = DB::table('metrics AS m')->leftJoin('issues AS i', 'm.assoc_id', '=', 'i.issue_id')->where('m.assoc_type', '=', self::ASSOC_TYPE_ISSUE)->whereNull('i.issue_id')->distinct()->pluck('m.assoc_id');
-        $orphandedIssues = DB::table('metrics')->select('*')->where('assoc_type', '=', self::ASSOC_TYPE_ISSUE)->whereIn('assoc_id', $orphanedIds);
+        $orphandedIssues = DB::table('metrics')->select($metricsColumns)->where('assoc_type', '=', self::ASSOC_TYPE_ISSUE)->whereIn('assoc_id', $orphanedIds);
         DB::table('metrics_tmp')->insertUsing($metricsColumns, $orphandedIssues);
         DB::table('metrics')->where('assoc_type', '=', self::ASSOC_TYPE_ISSUE)->whereIn('assoc_id', $orphanedIds)->delete();
 
         // Clean orphaned metrics issue galley IDs
         $orphanedIds = DB::table('metrics AS m')->leftJoin('issue_galleys AS ig', 'm.assoc_id', '=', 'ig.galley_id')->where('m.assoc_type', '=', self::ASSOC_TYPE_ISSUE_GALLEY)->whereNull('ig.galley_id')->distinct()->pluck('m.assoc_id');
-        $orphandedIssuesGalleys = DB::table('metrics')->select('*')->where('assoc_type', '=', self::ASSOC_TYPE_ISSUE_GALLEY)->whereIn('assoc_id', $orphanedIds);
+        $orphandedIssuesGalleys = DB::table('metrics')->select($metricsColumns)->where('assoc_type', '=', self::ASSOC_TYPE_ISSUE_GALLEY)->whereIn('assoc_id', $orphanedIds);
         DB::table('metrics_tmp')->insertUsing($metricsColumns, $orphandedIssuesGalleys);
         DB::table('metrics')->where('assoc_type', '=', self::ASSOC_TYPE_ISSUE_GALLEY)->whereIn('assoc_id', $orphanedIds)->delete();
     }
