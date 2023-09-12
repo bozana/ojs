@@ -1,12 +1,23 @@
 {
 	"description": "A published version of an article.",
 	"required": [
+		"contextName",
+		"onlineIssn",
+		"printIssn",
 		"sectionId"
 	],
 	"properties": {
 		"accessStatus": {
 			"type": "integer",
 			"default": 0,
+			"validation": [
+				"nullable"
+			]
+		},
+		"contextName": {
+			"type": "string",
+			"multilingual": true,
+			"apiSummary": true,
 			"validation": [
 				"nullable"
 			]
@@ -33,12 +44,26 @@
 				"nullable"
 			]
 		},
+		"onlineIssn": {
+			"type": "string",
+			"validation": [
+				"nullable",
+				"issn"
+			]
+		},
 		"pages": {
 			"type": "string",
 			"description": "The pages of the issue in which this article appears if it is published in a physical format.",
 			"apiSummary": true,
 			"validation": [
 				"nullable"
+			]
+		},
+		"printIssn": {
+			"type": "string",
+			"validation": [
+				"nullable",
+				"issn"
 			]
 		},
 		"sectionId": {
