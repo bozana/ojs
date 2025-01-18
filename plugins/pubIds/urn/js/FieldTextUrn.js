@@ -15,49 +15,48 @@ pkp.registry.registerComponent('FieldTextUrn', {
 	name: 'FieldTextUrn',
 	extends: pkp.registry.getComponent('PkpFieldText'),
 	template:
-		'<div class="pkpFormField pkpFormField--text pkpFormField--urn" :class="classes">' +
-		'			<form-field-label' +
-		'				:controlId="controlId"' +
-		'				:label="label"' +
-		'				:localeLabel="localeLabel"' +
-		'				:isRequired="isRequired"' +
-		'				:requiredLabel="t(\'common.required\')"' +
-		'				:multilingualLabel="multilingualLabel"' +
-		'			/>' +
-		'			<div' +
-		'				v-if="isPrimaryLocale && description"' +
-		'				class="pkpFormField__description"' +
-		'				v-html="description"' +
-		'				:id="describedByDescriptionId"' +
-		'			/>' +
-		'			<div class="pkpFormField__control" :class="controlClasses">' +
-		'				<input' +
-		'					class="pkpFormField__input pkpFormField--text__input pkpFormField--urn__input"' +
-		'					ref="input"' +
-		'					v-model="currentValue"' +
-		'					:type="inputType"' +
-		'					:id="controlId"' +
-		'					:name="localizedName"' +
-		'					:aria-describedby="describedByIds"' +
-		'					:aria-invalid="!!errors.length"' +
-		'					:required="isRequired"' +
-		'					:style="inputStyles"' +
-		'				/>' +
-		'				<button' +
-		'					v-if="applyCheckNumber"' +
-		'					class="pkpButton pkpFormField--urn__button"' +
-		'					@click.prevent="addCheckNumber"' +
-		'				>' +
-		'					{{ addCheckNumberLabel }}' +
-		'				</button>' +
-		'				<field-error' +
-		'					v-if="errors.length"' +
-		'					:id="describedByErrorId"' +
-		'					:messages="errors"' +
-		'				/>' +
-		'				</div>' +
-		'			</div>' +
-		'		</div>',
+	'<div class="pkpFormField pkpFormField--text pkpFormField--urn" :class="classes">' +
+	'			<FormFieldLabel' +
+	'				:controlId="controlId"' +
+	'				:label="label"' +
+	'				:locale-label="localeLabel"' +
+	'				:is-required="isRequired"' +
+	'				:required-label="t(\'common.required\')"' +
+	'				:multilingual-label="multilingualLabel"' +
+	'			/>' +
+	'			<div' +
+	'				v-if="isPrimaryLocale && description"' +
+	'				class="pkpFormField__description"' +
+	'				v-html="description"' +
+	'				:id="describedByDescriptionId"' +
+	'			/>' +
+	'			<div class="pkpFormField__control" :class="controlClasses">' +
+	'				<input' +
+	'					class="pkpFormField__input pkpFormField--text__input pkpFormField--urn__input"' +
+	'					ref="input"' +
+	'					v-model="currentValue"' +
+	'					:type="inputType"' +
+	'					:id="controlId"' +
+	'					:name="localizedName"' +
+	'					:aria-describedby="describedByIds"' +
+	'					:aria-invalid="!!errors.length"' +
+	'					:required="isRequired"' +
+	'					:style="inputStyles"' +
+	'				/>' +
+	'				<PkpButton' +
+	'					v-if="applyCheckNumber"' +
+	'					class="pkpButton pkpFormField--urn__button"' +
+	'					@click.prevent="addCheckNumber"' +
+	'				>' +
+	'					{{ addCheckNumberLabel }}' +
+	'				</PkpButton>' +
+	'				<FieldError' +
+	'					v-if="errors && errors.length"' +
+	'					:id="describedByErrorId"' +
+	'					:messages="errors"' +
+	'				/>' +
+'			</div>' +
+	'</div>',
 	props: {
 		addCheckNumberLabel: {
 			type: String,
