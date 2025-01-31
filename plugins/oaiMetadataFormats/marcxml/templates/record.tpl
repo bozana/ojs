@@ -43,9 +43,9 @@
 	{foreach from=$authors item=author}
 		<datafield tag="{if $authors|@count==1}100{else}720{/if}" ind1="1" ind2=" ">
 			<subfield code="a">{$author->getFullName(false, true, $journal->getPrimaryLocale())|escape}</subfield>
-			{foreach from=$author->getLocalizedAffiliations() item=$affiliation}
-			{if $affiliation['ror']}<subfield code="u">{$affiliation['ror']|escape}</subfield>
-			{elseif $affiliation['name']}<subfield code="u">{$affiliation['name']|escape}</subfield>{/if}
+			{foreach from=$author->getAffiliations() item=$affiliation}
+				{if $affiliation->getRor()}<subfield code="u">{$affiliation->getRor()|escape}</subfield>
+				{else}<subfield code="u">{$affiliation->getLocalizedName($publication->getData('locale'))|escape}</subfield>{/if}
 			{/foreach}
 			{if $author->getUrl()}<subfield code="0">{$author->getUrl()|escape}</subfield>{/if}
 			{if $author->getData('orcid') && $author->getData('orcidIsVerified')}<subfield code="0">{$author->getData('orcid')|escape}</subfield>{/if}

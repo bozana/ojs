@@ -55,4 +55,5 @@
 	<code function="createConfig"/>
 	<code function="addPluginVersions"/>
 	<code function="installDefaultNavigationMenus"/>
+	<code function="updateRorRegistryDataset"/>
 </install>

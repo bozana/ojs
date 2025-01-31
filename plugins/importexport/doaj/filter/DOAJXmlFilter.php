@@ -250,13 +250,12 @@ class DOAJXmlFilter extends \PKP\plugins\importexport\native\filter\NativeExport
         $authorNode->appendChild($node = $doc->createElement('name', htmlspecialchars($author->getFullName(false, false, $publication->getData('locale')), ENT_COMPAT, 'UTF-8')));
         $affiliations = $author->getLocalizedAffiliationNames($publication->getData('locale'));
         foreach ($affiliations as $affiliation) {
-            if (in_array($affiliation, $affilList) && !empty($affilList[0])) {
-                $authorNode->appendChild(
-                    $node = $doc->createElement('affiliationId',
-                        htmlspecialchars(current(array_keys($affilList, $affiliation)), ENT_COMPAT, 'UTF-8')
-                    )
-                );
-            }
+            $authorNode->appendChild(
+                $doc->createElement(
+                    'affiliationId',
+                    htmlspecialchars(current(array_keys($affilList, $affiliation)), ENT_COMPAT, 'UTF-8')
+                )
+            );
         }
         if ($author->getData('orcid') && $author->getData('orcidIsVerified')) {
             $authorNode->appendChild($doc->createElement('orcid_id'))->appendChild($doc->createTextNode($author->getData('orcid')));
@@ -279,7 +278,8 @@ class DOAJXmlFilter extends \PKP\plugins\importexport\native\filter\NativeExport
             $affiliations = $author->getLocalizedAffiliationNames($publication->getData('locale'));
             foreach ($affiliations as $affiliation) {
                 if (!in_array($affiliation, $affilList)) {
-                    $affilList[] = $affiliation;;
+                    $affilList[] = $affiliation;
+                    ;
                 }
             }
         }

@@ -66,7 +66,7 @@ class OAIMetadataFormat_RFC1807 extends OAIMetadataFormat
 
         // Format creators
         $creators = [];
-        foreach ($publication->getAuthors() as $author) {
+        foreach ($publication->getData('authors') as $author) {
             $creators[] = $author->getFullName(false, true);
         }
 

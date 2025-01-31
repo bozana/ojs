@@ -28,7 +28,11 @@ describe('Data suite: Cmontgomerie', function() {
 			{
 				givenName: {en: 'Mark'},
 				familyName: {en: 'Irvine'},
-				affiliation: {en: 'University of Victoria'},
+				affiliations: [
+					{
+						name: {en: 'University of Victoria'}
+					}
+				],
 				email: 'mirvine@mailinator.com',
 				country: 'CA',
 				userGroupId: Cypress.env('authorUserGroupId')

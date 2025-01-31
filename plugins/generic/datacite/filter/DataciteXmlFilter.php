@@ -336,14 +336,16 @@ class DataciteXmlFilter extends \PKP\plugins\importexport\native\filter\NativeEx
                 $creatorNode->appendChild($node);
             }
             if ($creator['affiliations']) {
-                foreach($creator['affiliations'] as $affiliation) {
+                // Currently affiliations are only there for Publication objects
+                foreach ($creator['affiliations'] as $affiliation) {
                     $node = $doc->createElementNS($deployment->getNamespace(), 'affiliation');
-                    if ($affiliation['ror']) {
-                        $node->setAttribute('affiliationIdentifier', $affiliation['ror']);
+                    $ror = $affiliation->getRor();
+                    if ($ror) {
+                        $node->setAttribute('affiliationIdentifier', $ror);
                         $node->setAttribute('affiliationIdentifierScheme', 'ROR');
                         $node->setAttribute('schemeURI', 'https://ror.org');
                     }
-                    $node->appendChild($doc->createTextNode($affiliation['name']));
+                    $node->appendChild($doc->createTextNode($affiliation->getLocalizedName($publication->getData('locale'))));
                     $creatorNode->appendChild($node);
                 }
             }

@@ -24,7 +24,11 @@ describe('Data suite tests', function() {
 			{
 				givenName: {en: 'Frank'},
 				familyName: {en: 'van Laerhoven'},
-				affiliation: {en: 'Indiana University'},
+				affiliations: [
+					{
+						name: {en: 'Indiana University'}
+					}
+				],
 				email: 'fvanlaerhoven@mailinator.com',
 				country: 'US',
 				userGroupId: Cypress.env('authorUserGroupId')
