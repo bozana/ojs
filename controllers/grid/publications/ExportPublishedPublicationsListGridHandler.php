@@ -1,20 +1,20 @@
 <?php
 
 /**
- * @file controllers/grid/submissions/ExportPublishedSubmissionsListGridHandler.php
+ * @file controllers/grid/publications/ExportPublishedPublicationsListGridHandler.php
  *
- * Copyright (c) 2014-2021 Simon Fraser University
- * Copyright (c) 2000-2021 John Willinsky
+ * Copyright (c) 2025 Simon Fraser University
+ * Copyright (c) 2025 John Willinsky
  * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
  *
- * @class ExportPublishedSubmissionsListGridHandler
+ * @class ExportPublishedPublicationsListGridHandler
  *
- * @ingroup controllers_grid_submissions
+ * @ingroup controllers_grid_publications
  *
- * @brief Handle exportable published submissions list grid requests.
+ * @brief Handle exportable published publications list grid requests.
  */
 
-namespace APP\controllers\grid\submissions;
+namespace APP\controllers\grid\publications;
 
 use APP\core\Application;
 use APP\facades\Repo;
@@ -24,16 +24,14 @@ use PKP\controllers\grid\feature\PagingFeature;
 use PKP\controllers\grid\feature\selectableItems\SelectableItemsFeature;
 use PKP\controllers\grid\GridColumn;
 use PKP\controllers\grid\GridHandler;
-use PKP\plugins\ImportExportPlugin;
 use PKP\plugins\PluginRegistry;
 use PKP\security\authorization\PolicySet;
 use PKP\security\authorization\RoleBasedHandlerOperationPolicy;
 use PKP\security\Role;
 
-class ExportPublishedSubmissionsListGridHandler extends GridHandler
+class ExportPublishedPublicationsListGridHandler extends GridHandler
 {
-    /** @var ImportExportPlugin */
-    public $_plugin;
+    public PubObjectsExportPlugin $_plugin;
 
     /**
      * Constructor
@@ -73,10 +71,9 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
     public function initialize($request, $args = null)
     {
         parent::initialize($request, $args);
-        $context = $request->getContext();
 
         // Basic grid configuration.
-        $this->setTitle('plugins.importexport.common.export.articles');
+        $this->setTitle('plugins.importexport.common.export.publications');
 
         $pluginCategory = $request->getUserVar('category');
         $pluginName = $request->getUserVar('plugin');
@@ -96,10 +93,21 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
         $cellProvider = $this->getGridCellProvider();
         $this->addColumn(
             new GridColumn(
-                'id',
+                'submissionId',
+                'grid.publication.itemSubmissionId',
                 null,
-                __('common.id'),
-                'controllers/grid/gridCell.tpl',
+                null,
+                $cellProvider,
+                ['alignment' => GridColumn::COLUMN_ALIGNMENT_LEFT,
+                    'width' => 10]
+            )
+        );
+        $this->addColumn(
+            new GridColumn(
+                'version',
+                'publication.versionStage.versionOfRecord',
+                null,
+                null,
                 $cellProvider,
                 ['alignment' => GridColumn::COLUMN_ALIGNMENT_LEFT,
                     'width' => 10]
@@ -116,17 +124,7 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
                     'alignment' => GridColumn::COLUMN_ALIGNMENT_LEFT]
             )
         );
-        $this->addColumn(
-            new GridColumn(
-                'issue',
-                'issue.issue',
-                null,
-                null,
-                $cellProvider,
-                ['alignment' => GridColumn::COLUMN_ALIGNMENT_LEFT,
-                    'width' => 20]
-            )
-        );
+
         if (method_exists($this, 'addAdditionalColumns')) {
             $this->addAdditionalColumns($cellProvider);
         }
@@ -176,7 +174,7 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
      */
     public function getSelectName()
     {
-        return 'selectedSubmissions';
+        return 'selectedPublications';
     }
 
     /**
@@ -184,7 +182,7 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
      */
     protected function getFilterForm()
     {
-        return 'controllers/grid/submissions/exportPublishedSubmissionsGridFilter.tpl';
+        return 'controllers/grid/publications/exportPublishedPublicationsGridFilter.tpl';
     }
 
     /**
@@ -251,7 +249,7 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
         if ($statusId) {
             $pubIdStatusSettingName = $this->_plugin->getDepositStatusSettingName();
         }
-        return Repo::submission()->dao->getExportable(
+        $publications = Repo::publication()->dao->getExportable(
             $context->getId(),
             null,
             $title,
@@ -261,6 +259,7 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
             $statusId,
             $this->getGridRangeInfo($request, $this->getId())
         );
+        return $publications;
     }
 
 
@@ -314,12 +313,12 @@ class ExportPublishedSubmissionsListGridHandler extends GridHandler
     /**
      * Get the grid cell provider instance
      *
-     * @return ExportPublishedSubmissionsListGridCellProvider
+     * @return ExportPublishedPublicationsListGridCellProvider
      */
     public function getGridCellProvider()
     {
         // Fetch the authorized roles.
         $authorizedRoles = $this->getAuthorizedContextObject(Application::ASSOC_TYPE_USER_ROLES);
-        return new ExportPublishedSubmissionsListGridCellProvider($this->_plugin, $authorizedRoles);
+        return new ExportPublishedPublicationsListGridCellProvider($this->_plugin, $authorizedRoles);
     }
 }
