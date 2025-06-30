@@ -14,12 +14,12 @@
 
 namespace APP\plugins\importexport\pubmed;
 
-use PKP\form\Form;
+use APP\plugins\PubObjectsExportSettingsForm;
 use PKP\form\validation\FormValidatorCSRF;
 use PKP\form\validation\FormValidatorPost;
 use PKP\plugins\Plugin;
 
-class PubMedSettingsForm extends Form
+class PubMedSettingsForm extends PubObjectsExportSettingsForm
 {
     public int $contextId;
     public Plugin $plugin;
@@ -92,9 +92,7 @@ class PubMedSettingsForm extends Form
     }
 
     /**
-     * Get form fields
-     *
-     * @return array (field name => field type)
+     * @copydoc PubObjectsExportSettingsForm::getFormFields()
      */
     public function getFormFields(): array
     {
@@ -104,7 +102,7 @@ class PubMedSettingsForm extends Form
     }
 
     /**
-     * If the form field is optional
+     * @copydoc PubObjectsExportSettingsForm::getFormFields()
      */
     public function isOptional(string $settingName): bool
     {
