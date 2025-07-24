@@ -53,6 +53,19 @@ class DataciteExportPlugin extends DOIPubIdExportPlugin
         $this->agencyPlugin = $agencyPlugin;
     }
 
+    public function register($category, $path, $mainContextId = null)
+    {
+        $success = parent::register($category, $path, $mainContextId);
+        if ($success) {
+            // register hooks. This will prevent DB access attempts before the
+            // schema is installed.
+            if (Application::isUnderMaintenance()) {
+                return true;
+            }
+        }
+        return $success;
+    }
+
     /**
      * @see Plugin::getName()
      */
@@ -335,6 +348,26 @@ class DataciteExportPlugin extends DOIPubIdExportPlugin
             $editParams['registrationAgency'] = $this->getName();
         }
         Repo::doi()->edit($doiObject, $editParams);
+    }
+
+    /**
+     * @copydoc DOIPubIdExportPlugin::markRegistered()
+     */
+    public function markRegistered($context, $objects)
+    {
+        foreach ($objects as $object) {
+            // Get all DOIs for each object
+            // Check if submission or issue
+            if ($object instanceof Submission) {
+                $doiIds = Repo::doi()->getDoisForSubmission($object->getId());
+            } else {
+                $doiIds = Repo::doi()->getDoisForIssue($object->getId, true);
+            }
+
+            foreach ($doiIds as $doiId) {
+                Repo::doi()->markRegistered($doiId);
+            }
+        }
     }
 
     /**

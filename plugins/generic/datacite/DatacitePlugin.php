@@ -95,6 +95,143 @@ class DatacitePlugin extends GenericPlugin implements IDoiRegistrationAgency
     }
 
     /**
+     * Helper to register hooks that are used in normal plugin setup and in CLI tool usage.
+     */
+    private function _pluginInitialization()
+    {
+        PluginRegistry::register('importexport', new DataciteExportPlugin($this), $this->getPluginPath());
+
+        Hook::add('DoiSettingsForm::setEnabledRegistrationAgencies', [$this, 'addAsRegistrationAgencyOption']);
+        Hook::add('DoiSetupSettingsForm::getObjectTypes', [$this, 'addAllowedObjectTypes']);
+        Hook::add('DoiListPanel::setConfig', [$this, 'addRegistrationAgencyName']);
+        Hook::add('Schema::get::doi', [$this, 'addToSchema']);
+
+    }
+
+    /**
+     * Add properties for DataCite to the DOI entity for storage in the database.
+     *
+     * @param string $hookName `Schema::get::doi`
+     * @param array $args [
+     *
+     *      @option stdClass $schema
+     * ]
+     *
+     */
+    public function addToSchema(string $hookName, array $args): bool
+    {
+        $schema = &$args[0];
+
+        $settings = [
+            $this->_getFailedMsgSettingName(),
+        ];
+
+        foreach ($settings as $settingName) {
+            $schema->properties->{$settingName} = (object) [
+                'type' => 'string',
+                'apiSummary' => true,
+                'validation' => ['nullable'],
+            ];
+        }
+
+        return false;
+    }
+
+    /**
+     * Includes plugin in list of configurable registration agencies for DOI depositing functionality
+     *
+     * @param string $hookName DoiSettingsForm::setEnabledRegistrationAgencies
+     * @param array $args [
+     *
+     * @option $enabledRegistrationAgencies array
+     * ]
+     */
+    public function addAsRegistrationAgencyOption(string $hookName, array $args)
+    {
+        /** @var Collection<int,IDoiRegistrationAgency> $enabledRegistrationAgencies */
+        $enabledRegistrationAgencies = &$args[0];
+        $enabledRegistrationAgencies->add($this);
+    }
+
+    /**
+     * Includes human-readable name of registration agency for display in conjunction with how/with whom the
+     * DOI was registered.
+     *
+     * @param string $hookName DoiListPanel::setConfig
+     * @param array $args [
+     *
+     *      @option $config array
+     * ]
+     */
+    public function addRegistrationAgencyName(string $hookName, array $args): bool
+    {
+        $config = &$args[0];
+        $config['registrationAgencyNames'][$this->_getExportPlugin()->getName()] = $this->getRegistrationAgencyName();
+
+        return HOOK::CONTINUE;
+    }
+
+    /**
+     * Adds self to "allowed" list of pub object types that can be assigned DOIs for this registration agency.
+     *
+     * @param string $hookName DoiSetupSettingsForm::getObjectTypes
+     * @param array $args [
+     *
+     *      @option array &$objectTypeOptions
+     * ]
+     */
+    public function addAllowedObjectTypes(string $hookName, array $args): bool
+    {
+        $objectTypeOptions = &$args[0];
+        $allowedTypes = $this->getAllowedDoiTypes();
+
+        $objectTypeOptions = array_map(function ($option) use ($allowedTypes) {
+            if (in_array($option['value'], $allowedTypes)) {
+                $option['allowedBy'][] = $this->getName();
+            }
+            return $option;
+        }, $objectTypeOptions);
+
+        return Hook::CONTINUE;
+    }
+
+    /**
+     * Checks if plugin meets registration agency-specific requirements for being active and handling deposits
+     *
+     */
+    public function isPluginConfigured(Context $context): bool
+    {
+        $settingsObject = $this->getSettingsObject();
+
+        /** @var PKPSchemaService $schemaService */
+        $schemaService = Services::get('schema');
+        $requiredProps = $schemaService->getRequiredProps($settingsObject::class);
+
+        foreach ($requiredProps as $requiredProp) {
+            $settingValue = $this->getSetting($context->getId(), $requiredProp);
+            if (empty($settingValue)) {
+                return false;
+            }
+        }
+
+        $doiPrefix = $context->getData(Context::SETTING_DOI_PREFIX);
+        if (empty($doiPrefix)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get configured registration agency display name for use in DOI management pages
+     *
+     */
+    public function getRegistrationAgencyName(): string
+    {
+        return __('plugins.generic.datacite.registrationAgency.name');
+    }
+
+    /**
      * @param \APP\submission\Submission[] $submissions
      *
      */
@@ -179,73 +316,27 @@ class DatacitePlugin extends GenericPlugin implements IDoiRegistrationAgency
     }
 
     /**
-     * Includes plugin in list of configurable registration agencies for DOI depositing functionality
+     * Adds DataCite specific info to Repo::doi()->markRegistered()
      *
-     * @param string $hookName DoiSettingsForm::setEnabledRegistrationAgencies
-     * @param array $args [
+     * @param string $hookName Doi::markRegistered
      *
-     * @option $enabledRegistrationAgencies array
-     * ]
      */
-    public function addAsRegistrationAgencyOption(string $hookName, array $args)
+    public function editMarkRegisteredParams(string $hookName, array $args): bool
     {
-        /** @var Collection<int,IDoiRegistrationAgency> $enabledRegistrationAgencies */
-        $enabledRegistrationAgencies = &$args[0];
-        $enabledRegistrationAgencies->add($this);
+        $editParams = &$args[0];
+        $editParams[$this->_getFailedMsgSettingName()] = null;
+
+        return false;
     }
 
     /**
-     * Checks if plugin meets registration agency-specific requirements for being active and handling deposits
+     * Get request failed message setting name.
+     * NB: Change from 3.3.x to camelCase (over crossref::failedMsg)
      *
      */
-    public function isPluginConfigured(Context $context): bool
+    private function _getFailedMsgSettingName(): string
     {
-        $settingsObject = $this->getSettingsObject();
-
-        /** @var PKPSchemaService $schemaService */
-        $schemaService = Services::get('schema');
-        $requiredProps = $schemaService->getRequiredProps($settingsObject::class);
-
-        foreach ($requiredProps as $requiredProp) {
-            $settingValue = $this->getSetting($context->getId(), $requiredProp);
-            if (empty($settingValue)) {
-                return false;
-            }
-        }
-
-        $doiPrefix = $context->getData(Context::SETTING_DOI_PREFIX);
-        if (empty($doiPrefix)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get configured registration agency display name for use in DOI management pages
-     *
-     */
-    public function getRegistrationAgencyName(): string
-    {
-        return __('plugins.generic.datacite.registrationAgency.name');
-    }
-
-    /**
-     * Get key for retrieving error message if one exists on DOI object
-     *
-     */
-    public function getErrorMessageKey(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * Get key for retrieving registered message if one exists on DOI object
-     *
-     */
-    public function getRegisteredMessageKey(): ?string
-    {
-        return null;
+        return $this->getName() . '_failedMsg';
     }
 
     /**
@@ -267,57 +358,21 @@ class DatacitePlugin extends GenericPlugin implements IDoiRegistrationAgency
     }
 
     /**
-     * Helper to register hooks that are used in normal plugin setup and in CLI tool usage.
+     * Get key for retrieving error message if one exists on DOI object
+     *
      */
-    private function _pluginInitialization()
+    public function getErrorMessageKey(): ?string
     {
-        PluginRegistry::register('importexport', new DataciteExportPlugin($this), $this->getPluginPath());
-
-        Hook::add('DoiSettingsForm::setEnabledRegistrationAgencies', [$this, 'addAsRegistrationAgencyOption']);
-        Hook::add('DoiSetupSettingsForm::getObjectTypes', [$this, 'addAllowedObjectTypes']);
-        Hook::add('DoiListPanel::setConfig', [$this, 'addRegistrationAgencyName']);
+        return $this->_getFailedMsgSettingName();
     }
 
     /**
-     * Includes human-readable name of registration agency for display in conjunction with how/with whom the
-     * DOI was registered.
+     * Get key for retrieving registered message if one exists on DOI object
      *
-     * @param string $hookName DoiListPanel::setConfig
-     * @param array $args [
-     *
-     *      @option $config array
-     * ]
      */
-    public function addRegistrationAgencyName(string $hookName, array $args): bool
+    public function getRegisteredMessageKey(): ?string
     {
-        $config = &$args[0];
-        $config['registrationAgencyNames'][$this->_getExportPlugin()->getName()] = $this->getRegistrationAgencyName();
-
-        return HOOK::CONTINUE;
-    }
-
-    /**
-     * Adds self to "allowed" list of pub object types that can be assigned DOIs for this registration agency.
-     *
-     * @param string $hookName DoiSetupSettingsForm::getObjectTypes
-     * @param array $args [
-     *
-     *      @option array &$objectTypeOptions
-     * ]
-     */
-    public function addAllowedObjectTypes(string $hookName, array $args): bool
-    {
-        $objectTypeOptions = &$args[0];
-        $allowedTypes = $this->getAllowedDoiTypes();
-
-        $objectTypeOptions = array_map(function ($option) use ($allowedTypes) {
-            if (in_array($option['value'], $allowedTypes)) {
-                $option['allowedBy'][] = $this->getName();
-            }
-            return $option;
-        }, $objectTypeOptions);
-
-        return Hook::CONTINUE;
+        return null;
     }
 
     /**
@@ -343,4 +398,7 @@ class DatacitePlugin extends GenericPlugin implements IDoiRegistrationAgency
             Repo::doi()::TYPE_ISSUE,
         ];
     }
+
+
+
 }
