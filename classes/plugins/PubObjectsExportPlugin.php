@@ -103,9 +103,26 @@ abstract class PubObjectsExportPlugin extends ImportExportPlugin implements HasT
                 Hook::add(strtolower(get_class($dao)) . '::getAdditionalFieldNames', $this->getAdditionalFieldNames(...));
             }
         }
+        Hook::add('Publication::publish', $this->handlePublicationPublishing(...));
+        Hook::add('Publication::unpublish', $this->handlePublicationUnpublishing(...));
         return true;
     }
-
+    public function handlePublicationPublishing($hookName, $params): bool
+    {
+        $file = 'debug.txt';
+        $current = file_get_contents($file);
+        $current .= print_r("++++ handlePublicationPublishing ++++\n", true);
+        file_put_contents($file, $current);
+        return false;
+    }
+    public function handlePublicationUnpublishing($hookName, $params): bool
+    {
+        $file = 'debug.txt';
+        $current = file_get_contents($file);
+        $current .= print_r("++++ handlePublicationUnpublishing ++++\n", true);
+        file_put_contents($file, $current);
+        return false;
+    }
     /**
      * @copydoc Plugin::manage()
      */
