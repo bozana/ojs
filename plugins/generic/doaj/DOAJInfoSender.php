@@ -134,7 +134,6 @@ class DOAJInfoSender extends ScheduledTask
     {
         if (is_array($errors)) {
             foreach ($errors as $error) {
-                assert(is_array($error) && count($error) >= 1);
                 $this->addExecutionLogEntry(
                     __($error[0], ['param' => $error[1] ?? null]),
                     ScheduledTaskHelper::SCHEDULED_TASK_MESSAGE_TYPE_WARNING

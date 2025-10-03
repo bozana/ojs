@@ -265,7 +265,8 @@ class DOAJExportPlugin extends PubObjectsExportPlugin implements HasTaskSchedule
      * @param Context $context
      * @param string $jsonString Export JSON string
      *
-     * @return bool|array Whether the JSON string has been registered
+     * @return bool Whether deletion or registration job has been successfully dispatched.
+     * The deletion and registration errors will then be considered in failure messages of the jobs.
      */
     public function depositXML($objects, $context, $jsonString)
     {
@@ -328,7 +329,6 @@ class DOAJExportPlugin extends PubObjectsExportPlugin implements HasTaskSchedule
             } else {
                 foreach ($resultErrors as $errors) {
                     foreach ($errors as $error) {
-                        assert(is_array($error) && count($error) >= 1);
                         $this->_sendNotification(
                             $request->getUser(),
                             $error[0],
@@ -341,7 +341,7 @@ class DOAJExportPlugin extends PubObjectsExportPlugin implements HasTaskSchedule
             // redirect back to the right tab
             $request->redirect(null, null, null, $path, null, $tab);
         } else {
-            return parent::executeExportAction($request, $objects, $filter, $tab, $objectsFileNamePart, $noValidation);
+            parent::executeExportAction($request, $objects, $filter, $tab, $objectsFileNamePart, $noValidation);
         }
     }
 
@@ -358,7 +358,6 @@ class DOAJExportPlugin extends PubObjectsExportPlugin implements HasTaskSchedule
     {
         $filterDao = DAORegistry::getDAO('FilterDAO'); /** @var FilterDAO $filterDao */
         $exportFilters = $filterDao->getObjectsByGroup($filter);
-        assert(count($exportFilters) == 1); // Assert only a single serialization filter
         $exportFilter = array_shift($exportFilters); /** @var PKPImportExportFilter $exportFilter */
         $exportDeployment = $this->_instantiateExportDeployment($context);
         $exportFilter->setDeployment($exportDeployment);

@@ -80,7 +80,6 @@ class DOAJXmlFilter extends \PKP\plugins\importexport\native\filter\NativeExport
                     $article = $cache->get('articles', $publication->getData('submissionId'));
                 } else {
                     $article = Repo::submission()->get($publication->getData('submissionId'));
-                    $article = $article->getData('contextId') == $context->getId() ? $article : null;
                     if ($article) {
                         $cache->add($article, null);
                     }
@@ -94,7 +93,6 @@ class DOAJXmlFilter extends \PKP\plugins\importexport\native\filter\NativeExport
                     $issue = $cache->get('issues', $issueId);
                 } else {
                     $issue = Repo::issue()->get($issueId);
-                    $issue = $issue?->getJournalId() == $context->getId() ? $issue : null;
                     if ($issue) {
                         $cache->add($issue, null);
                     }
