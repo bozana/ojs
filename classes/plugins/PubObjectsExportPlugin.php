@@ -41,6 +41,7 @@ use PKP\linkAction\request\NullAction;
 use PKP\notification\Notification;
 use PKP\plugins\Hook;
 use PKP\plugins\importexport\PKPImportExportDeployment;
+use PKP\plugins\importexport\PKPImportExportFilter;
 use PKP\plugins\ImportExportPlugin;
 use PKP\plugins\PluginRegistry;
 use PKP\submission\PKPSubmission;
